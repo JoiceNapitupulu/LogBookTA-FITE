@@ -25,8 +25,8 @@
     </div>
 
     @if (auth()->user()->isMahasiswa())
-      <button @click="openCreateModal = true" class="notion-btn-primary text-xs">
-        Isi Logbook Baru
+      <button @click="openCreateModal = true" class="btn btn-dark btn-sm d-inline-flex align-items-center gap-1.5 text-xs">
+        <i class="bi bi-pencil-square"></i> Isi Logbook Baru
       </button>
     @endif
   </div>

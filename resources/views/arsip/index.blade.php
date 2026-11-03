@@ -16,8 +16,8 @@
     </div>
 
     @if (auth()->user()->isTA())
-      <button @click="uploadModal = true" class="notion-btn-primary text-xs">
-        Unggah Arsip Tugas Akhir
+      <button @click="uploadModal = true" class="btn btn-dark btn-sm d-inline-flex align-items-center gap-1.5 text-xs">
+        <i class="bi bi-cloud-arrow-up"></i> Unggah Arsip Tugas Akhir
       </button>
     @else
       <div class="text-[11px] text-[#787774] bg-[#F7F7F5] px-2.5 py-1 rounded border border-[#E9E9E7]">
@@ -122,8 +122,8 @@
                 </div>
               </td>
               <td class="py-3 px-4 text-right whitespace-nowrap">
-                <a href="{{ asset('storage/' . $item->file_dokumen) }}" target="_blank" class="notion-btn-secondary text-xs py-1 px-2.5">
-                  Unduh PDF
+                <a href="{{ asset('storage/' . $item->file_dokumen) }}" target="_blank" class="btn btn-outline-secondary btn-sm text-xs py-1 px-2.5 inline-flex align-items-center gap-1">
+                  <i class="bi bi-file-earmark-pdf text-danger"></i> Unduh PDF
                 </a>
               </td>
             </tr>

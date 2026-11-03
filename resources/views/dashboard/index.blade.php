@@ -24,13 +24,16 @@
   @if ($user->isMahasiswa() && (!$mahasiswaProfile || !$mahasiswaProfile->is_ta))
     <div class="notion-callout">
       <div class="text-xs">
-        <p class="font-bold text-[#37352F]">Status: Mahasiswa Non-TA (Tahap Persiapan Tugas Akhir)</p>
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-info-circle-fill text-primary"></i>
+          <p class="font-bold text-[#37352F]">Status: Mahasiswa Non-TA (Tahap Persiapan Tugas Akhir)</p>
+        </div>
         <p class="text-[#787774] mt-1 leading-relaxed">
           Akun Anda tercatat sebagai mahasiswa aktif <strong class="text-[#37352F]">{{ $mahasiswaProfile->prodi ?? 'FITE' }} (NIM: {{ $mahasiswaProfile->nim ?? '-' }})</strong> namun belum mengambil mata kuliah Tugas Akhir pada semester ini. Anda memiliki akses penuh untuk menelusuri katalog repositori naskah skripsi alumni FITE sebagai referensi topik penelitian Anda.
         </p>
         <div class="mt-3">
-          <a href="{{ route('arsip.index') }}" class="notion-btn-primary text-xs">
-            Buka Pustaka Arsip Tugas Akhir
+          <a href="{{ route('arsip.index') }}" class="btn btn-dark btn-sm d-inline-flex align-items-center gap-1.5 text-xs">
+            <i class="bi bi-collection"></i> Buka Pustaka Arsip Tugas Akhir
           </a>
         </div>
       </div>
@@ -122,11 +125,12 @@
                     @php
                       $isCurrentUser = auth()->check() && (auth()->id() === $member->user_id);
                     @endphp
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F7F7F5] {{ $isCurrentUser ? 'border border-[#37352F] shadow-2xs' : 'border border-[#E9E9E7]' }} text-[#37352F] text-xs">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md {{ $isCurrentUser ? 'bg-white border border-dark shadow-xs' : 'bg-[#F7F7F5] border border-[#E9E9E7]' }} text-[#37352F] text-xs">
+                      <i class="bi bi-person-fill text-[#787774] text-xs"></i>
                       <span class="font-semibold">{{ $member->user->name ?? '-' }}</span>
                       <span class="text-[11px] text-[#787774]">{{ $member->nim }}</span>
                       @if ($isCurrentUser)
-                        <span class="text-[10px] text-[#787774] font-medium">(Anda)</span>
+                        <span class="badge bg-dark-subtle text-dark border border-dark-subtle text-[9px] px-1.5 py-0.5">(Anda)</span>
                       @endif
                     </span>
                   @endforeach
@@ -136,11 +140,11 @@
           </div>
 
           <div class="flex items-center gap-2 shrink-0">
-            <a href="{{ route('bimbingan.index') }}" class="notion-btn-secondary text-xs">
-              Ajukan bimbingan
+            <a href="{{ route('bimbingan.index') }}" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center gap-1.5 text-xs">
+              <i class="bi bi-calendar-plus"></i> Ajukan bimbingan
             </a>
-            <a href="{{ route('logbook.index') }}" class="notion-btn-primary text-xs">
-              Isi logbook
+            <a href="{{ route('logbook.index') }}" class="btn btn-dark btn-sm d-inline-flex align-items-center gap-1.5 text-xs">
+              <i class="bi bi-pencil-square"></i> Isi logbook
             </a>
           </div>
         </div>
@@ -224,28 +228,28 @@
 
           @foreach ($steps as $st)
             @if ($st['status'] === 'approved')
-              <div class="p-3 rounded border border-[#C4E5D1] bg-[#EBF5EE]">
-                <span class="text-[10px] font-bold text-[#2A7E4B] block uppercase">{{ $st['step'] }}</span>
+              <div class="p-3 rounded-3 border border-success-subtle bg-success-subtle/40">
+                <span class="text-[10px] font-bold text-success block uppercase">{{ $st['step'] }}</span>
                 <p class="font-bold text-[#37352F] mt-1">{{ $st['name'] }}</p>
-                <p class="text-[10px] text-[#2A7E4B]">{{ $st['label'] }}</p>
+                <p class="text-[10px] text-success font-medium"><i class="bi bi-check-circle-fill me-0.5"></i> {{ $st['label'] }}</p>
               </div>
             @elseif ($st['status'] === 'revision')
-              <div class="p-3 rounded border border-amber-300 bg-amber-50">
-                <span class="text-[10px] font-bold text-amber-800 block uppercase">{{ $st['step'] }}</span>
+              <div class="p-3 rounded-3 border border-warning-subtle bg-warning-subtle/50">
+                <span class="text-[10px] font-bold text-warning-emphasis block uppercase">{{ $st['step'] }}</span>
                 <p class="font-bold text-[#37352F] mt-1">{{ $st['name'] }}</p>
-                <p class="text-[10px] text-amber-800 font-semibold">{{ $st['label'] }}</p>
+                <p class="text-[10px] text-warning-emphasis font-medium"><i class="bi bi-exclamation-triangle-fill me-0.5"></i> {{ $st['label'] }}</p>
               </div>
             @elseif ($st['status'] === 'pending' || $st['status'] === 'in_progress')
-              <div class="p-3 rounded border border-blue-200 bg-blue-50">
-                <span class="text-[10px] font-bold text-blue-700 block uppercase">{{ $st['step'] }}</span>
+              <div class="p-3 rounded-3 border border-primary-subtle bg-primary-subtle/40">
+                <span class="text-[10px] font-bold text-primary block uppercase">{{ $st['step'] }}</span>
                 <p class="font-bold text-[#37352F] mt-1">{{ $st['name'] }}</p>
-                <p class="text-[10px] text-blue-700">{{ $st['label'] }}</p>
+                <p class="text-[10px] text-primary font-medium"><i class="bi bi-clock-history me-0.5"></i> {{ $st['label'] }}</p>
               </div>
             @else
-              <div class="p-3 rounded border border-[#E9E9E7] bg-[#F7F7F5] opacity-60">
-                <span class="text-[10px] font-medium text-[#787774] block uppercase">{{ $st['step'] }}</span>
-                <p class="font-medium text-[#787774] mt-1">{{ $st['name'] }}</p>
-                <p class="text-[10px] text-[#787774]">{{ $st['label'] }}</p>
+              <div class="p-3 rounded-3 border border-light-subtle bg-light text-muted opacity-75">
+                <span class="text-[10px] font-medium text-secondary block uppercase">{{ $st['step'] }}</span>
+                <p class="font-medium text-secondary mt-1">{{ $st['name'] }}</p>
+                <p class="text-[10px] text-secondary"><i class="bi bi-dash-circle me-0.5"></i> {{ $st['label'] }}</p>
               </div>
             @endif
           @endforeach
@@ -330,28 +334,40 @@
   <!-- ================================================================= -->
   @if ($user->isDosen() || $user->isKaprodi())
     
-    <!-- Quick Stats Cards ala Notion -->
+    <!-- Quick Stats Cards ala Notion / Bootstrap -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-      <div class="p-4 bg-[#F7F6F3] rounded-lg border border-[#E9E9E7]">
-        <p class="text-xs text-[#787774]">Mahasiswa Bimbingan</p>
+      <div class="p-4 bg-[#F7F6F3] rounded-3 border border-[#E9E9E7] shadow-xs">
+        <div class="d-flex align-items-center justify-content-between text-muted mb-1">
+          <span class="text-xs">Mahasiswa Bimbingan</span>
+          <i class="bi bi-people text-secondary text-sm"></i>
+        </div>
         <p class="text-2xl font-bold text-[#37352F] mt-1">{{ $mahasiswaBimbingan->count() }}</p>
         <p class="text-[10px] text-[#787774] mt-0.5">FITE IT Del</p>
       </div>
 
-      <div class="p-4 bg-[#FDF5E6] rounded-lg border border-[#F3E0A2]">
-        <p class="text-xs text-[#B86200]">Menunggu Review</p>
+      <div class="p-4 bg-warning-subtle/50 rounded-3 border border-warning-subtle shadow-xs">
+        <div class="d-flex align-items-center justify-content-between text-warning-emphasis mb-1">
+          <span class="text-xs">Menunggu Review</span>
+          <i class="bi bi-hourglass-split text-sm"></i>
+        </div>
         <p class="text-2xl font-bold text-[#B86200] mt-1">{{ $pendingReviewsCount }}</p>
         <p class="text-[10px] text-[#B86200] mt-0.5">Entri logbook baru</p>
       </div>
 
-      <div class="p-4 bg-[#EBF5EE] rounded-lg border border-[#C4E5D1]">
-        <p class="text-xs text-[#2A7E4B]">Pertemuan Minggu Ini</p>
+      <div class="p-4 bg-success-subtle/50 rounded-3 border border-success-subtle shadow-xs">
+        <div class="d-flex align-items-center justify-content-between text-success-emphasis mb-1">
+          <span class="text-xs">Pertemuan Minggu Ini</span>
+          <i class="bi bi-calendar-check text-sm"></i>
+        </div>
         <p class="text-2xl font-bold text-[#2A7E4B] mt-1">{{ $upcomingMeetingsCount }}</p>
         <p class="text-[10px] text-[#2A7E4B] mt-0.5">Asistensi terjadwal</p>
       </div>
 
-      <div class="p-4 bg-[#F7F6F3] rounded-lg border border-[#E9E9E7]">
-        <p class="text-xs text-[#787774]">Total TA FITE Aktif</p>
+      <div class="p-4 bg-[#F7F6F3] rounded-3 border border-[#E9E9E7] shadow-xs">
+        <div class="d-flex align-items-center justify-content-between text-muted mb-1">
+          <span class="text-xs">Total TA FITE Aktif</span>
+          <i class="bi bi-folder2-open text-secondary text-sm"></i>
+        </div>
         <p class="text-2xl font-bold text-[#37352F] mt-1">{{ $totalTaAktif }}</p>
         <p class="text-[10px] text-[#787774] mt-0.5">3 Program Studi</p>
       </div>
@@ -361,11 +377,16 @@
       <!-- Panel Ringkas Koordinator TA -->
       <div class="border border-[#E9E9E7] rounded-xl p-5 bg-[#FAFAF9] shadow-xs">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#E9E9E7] gap-2 mb-4">
-          <div>
-            <h3 class="text-sm font-bold text-[#37352F]">Ringkasan Operasional Koordinator TA</h3>
-            <p class="text-xs text-[#787774]">Penetapan pembimbing dan penjadwalan ujian program studi FITE</p>
+          <div class="d-flex align-items-center gap-2">
+            <div class="w-8 h-8 rounded-3 bg-secondary-subtle d-flex align-items-center justify-center text-dark">
+              <i class="bi bi-sliders"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-[#37352F]">Ringkasan Operasional Koordinator TA</h3>
+              <p class="text-xs text-[#787774]">Penetapan pembimbing dan penjadwalan ujian program studi FITE</p>
+            </div>
           </div>
-          <a href="{{ route('koordinator.index') }}" class="notion-btn-secondary text-xs">
+          <a href="{{ route('koordinator.index') }}" class="btn btn-outline-dark btn-sm text-xs">
             Buka Panel Koordinator &rarr;
           </a>
         </div>
@@ -376,7 +397,7 @@
               <p class="text-[#787774] text-[11px] font-medium uppercase tracking-wider">Menunggu Penunjukan Pembimbing</p>
               <p class="text-2xl font-bold text-[#37352F] mt-1">{{ $menungguAssignCount }} <span class="text-xs font-normal text-[#787774]">Mahasiswa</span></p>
             </div>
-            <a href="{{ route('koordinator.index') }}" class="notion-btn-primary text-xs py-1.5 px-3">
+            <a href="{{ route('koordinator.index') }}" class="btn btn-dark btn-sm text-xs py-1.5 px-3">
               Plot Pembimbing
             </a>
           </div>
@@ -386,7 +407,7 @@
               <p class="text-[#787774] text-[11px] font-medium uppercase tracking-wider">Ujian Siap Dijadwalkan (Berkas Lengkap)</p>
               <p class="text-2xl font-bold text-[#2A7E4B] mt-1">{{ $unassignedExamsCount }} <span class="text-xs font-normal text-[#787774]">Pengajuan</span></p>
             </div>
-            <a href="{{ route('ujian.index') }}" class="notion-btn-primary text-xs py-1.5 px-3">
+            <a href="{{ route('ujian.index') }}" class="btn btn-dark btn-sm text-xs py-1.5 px-3">
               Tetapkan Jadwal &rarr;
             </a>
           </div>
@@ -398,11 +419,16 @@
       <!-- Panel Ringkas Kaprodi -->
       <div class="border border-[#E9E9E7] rounded-xl p-5 bg-[#FAFAF9] shadow-xs">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#E9E9E7] gap-2 mb-4">
-          <div>
-            <h3 class="text-sm font-bold text-[#37352F]">Ringkasan Mutu & Statistik Kaprodi</h3>
-            <p class="text-xs text-[#787774]">Pengawasan mutu kelulusan tugas akhir dan beban bimbingan dosen FITE</p>
+          <div class="d-flex align-items-center gap-2">
+            <div class="w-8 h-8 rounded-3 bg-secondary-subtle d-flex align-items-center justify-center text-dark">
+              <i class="bi bi-graph-up-arrow"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-[#37352F]">Ringkasan Mutu & Statistik Kaprodi</h3>
+              <p class="text-xs text-[#787774]">Pengawasan mutu kelulusan tugas akhir dan beban bimbingan dosen FITE</p>
+            </div>
           </div>
-          <a href="{{ route('kaprodi.index') }}" class="notion-btn-secondary text-xs">
+          <a href="{{ route('kaprodi.index') }}" class="btn btn-outline-dark btn-sm text-xs">
             Buka Panel Kaprodi &rarr;
           </a>
         </div>
@@ -413,7 +439,7 @@
               <p class="text-[#787774] text-[11px] font-medium uppercase tracking-wider">Total Tugas Akhir Berjalan</p>
               <p class="text-2xl font-bold text-[#37352F] mt-1">{{ $totalTaAktif }} <span class="text-xs font-normal text-[#787774]">Mahasiswa</span></p>
             </div>
-            <a href="{{ route('kaprodi.index') }}" class="notion-btn-primary text-xs py-1.5 px-3">
+            <a href="{{ route('kaprodi.index') }}" class="btn btn-dark btn-sm text-xs py-1.5 px-3">
               Pantau Mutu TA
             </a>
           </div>
@@ -423,7 +449,7 @@
               <p class="text-[#787774] text-[11px] font-medium uppercase tracking-wider">Mahasiswa Siap Sidang</p>
               <p class="text-2xl font-bold text-[#2A7E4B] mt-1">{{ $totalMhsSiapSidang }} <span class="text-xs font-normal text-[#787774]">Mahasiswa</span></p>
             </div>
-            <a href="{{ route('kaprodi.index') }}" class="notion-btn-primary text-xs py-1.5 px-3">
+            <a href="{{ route('kaprodi.index') }}" class="btn btn-dark btn-sm text-xs py-1.5 px-3">
               Lihat Statistik &rarr;
             </a>
           </div>
@@ -519,30 +545,39 @@
   <!-- ================================================================= -->
   @if ($user->isTA() || $user->isBaak())
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="p-5 rounded-xl border border-[#E9E9E7] bg-[#F7F6F3]">
-        <h4 class="text-xs font-bold text-[#787774] uppercase">Antrean Verifikasi Berkas (TA)</h4>
-        <p class="text-3xl font-extrabold text-[#37352F] mt-2">{{ $pendingUjianCount }}</p>
+      <div class="p-5 rounded-3 border border-light-subtle bg-light shadow-xs">
+        <div class="d-flex align-items-center justify-content-between text-muted">
+          <h4 class="text-xs font-bold uppercase tracking-wider mb-0">Antrean Verifikasi Berkas (TA)</h4>
+          <i class="bi bi-file-earmark-check text-secondary"></i>
+        </div>
+        <p class="text-3xl font-extrabold text-[#37352F] mt-2 mb-0">{{ $pendingUjianCount }}</p>
         <p class="text-xs text-[#787774] mt-1">Berkas ujian mahasiswa menunggu validasi fisik/soft-copy</p>
         <div class="mt-4">
-          <a href="{{ route('ujian.index') }}" class="notion-btn-primary text-xs">Periksa Berkas &rarr;</a>
+          <a href="{{ route('ujian.index') }}" class="btn btn-dark btn-sm text-xs">Periksa Berkas &rarr;</a>
         </div>
       </div>
 
-      <div class="p-5 rounded-xl border border-[#E9E9E7] bg-[#F7F6F3]">
-        <h4 class="text-xs font-bold text-[#787774] uppercase">Alokasi Ruangan Ujian (BAAK)</h4>
-        <p class="text-3xl font-extrabold text-[#37352F] mt-2">{{ $unscheduledBaakCount }}</p>
+      <div class="p-5 rounded-3 border border-light-subtle bg-light shadow-xs">
+        <div class="d-flex align-items-center justify-content-between text-muted">
+          <h4 class="text-xs font-bold uppercase tracking-wider mb-0">Alokasi Ruangan Ujian (BAAK)</h4>
+          <i class="bi bi-building text-secondary"></i>
+        </div>
+        <p class="text-3xl font-extrabold text-[#37352F] mt-2 mb-0">{{ $unscheduledBaakCount }}</p>
         <p class="text-xs text-[#787774] mt-1">Jadwal tanggal terbit menanti alokasi ruang GD & link Zoom</p>
         <div class="mt-4">
-          <a href="{{ route('ujian.index') }}" class="notion-btn-primary text-xs">Kelola Fasilitas &rarr;</a>
+          <a href="{{ route('ujian.index') }}" class="btn btn-dark btn-sm text-xs">Kelola Fasilitas &rarr;</a>
         </div>
       </div>
 
-      <div class="p-5 rounded-xl border border-[#E9E9E7] bg-[#F7F6F3]">
-        <h4 class="text-xs font-bold text-[#787774] uppercase">Total Arsip Digital Alumni</h4>
-        <p class="text-3xl font-extrabold text-[#37352F] mt-2">{{ $totalArsipCount }}</p>
+      <div class="p-5 rounded-3 border border-light-subtle bg-light shadow-xs">
+        <div class="d-flex align-items-center justify-content-between text-muted">
+          <h4 class="text-xs font-bold uppercase tracking-wider mb-0">Total Arsip Digital Alumni</h4>
+          <i class="bi bi-archive text-secondary"></i>
+        </div>
+        <p class="text-3xl font-extrabold text-[#37352F] mt-2 mb-0">{{ $totalArsipCount }}</p>
         <p class="text-xs text-[#787774] mt-1">Karya naskah skripsi terunggah di repositori FITE</p>
         <div class="mt-4">
-          <a href="{{ route('arsip.index') }}" class="notion-btn-secondary text-xs">Pustaka Naskah &rarr;</a>
+          <a href="{{ route('arsip.index') }}" class="btn btn-outline-dark btn-sm text-xs">Pustaka Naskah &rarr;</a>
         </div>
       </div>
     </div>

@@ -212,8 +212,8 @@
                   <span class="notion-pill-gray text-[10px]">{{ $item->jenis_ujian_label }}</span>
                 </td>
                 <td class="py-3 px-4">
-                  <a href="{{ asset('storage/' . $item->file_persyaratan) }}" target="_blank" class="inline-flex items-center gap-1 font-semibold text-[#37352F] underline">
-                    Unduh Berkas
+                  <a href="{{ asset('storage/' . $item->file_persyaratan) }}" target="_blank" class="inline-flex items-center gap-1.5 font-semibold text-[#37352F] hover:text-dark">
+                    <i class="bi bi-file-earmark-arrow-down text-primary"></i> Unduh Berkas
                   </a>
                 </td>
                 <td class="py-3 px-4">

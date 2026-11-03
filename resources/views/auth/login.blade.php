@@ -20,9 +20,9 @@
         <div>
           <!-- Logo Institut Teknologi Del Resmi -->
           <div class="flex items-center gap-3 mb-6">
-            <img src="https://cis.del.ac.id/assets/d7fb01ed/img/logo.jpg" 
+            <img src="{{ asset('images/logo-del.png') }}" 
                  alt="Logo Institut Teknologi Del" 
-                 class="h-12 w-auto object-contain rounded shadow-xs border border-gray-100">
+                 class="h-12 w-auto object-contain shrink-0">
             <div>
               <span class="text-xs font-bold tracking-wider uppercase text-[#0A0A0B] block leading-tight">Institut Teknologi Del</span>
               <span class="text-[10px] text-[#787774] font-mono-code block">Fakultas Informatika & Teknik Elektro</span>

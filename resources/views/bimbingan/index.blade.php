@@ -23,8 +23,8 @@
       <p class="text-xs text-[#787774]">Koordinasi jadwal bimbingan tatap muka (Ruang Dosen GD 512/514) atau daring (Zoom IT Del) antara mahasiswa dan dosen.</p>
     </div>
 
-    <button @click="openModal = true" class="notion-btn-primary text-xs">
-      Ajukan Janji Bimbingan
+    <button @click="openModal = true" class="btn btn-dark btn-sm d-inline-flex align-items-center gap-1.5 text-xs">
+      <i class="bi bi-calendar-plus"></i> Ajukan Janji Bimbingan
     </button>
   </div>
 
@@ -60,8 +60,9 @@
                 @endif
                 Dosen: <strong class="text-[#37352F]">{{ $item->dosen->user->name ?? '-' }}</strong>
               </p>
-              <div class="mt-2 text-[11px] text-[#787774] bg-[#F7F7F5] px-2 py-1 rounded inline-block">
-                {{ $item->metode === 'offline' ? 'Tatap Muka: ' : 'Daring: ' }} {{ $item->lokasi_atau_link ?? '-' }}
+              <div class="mt-2 text-[11px] text-[#787774] bg-[#F7F7F5] px-2.5 py-1 rounded-md border border-[#E9E9E7] inline-flex align-items-center gap-1.5">
+                <i class="bi {{ $item->metode === 'offline' ? 'bi-geo-alt' : 'bi-camera-video' }} text-secondary"></i>
+                <span>{{ $item->metode === 'offline' ? 'Tatap Muka: ' : 'Daring: ' }} {{ $item->lokasi_atau_link ?? '-' }}</span>
               </div>
             </div>
 
@@ -169,11 +170,11 @@
               </td>
               <td class="py-3 px-4 text-right whitespace-nowrap">
                 @if ($janji->status === 'disetujui' && auth()->user()->isDosen() && auth()->user()->dosenProfile?->id === $janji->dosen_id)
-                  <button @click="openComplete({{ $janji->toJson() }})" class="notion-btn-secondary text-[11px] py-1 px-2.5 inline-flex items-center">
-                    Selesaikan & Catat
+                  <button @click="openComplete({{ $janji->toJson() }})" class="btn btn-outline-success btn-sm text-xs py-1 px-2.5 inline-flex align-items-center gap-1.5">
+                    <i class="bi bi-check2-circle"></i> Selesaikan & Catat
                   </button>
                 @elseif ($janji->status === 'selesai')
-                  <span class="text-[11px] text-[#2A7E4B] font-semibold">Telah Selesai</span>
+                  <span class="badge bg-success-subtle text-success border border-success-subtle text-[11px] font-semibold">Telah Selesai</span>
                 @else
                   <span class="text-[11px] text-[#787774]">-</span>
                 @endif

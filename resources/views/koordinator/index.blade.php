@@ -28,8 +28,8 @@
     </div>
 
     <div class="flex items-center gap-2">
-      <a href="{{ route('ujian.index') }}" class="notion-btn-secondary text-xs">
-        Kelola Jadwal Ujian ({{ $siapJadwalCount }})
+      <a href="{{ route('ujian.index') }}" class="btn btn-outline-dark btn-sm text-xs d-inline-flex align-items-center gap-1.5">
+        <i class="bi bi-mortarboard"></i> Kelola Jadwal Ujian ({{ $siapJadwalCount }})
       </a>
     </div>
   </div>

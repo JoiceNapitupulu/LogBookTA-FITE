@@ -10,11 +10,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- Bootstrap 5.3 CSS & Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
   @vite(['resources/css/app.css', 'resources/js/app.js'])
 
   <style>
     [x-cloak] { display: none !important; }
     
+    p {
+      margin-bottom: 0;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    a:hover {
+      color: inherit;
+    }
+
     /* Notion Aesthetic Specific Tokens */
     :root {
       --notion-sidebar-bg: #F7F7F5;
@@ -187,21 +202,15 @@
         <!-- Workspace Switcher IT Del FITE -->
         <div class="h-[52px] border-b border-[#E9E9E7] px-3 flex items-center justify-between">
           <a href="{{ route('dashboard') }}" class="flex items-center gap-2 overflow-hidden hover:opacity-90">
-            <div class="w-7 h-7 rounded bg-[#2C2C2F] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs tracking-wider">
-              TA
-            </div>
+            <img src="{{ asset('images/logo-del.png') }}" alt="Logo IT Del" class="w-8 h-8 object-contain shrink-0">
             <div x-show="sidebarOpen" class="truncate">
               <h2 class="text-xs font-bold text-[#37352F] tracking-tight leading-none truncate">TA FITE IT Del</h2>
               <p class="text-[10px] text-[#787774] truncate mt-0.5">Workspace Akademik</p>
             </div>
           </a>
 
-          <button @click="sidebarOpen = !sidebarOpen" class="p-1 rounded text-[#787774] hover:bg-[#EBEBE9] hover:text-[#37352F]">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="3" y1="12" x2="21" y2="12"></line>
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
+          <button @click="sidebarOpen = !sidebarOpen" class="p-1 rounded text-[#787774] hover:bg-[#EBEBE9] hover:text-[#37352F]" title="Toggle Sidebar">
+            <i class="bi bi-layout-sidebar text-sm"></i>
           </button>
         </div>
 
@@ -209,10 +218,7 @@
         <div x-show="sidebarOpen" class="px-3 pt-3">
           <a href="{{ route('arsip.index') }}" class="w-full flex items-center justify-between px-2.5 py-1.5 text-xs text-[#787774] bg-[#FFFFFF] hover:bg-[#EBEBE9] border border-[#E9E9E7] rounded transition-colors">
             <div class="flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
+              <i class="bi bi-search text-xs text-[#787774]"></i>
               <span>Cari arsip & naskah...</span>
             </div>
             <span class="text-[10px] font-mono text-[#CCCCCC] bg-[#F7F7F5] px-1 rounded">⌘K</span>
@@ -230,26 +236,26 @@
             <div class="space-y-0.5">
               <!-- Dashboard -->
               <a href="{{ route('dashboard') }}" 
-                 class="flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('dashboard') || request()->routeIs('workspace') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
+                 class="flex items-center gap-2.5 px-2.5 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('dashboard') || request()->routeIs('workspace') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
                  title="Dashboard Workspace">
-                <span class="w-5 text-[10px] font-bold text-[#787774] text-center shrink-0">DB</span>
+                <i class="bi bi-grid-1x2 text-sm text-[#787774] w-4 text-center shrink-0"></i>
                 <span x-show="sidebarOpen" class="truncate">Dashboard Utama</span>
               </a>
 
               @if (auth()->check() && (auth()->user()->isMahasiswaTa() || auth()->user()->isDosen()))
               <!-- Logbook Aktivitas -->
               <a href="{{ route('logbook.index') }}" 
-                 class="flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('logbook.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
+                 class="flex items-center gap-2.5 px-2.5 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('logbook.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
                  title="Logbook Aktivitas & Progres">
-                <span class="w-5 text-[10px] font-bold text-[#787774] text-center shrink-0">LB</span>
+                <i class="bi bi-journal-text text-sm text-[#787774] w-4 text-center shrink-0"></i>
                 <span x-show="sidebarOpen" class="truncate">Logbook Aktivitas</span>
               </a>
 
               <!-- Janji Bimbingan -->
               <a href="{{ route('bimbingan.index') }}" 
-                 class="flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('bimbingan.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
+                 class="flex items-center gap-2.5 px-2.5 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('bimbingan.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
                  title="Janji Bimbingan">
-                <span class="w-5 text-[10px] font-bold text-[#787774] text-center shrink-0">JB</span>
+                <i class="bi bi-calendar-event text-sm text-[#787774] w-4 text-center shrink-0"></i>
                 <span x-show="sidebarOpen" class="truncate">Janji Bimbingan</span>
               </a>
               @endif
@@ -257,9 +263,9 @@
               @if (auth()->check() && !auth()->user()->isMahasiswaNonTa())
               <!-- Alur & Jadwal Ujian TA -->
               <a href="{{ route('ujian.index') }}" 
-                 class="flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('ujian.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
+                 class="flex items-center gap-2.5 px-2.5 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('ujian.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
                  title="Pendaftaran & Jadwal Ujian">
-                <span class="w-5 text-[10px] font-bold text-[#787774] text-center shrink-0">UJ</span>
+                <i class="bi bi-mortarboard text-sm text-[#787774] w-4 text-center shrink-0"></i>
                 <span x-show="sidebarOpen" class="truncate">Manajemen Ujian TA</span>
               </a>
               @endif
@@ -274,9 +280,9 @@
             <div class="space-y-0.5">
               <!-- Pustaka Arsip TA -->
               <a href="{{ route('arsip.index') }}" 
-                 class="flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('arsip.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
+                 class="flex items-center gap-2.5 px-2.5 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('arsip.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
                  title="Pustaka Arsip Tugas Akhir Alumni">
-                <span class="w-5 text-[10px] font-bold text-[#787774] text-center shrink-0">AR</span>
+                <i class="bi bi-collection text-sm text-[#787774] w-4 text-center shrink-0"></i>
                 <span x-show="sidebarOpen" class="truncate">Pustaka Arsip TA</span>
               </a>
             </div>
@@ -291,18 +297,18 @@
             <div class="space-y-0.5">
               @if (auth()->user()->isKoordinator())
               <a href="{{ route('koordinator.index') }}" 
-                 class="flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('koordinator.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
+                 class="flex items-center gap-2.5 px-2.5 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('koordinator.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
                  title="Panel Koordinator TA">
-                <span class="w-5 text-[10px] font-bold text-[#787774] text-center shrink-0">KD</span>
+                <i class="bi bi-sliders text-sm text-[#787774] w-4 text-center shrink-0"></i>
                 <span x-show="sidebarOpen" class="truncate">Koordinator TA</span>
               </a>
               @endif
 
               @if (auth()->user()->isKaprodi())
               <a href="{{ route('kaprodi.index') }}" 
-                 class="flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('kaprodi.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
+                 class="flex items-center gap-2.5 px-2.5 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('kaprodi.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
                  title="Panel Eksekutif Kaprodi">
-                <span class="w-5 text-[10px] font-bold text-[#787774] text-center shrink-0">KP</span>
+                <i class="bi bi-bar-chart-line text-sm text-[#787774] w-4 text-center shrink-0"></i>
                 <span x-show="sidebarOpen" class="truncate">Panel Kaprodi</span>
               </a>
               @endif
@@ -316,21 +322,9 @@
       <!-- Bottom User Section & Logout -->
       <div class="p-2.5 border-t border-[#E9E9E7] bg-[#F7F7F5]">
         @auth
-          <div x-show="sidebarOpen" class="mb-2">
-            <div class="px-2 py-1 rounded bg-[#FFFFFF] border border-[#E9E9E7] text-[11px]">
-              <span class="text-[#787774] block text-[9px] uppercase font-semibold">Peran Aktif:</span>
-              <span class="font-bold text-[#37352F] truncate block">
-                {{ strtoupper(str_replace('_', ' ', auth()->user()->role)) }}
-                @if (auth()->user()->isKoordinator())
-                  <span class="text-emerald-700 font-semibold">• Koordinator TA</span>
-                @endif
-              </span>
-            </div>
-          </div>
-
           <div class="flex items-center justify-between px-1">
             <div class="flex items-center gap-2 overflow-hidden">
-              <div class="w-6 h-6 rounded-full bg-[#37352F] text-white flex items-center justify-center font-bold text-[10px] shrink-0">
+              <div class="w-7 h-7 rounded-full bg-[#37352F] text-white flex items-center justify-center font-bold text-[11px] shrink-0">
                 {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
               </div>
               <div x-show="sidebarOpen" class="truncate text-left">
@@ -341,12 +335,8 @@
 
             <form action="{{ route('logout') }}" method="POST" x-show="sidebarOpen">
               @csrf
-              <button type="submit" class="p-1 rounded text-[#787774] hover:text-[#C4383D] hover:bg-[#FDEBEC]" title="Keluar">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                  <polyline points="16 17 21 12 16 7"></polyline>
-                  <line x1="21" y1="12" x2="9" y2="12"></line>
-                </svg>
+              <button type="submit" class="p-1.5 rounded text-[#787774] hover:text-[#C4383D] hover:bg-[#FDEBEC] transition-colors" title="Keluar">
+                <i class="bi bi-box-arrow-right text-sm"></i>
               </button>
             </form>
           </div>
@@ -378,70 +368,16 @@
           <span class="font-semibold text-[#37352F]">@yield('breadcrumb', 'Workspace')</span>
         </div>
 
-        <!-- Right Quick Actions & Role Switcher Tester -->
-        <div class="flex items-center gap-2.5">
+        <!-- Right Quick Actions -->
+        <div class="flex items-center gap-3">
           
-          <!-- Role Switcher Tester Dropdown -->
-          <div class="relative" @click.away="roleTesterOpen = false">
-            <button @click="roleTesterOpen = !roleTesterOpen" 
-                    class="flex items-center gap-1.5 px-2.5 py-1 bg-[#F7F7F5] border border-[#E9E9E7] rounded text-xs font-medium text-[#37352F] hover:bg-[#EBEBE9] transition-colors">
-              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span class="hidden sm:inline">Ganti Akun Demo:</span>
-              <span class="font-semibold">{{ auth()->check() ? auth()->user()->name : 'Guest' }}</span>
-              <svg class="w-3.5 h-3.5 ml-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-
-            <!-- Dropdown Menu Akun Demo -->
-            <div x-show="roleTesterOpen" x-cloak
-                 class="absolute right-0 mt-2 w-72 bg-[#FFFFFF] border border-[#E9E9E7] rounded-lg shadow-xl py-2 z-50 text-xs">
-              <div class="px-3 py-1.5 border-b border-[#E9E9E7]">
-                <p class="font-bold text-[#37352F]">Pilih Akun Demo Pengujian FITE</p>
-                <p class="text-[10px] text-[#787774]">Simulasi login tanpa input password</p>
-              </div>
-
-              <div class="max-h-64 overflow-y-auto p-1 space-y-0.5">
-                <a href="{{ route('demo.login', 'mahasiswa_ta') }}" class="block p-2 rounded hover:bg-[#F7F7F5] transition-colors text-left">
-                  <p class="font-semibold text-[#37352F]">1. Mahasiswa TA Aktif</p>
-                  <p class="text-[10px] text-[#787774]">Samuel Siahaan (11S21004) - Ada TA & Logbook</p>
-                </a>
-                <a href="{{ route('demo.login', 'mahasiswa_non_ta') }}" class="block p-2 rounded hover:bg-[#F7F7F5] transition-colors text-left">
-                  <p class="font-semibold text-[#37352F]">2. Mahasiswa Non-TA</p>
-                  <p class="text-[10px] text-[#787774]">Yosua Tambunan (11S22014) - Pustaka Read-Only</p>
-                </a>
-                <a href="{{ route('demo.login', 'dosen') }}" class="block p-2 rounded hover:bg-[#F7F7F5] transition-colors text-left">
-                  <p class="font-semibold text-[#37352F]">3. Dosen 1 (Koordinator TA)</p>
-                  <p class="text-[10px] text-[#787774]">Dr. Johannes Harungguan (JHH)</p>
-                </a>
-                <a href="{{ route('demo.login', 'dosen2') }}" class="block p-2 rounded hover:bg-[#F7F7F5] transition-colors text-left">
-                  <p class="font-semibold text-[#37352F]">4. Dosen 2 (Pembimbing)</p>
-                  <p class="text-[10px] text-[#787774]">Marlina Valentina, M.Sc. (MVN)</p>
-                </a>
-                <a href="{{ route('demo.login', 'kaprodi') }}" class="block p-2 rounded hover:bg-[#F7F7F5] transition-colors text-left">
-                  <p class="font-semibold text-[#37352F]">5. Kaprodi FITE</p>
-                  <p class="text-[10px] text-[#787774]">Dr. Arnaldo Marulitua Sinaga</p>
-                </a>
-                <a href="{{ route('demo.login', 'ta') }}" class="block p-2 rounded hover:bg-[#F7F7F5] transition-colors text-left">
-                  <p class="font-semibold text-[#37352F]">6. Teaching Assistant (TA)</p>
-                  <p class="text-[10px] text-[#787774]">Grace Panjaitan (Verifikator Berkas & Arsip)</p>
-                </a>
-                <a href="{{ route('demo.login', 'baak') }}" class="block p-2 rounded hover:bg-[#F7F7F5] transition-colors text-left">
-                  <p class="font-semibold text-[#37352F]">7. BAAK IT Del</p>
-                  <p class="text-[10px] text-[#787774]">Pengatur Ruang Ujian, Jam & Link Zoom</p>
-                </a>
-              </div>
-            </div>
-          </div>
-
           <!-- Lonceng Notifikasi In-App -->
           <div class="relative" @click.away="notifDropdownOpen = false">
-            <button @click="notifDropdownOpen = !notifDropdownOpen" class="p-1.5 rounded hover:bg-[#F7F7F5] text-[#787774] hover:text-[#37352F] relative">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-              </svg>
-              <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500"></span>
+            <button @click="notifDropdownOpen = !notifDropdownOpen" class="p-1.5 rounded hover:bg-[#F7F7F5] text-[#787774] hover:text-[#37352F] relative" title="Notifikasi">
+              <i class="bi bi-bell text-base"></i>
+              <span class="position-absolute top-1 end-1 p-1 bg-danger border border-light rounded-circle">
+                <span class="visually-hidden">Notifikasi Baru</span>
+              </span>
             </button>
 
             <!-- Dropdown Notifikasi -->
@@ -449,7 +385,7 @@
                  class="absolute right-0 mt-2 w-80 bg-[#FFFFFF] border border-[#E9E9E7] rounded-lg shadow-xl p-3 z-50 text-xs">
               <div class="flex items-center justify-between pb-2 border-b border-[#E9E9E7] mb-2">
                 <span class="font-bold text-[#37352F]">Pemberitahuan Sistem</span>
-                <span class="notion-pill-green text-[10px]">3 Baru</span>
+                <span class="badge bg-success-subtle text-success border border-success-subtle text-[10px]">3 Baru</span>
               </div>
               <div class="space-y-2 max-h-60 overflow-y-auto">
                 <div class="p-2 rounded bg-[#F7F6F3] border border-[#E9E9E7]">
@@ -468,6 +404,18 @@
             </div>
           </div>
 
+          @auth
+            <div class="d-flex align-items-center gap-2 border-start ps-3 border-[#E9E9E7]">
+              <div class="text-end d-none d-sm-block">
+                <p class="text-xs font-semibold text-[#37352F] leading-tight mb-0">{{ auth()->user()->name }}</p>
+                <p class="text-[10px] text-[#787774] mb-0">{{ strtoupper(str_replace('_', ' ', auth()->user()->role)) }}</p>
+              </div>
+              <div class="w-7 h-7 rounded-full bg-[#2C2C2F] text-white flex items-center justify-center font-bold text-[11px] shrink-0">
+                {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+              </div>
+            </div>
+          @endauth
+
         </div>
 
       </header>
@@ -480,6 +428,9 @@
     </div>
 
   </div>
+
+  <!-- Bootstrap 5.3 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   @stack('scripts')
 </body>
