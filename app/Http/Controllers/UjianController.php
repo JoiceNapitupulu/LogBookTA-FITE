@@ -24,9 +24,12 @@ class UjianController extends Controller
         if ($user->isMahasiswa()) {
             $myTugasAkhir = $user->tugasAkhir();
             if ($myTugasAkhir) {
+                $myTugasAkhir->loadMissing('anggota.user');
                 $myUjian = UjianTa::where('tugas_akhir_id', $myTugasAkhir->id)
                     ->with([
                         'verifiedByTa',
+                        'tugasAkhir.mahasiswa.user',
+                        'tugasAkhir.anggota.user',
                         'tugasAkhir.pembimbing1.user',
                         'tugasAkhir.pembimbing2.user',
                         'penguji1.user',
@@ -43,6 +46,7 @@ class UjianController extends Controller
         // 2. Data khusus Staf (Teaching Assistant, Koordinator, BAAK, atau Dosen)
         $query = UjianTa::with([
             'tugasAkhir.mahasiswa.user',
+            'tugasAkhir.anggota.user',
             'tugasAkhir.pembimbing1.user',
             'tugasAkhir.pembimbing2.user',
             'penguji1.user',
@@ -92,6 +96,14 @@ class UjianController extends Controller
         $tugasAkhir = $user->tugasAkhir();
         if (! $tugasAkhir) {
             return redirect()->back()->with('error', 'Pendaftaran ujian gagal: Anda belum terdaftar dalam Tugas Akhir aktif.');
+        }
+
+        if (! $tugasAkhir->isAnggota($user)) {
+            abort(403, 'Akses ditolak: Anda bukan anggota kelompok Tugas Akhir ini.');
+        }
+
+        if ($request->filled('tugas_akhir_id') && (int) $request->tugas_akhir_id !== $tugasAkhir->id) {
+            return redirect()->back()->with('error', 'Pendaftaran ujian gagal: ID Tugas Akhir tidak sesuai dengan kelompok Anda.');
         }
 
         $validated = $request->validated();

@@ -119,9 +119,16 @@
               </td>
 
               @if (!auth()->user()->isMahasiswa())
-                <td class="py-3 px-4 whitespace-nowrap">
-                  <p class="font-semibold text-[#37352F]">{{ $log->tugasAkhir->mahasiswa->user->name ?? '-' }}</p>
-                  <p class="text-[10px] text-[#787774]">{{ $log->tugasAkhir->mahasiswa->nim ?? '-' }}</p>
+                <td class="py-3 px-4">
+                  @if ($log->tugasAkhir->anggota && $log->tugasAkhir->anggota->isNotEmpty())
+                    @foreach ($log->tugasAkhir->anggota as $member)
+                      <p class="font-semibold text-[#37352F] text-xs leading-tight">{{ $member->user->name ?? '-' }}</p>
+                      <p class="text-[10px] text-[#787774] mb-1">NIM: {{ $member->nim }}</p>
+                    @endforeach
+                  @else
+                    <p class="font-semibold text-[#37352F]">{{ $log->tugasAkhir->mahasiswa->user->name ?? '-' }}</p>
+                    <p class="text-[10px] text-[#787774]">{{ $log->tugasAkhir->mahasiswa->nim ?? '-' }}</p>
+                  @endif
                 </td>
               @endif
 

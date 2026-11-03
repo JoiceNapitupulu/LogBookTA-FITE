@@ -9,7 +9,6 @@
   <!-- Notion Cover / Page Title Header -->
   <div class="border-b border-[#E9E9E7] pb-5">
     <div class="flex items-center gap-3 mb-2">
-      <span class="text-3xl">🎓</span>
       <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-[#37352F]">
         Workspace Tugas Akhir FITE
       </h1>
@@ -105,6 +104,19 @@
                 Total Logbook: <span class="notion-pill-green">{{ $logbooks->count() }} Sesi Terdata</span>
               </div>
             </div>
+
+            @if ($tugasAkhir->anggota && $tugasAkhir->anggota->isNotEmpty())
+              <div class="mt-3 pt-3 border-t border-[#F0F0EE] flex flex-wrap items-center gap-2 text-xs">
+                <span class="font-semibold text-[#787774]">Anggota Kelompok ({{ $tugasAkhir->jumlahAnggota() }}):</span>
+                @foreach ($tugasAkhir->anggota as $member)
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F7F7F5] border border-[#E9E9E7] text-[#37352F] text-xs">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <span class="font-semibold">{{ $member->user->name ?? '-' }}</span>
+                    <span class="text-[11px] text-[#787774]">({{ $member->nim }})</span>
+                  </span>
+                @endforeach
+              </div>
+            @endif
           </div>
 
           <div class="flex items-center gap-2 shrink-0">
@@ -437,8 +449,20 @@
             @forelse ($mahasiswaBimbingan as $ta)
               <tr class="hover:bg-[#F7F7F5] transition-colors">
                 <td class="py-3 px-4">
-                  <p class="font-bold text-[#37352F]">{{ $ta->mahasiswa->user->name }}</p>
-                  <p class="text-[11px] text-[#787774]">{{ $ta->mahasiswa->nim }} • {{ $ta->prodi }}</p>
+                  @if ($ta->anggota && $ta->anggota->isNotEmpty())
+                    @foreach ($ta->anggota as $member)
+                      <p class="font-bold text-[#37352F]">{{ $member->user->name ?? '-' }}</p>
+                      <p class="text-[11px] text-[#787774] mb-1">{{ $member->nim }} • {{ $ta->prodi }}</p>
+                    @endforeach
+                    @if ($ta->jumlahAnggota() > 1)
+                      <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#E3E2E0] text-[#37352F]">
+                        Kelompok ({{ $ta->jumlahAnggota() }} Mhs)
+                      </span>
+                    @endif
+                  @else
+                    <p class="font-bold text-[#37352F]">{{ $ta->mahasiswa->user->name ?? '-' }}</p>
+                    <p class="text-[11px] text-[#787774]">{{ $ta->mahasiswa->nim ?? '-' }} • {{ $ta->prodi }}</p>
+                  @endif
                 </td>
                 <td class="py-3 px-4 max-w-xs">
                   <p class="font-medium text-[#37352F] line-clamp-2">{{ $ta->judul }}</p>

@@ -22,7 +22,11 @@ class JanjiBimbinganController extends Controller
             abort(403, 'Akses ditolak: Fitur Janji Bimbingan hanya tersedia untuk Mahasiswa TA dan Dosen Pembimbing.');
         }
 
-        $query = JanjiBimbingan::with(['tugasAkhir.mahasiswa.user', 'dosen.user']);
+        $query = JanjiBimbingan::with([
+            'tugasAkhir.mahasiswa.user',
+            'tugasAkhir.anggota.user',
+            'dosen.user',
+        ]);
 
         if ($user->isMahasiswa()) {
             $tugasAkhir = $user->tugasAkhir();
@@ -53,9 +57,12 @@ class JanjiBimbinganController extends Controller
         $bimbinganTaList = collect();
         if ($user->isMahasiswa()) {
             $myTugasAkhir = $user->tugasAkhir();
+            if ($myTugasAkhir) {
+                $myTugasAkhir->loadMissing('anggota.user');
+            }
         } elseif (($user->isDosen() || $user->isKaprodi()) && $user->dosenProfile) {
             $bimbinganTaList = $user->dosenProfile->tugasAkhirBimbingan()
-                ->with('mahasiswa.user')
+                ->with(['mahasiswa.user', 'anggota.user'])
                 ->get();
         }
 
@@ -72,6 +79,16 @@ class JanjiBimbinganController extends Controller
             if (! $tugasAkhir) {
                 abort(403, 'Akses ditolak: Anda belum memiliki Tugas Akhir aktif.');
             }
+
+            // Jika form mengirim tugas_akhir_id, pastikan milik kelompoknya
+            if ($request->filled('tugas_akhir_id') && (int) $request->tugas_akhir_id !== $tugasAkhir->id) {
+                abort(403, 'Akses ditolak: Anda hanya dapat mengajukan janji bimbingan untuk Tugas Akhir kelompok Anda sendiri.');
+            }
+
+            if (! $tugasAkhir->isAnggota($user)) {
+                abort(403, 'Akses ditolak: Anda bukan anggota kelompok Tugas Akhir ini.');
+            }
+
             if (empty($validated['dosen_id'])) {
                 abort(422, 'Dosen pembimbing wajib dipilih.');
             }

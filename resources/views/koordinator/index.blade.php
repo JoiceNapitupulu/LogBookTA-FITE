@@ -98,8 +98,20 @@
           @forelse ($tugasAkhirList as $ta)
             <tr class="hover:bg-[#F7F7F5] transition-colors">
               <td class="py-3 px-4">
-                <p class="font-bold text-[#37352F]">{{ $ta->mahasiswa->user->name ?? '-' }}</p>
-                <p class="text-[10px] text-[#787774]">{{ $ta->mahasiswa->nim ?? '-' }} • {{ $ta->prodi }}</p>
+                @if ($ta->anggota && $ta->anggota->isNotEmpty())
+                  @foreach ($ta->anggota as $member)
+                    <p class="font-bold text-[#37352F] leading-tight">{{ $member->user->name ?? '-' }}</p>
+                    <p class="text-[10px] text-[#787774] mb-1">NIM: {{ $member->nim }}</p>
+                  @endforeach
+                  @if ($ta->jumlahAnggota() > 1)
+                    <span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#E3E2E0] text-[#37352F]">
+                      Kelompok ({{ $ta->jumlahAnggota() }} Mhs)
+                    </span>
+                  @endif
+                @else
+                  <p class="font-bold text-[#37352F]">{{ $ta->mahasiswa->user->name ?? '-' }}</p>
+                  <p class="text-[10px] text-[#787774]">{{ $ta->mahasiswa->nim ?? '-' }} • {{ $ta->prodi }}</p>
+                @endif
               </td>
               <td class="py-3 px-4 max-w-xs">
                 <p class="font-medium text-[#37352F] line-clamp-2 leading-relaxed">{{ $ta->judul }}</p>

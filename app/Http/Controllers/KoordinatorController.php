@@ -23,6 +23,7 @@ class KoordinatorController extends Controller
 
         $query = TugasAkhir::with([
             'mahasiswa.user',
+            'anggota.user',
             'pembimbing1.user',
             'pembimbing2.user',
             'logbooks',

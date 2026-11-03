@@ -54,7 +54,11 @@
               </div>
               <h4 class="font-bold text-[#37352F] text-xs leading-snug">{{ $item->topik_pembahasan }}</h4>
               <p class="text-[11px] text-[#787774] mt-1.5">
-                Mahasiswa: <strong class="text-[#37352F]">{{ $item->tugasAkhir->mahasiswa->user->name ?? '-' }}</strong> • 
+                @if ($item->tugasAkhir->anggota && $item->tugasAkhir->anggota->isNotEmpty())
+                  Mahasiswa: <strong class="text-[#37352F]">{{ $item->tugasAkhir->anggota->pluck('user.name')->implode(', ') }}</strong> • 
+                @else
+                  Mahasiswa: <strong class="text-[#37352F]">{{ $item->tugasAkhir->mahasiswa->user->name ?? '-' }}</strong> • 
+                @endif
                 Dosen: <strong class="text-[#37352F]">{{ $item->dosen->user->name ?? '-' }}</strong>
               </p>
               <div class="mt-2 text-[11px] text-[#787774] bg-[#F7F7F5] px-2 py-1 rounded inline-block">
@@ -122,8 +126,16 @@
                 <span class="text-[11px] text-[#787774]">{{ $janji->tanggal_waktu->format('H:i') }} WIB</span>
               </td>
               <td class="py-3 px-4">
-                <p class="font-semibold text-[#37352F]">{{ $janji->tugasAkhir->mahasiswa->user->name ?? '-' }}</p>
-                <p class="text-[10px] text-[#787774]">Dosen: {{ $janji->dosen->user->name ?? '-' }}</p>
+                @if ($janji->tugasAkhir->anggota && $janji->tugasAkhir->anggota->isNotEmpty())
+                  @foreach ($janji->tugasAkhir->anggota as $member)
+                    <p class="font-semibold text-[#37352F] text-xs leading-tight">{{ $member->user->name ?? '-' }}</p>
+                    <p class="text-[10px] text-[#787774] mb-1">NIM: {{ $member->nim }}</p>
+                  @endforeach
+                @else
+                  <p class="font-semibold text-[#37352F]">{{ $janji->tugasAkhir->mahasiswa->user->name ?? '-' }}</p>
+                  <p class="text-[10px] text-[#787774]">{{ $janji->tugasAkhir->mahasiswa->nim ?? '-' }}</p>
+                @endif
+                <p class="text-[10px] text-[#787774] mt-0.5 font-medium">Dosen: {{ $janji->dosen->user->name ?? '-' }}</p>
               </td>
               <td class="py-3 px-4 max-w-sm">
                 <p class="font-medium text-[#37352F]">{{ $janji->topik_pembahasan }}</p>
@@ -208,7 +220,12 @@
               <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Pilih Mahasiswa Bimbingan</label>
               <select name="tugas_akhir_id" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
                 @forelse (($bimbinganTaList ?? []) as $ta)
-                  <option value="{{ $ta->id }}">{{ $ta->mahasiswa->user->name ?? 'Mahasiswa' }} (NIM: {{ $ta->mahasiswa->nim ?? '-' }}) — {{ Str::limit($ta->judul, 50) }}</option>
+                  @php
+                    $namaMhs = $ta->anggota && $ta->anggota->isNotEmpty()
+                      ? $ta->anggota->map(fn($m) => ($m->user->name ?? '-') . ' (' . $m->nim . ')')->implode(', ')
+                      : (($ta->mahasiswa->user->name ?? 'Mahasiswa') . ' (' . ($ta->mahasiswa->nim ?? '-') . ')');
+                  @endphp
+                  <option value="{{ $ta->id }}">{{ $namaMhs }} — {{ Str::limit($ta->judul, 50) }}</option>
                 @empty
                   <option disabled value="">Belum ada mahasiswa bimbingan aktif</option>
                 @endforelse

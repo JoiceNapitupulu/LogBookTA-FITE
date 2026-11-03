@@ -137,6 +137,11 @@
             <div>
               <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Judul Tugas Akhir Terdaftar</label>
               <input type="text" readonly value="{{ $myTugasAkhir->judul }}" class="w-full px-3 py-2 bg-[#F7F7F5] border border-[#E9E9E7] rounded text-[#787774]">
+              @if ($myTugasAkhir->anggota && $myTugasAkhir->anggota->isNotEmpty())
+                <p class="mt-1 text-[11px] text-[#787774]">
+                  Kelompok: <strong class="text-[#37352F]">{{ $myTugasAkhir->anggota->pluck('user.name')->implode(', ') }}</strong> ({{ $myTugasAkhir->jumlahAnggota() }} Mahasiswa)
+                </p>
+              @endif
             </div>
           </div>
 
@@ -184,13 +189,25 @@
             @forelse ($allUjian as $item)
               <tr class="hover:bg-[#F7F7F5] transition-colors {{ $item->status_dokumen === 'menunggu_verifikasi' ? 'bg-amber-50/40' : '' }}">
                 <td class="py-3 px-4">
-                  <div class="flex items-center gap-1.5">
+                  <div class="flex items-center gap-1.5 mb-1">
                     @if ($item->status_dokumen === 'menunggu_verifikasi')
                       <span class="inline-block w-2 h-2 rounded-full bg-amber-500 shrink-0" title="Menunggu verifikasi berkas"></span>
                     @endif
-                    <p class="font-bold text-[#37352F]">{{ $item->tugasAkhir->mahasiswa->user->name ?? '-' }}</p>
+                    @if ($item->tugasAkhir->anggota && $item->tugasAkhir->anggota->isNotEmpty() && $item->tugasAkhir->jumlahAnggota() > 1)
+                      <span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#E3E2E0] text-[#37352F]">
+                        Kelompok ({{ $item->tugasAkhir->jumlahAnggota() }} Mhs)
+                      </span>
+                    @endif
                   </div>
-                  <p class="text-[10px] text-[#787774]">{{ $item->tugasAkhir->mahasiswa->nim ?? '-' }} • {{ $item->tugasAkhir->prodi ?? '-' }}</p>
+                  @if ($item->tugasAkhir->anggota && $item->tugasAkhir->anggota->isNotEmpty())
+                    @foreach ($item->tugasAkhir->anggota as $member)
+                      <p class="font-bold text-[#37352F] leading-tight">{{ $member->user->name ?? '-' }}</p>
+                      <p class="text-[10px] text-[#787774] mb-1">{{ $member->nim }} • {{ $item->tugasAkhir->prodi ?? '-' }}</p>
+                    @endforeach
+                  @else
+                    <p class="font-bold text-[#37352F]">{{ $item->tugasAkhir->mahasiswa->user->name ?? '-' }}</p>
+                    <p class="text-[10px] text-[#787774]">{{ $item->tugasAkhir->mahasiswa->nim ?? '-' }} • {{ $item->tugasAkhir->prodi ?? '-' }}</p>
+                  @endif
                 </td>
                 <td class="py-3 px-4">
                   <span class="notion-pill-gray text-[10px]">{{ $item->jenis_ujian_label }}</span>
@@ -261,12 +278,25 @@
               @endphp
               <tr class="hover:bg-[#F7F7F5] transition-colors {{ $needsBaakSetup ? 'bg-amber-50/40' : '' }}">
                 <td class="py-3 px-4">
-                  <div class="flex items-center gap-1.5">
+                  <div class="flex items-center gap-1.5 mb-1">
                     @if ($needsBaakSetup)
                       <span class="inline-block w-2 h-2 rounded-full bg-amber-500 shrink-0" title="Menunggu alokasi BAAK"></span>
                     @endif
-                    <p class="font-bold text-[#37352F]">{{ $item->tugasAkhir->mahasiswa->user->name ?? '-' }}</p>
+                    @if ($item->tugasAkhir->anggota && $item->tugasAkhir->anggota->isNotEmpty() && $item->tugasAkhir->jumlahAnggota() > 1)
+                      <span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#E3E2E0] text-[#37352F]">
+                        Kelompok ({{ $item->tugasAkhir->jumlahAnggota() }} Mhs)
+                      </span>
+                    @endif
                   </div>
+                  @if ($item->tugasAkhir->anggota && $item->tugasAkhir->anggota->isNotEmpty())
+                    @foreach ($item->tugasAkhir->anggota as $member)
+                      <p class="font-bold text-[#37352F] leading-tight">{{ $member->user->name ?? '-' }}</p>
+                      <p class="text-[10px] text-[#787774] mb-1">{{ $member->nim }} • {{ $item->tugasAkhir->prodi ?? '-' }}</p>
+                    @endforeach
+                  @else
+                    <p class="font-bold text-[#37352F]">{{ $item->tugasAkhir->mahasiswa->user->name ?? '-' }}</p>
+                    <p class="text-[10px] text-[#787774]">{{ $item->tugasAkhir->mahasiswa->nim ?? '-' }}</p>
+                  @endif
                   <span class="notion-pill-gray text-[10px] mt-0.5 inline-block">{{ $item->jenis_ujian_label }}</span>
                 </td>
                 <td class="py-3 px-4 font-bold text-[#37352F]">
@@ -350,8 +380,20 @@
             @forelse ($allUjian as $item)
               <tr class="hover:bg-[#F7F7F5] transition-colors">
                 <td class="py-3 px-4">
-                  <p class="font-bold text-[#37352F]">{{ $item->tugasAkhir->mahasiswa->user->name ?? '-' }}</p>
-                  <p class="text-[10px] text-[#787774]">{{ $item->tugasAkhir->mahasiswa->nim ?? '-' }}</p>
+                  @if ($item->tugasAkhir->anggota && $item->tugasAkhir->anggota->isNotEmpty())
+                    @foreach ($item->tugasAkhir->anggota as $member)
+                      <p class="font-bold text-[#37352F] leading-tight">{{ $member->user->name ?? '-' }}</p>
+                      <p class="text-[10px] text-[#787774] mb-1">{{ $member->nim }} • {{ $item->tugasAkhir->prodi ?? '-' }}</p>
+                    @endforeach
+                    @if ($item->tugasAkhir->jumlahAnggota() > 1)
+                      <span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#E3E2E0] text-[#37352F]">
+                        Kelompok ({{ $item->tugasAkhir->jumlahAnggota() }} Mhs)
+                      </span>
+                    @endif
+                  @else
+                    <p class="font-bold text-[#37352F]">{{ $item->tugasAkhir->mahasiswa->user->name ?? '-' }}</p>
+                    <p class="text-[10px] text-[#787774]">{{ $item->tugasAkhir->mahasiswa->nim ?? '-' }}</p>
+                  @endif
                 </td>
                 <td class="py-3 px-4">
                   <span class="notion-pill-gray text-[10px]">{{ $item->jenis_ujian_label }}</span>

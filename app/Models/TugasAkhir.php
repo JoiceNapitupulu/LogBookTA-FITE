@@ -66,6 +66,14 @@ class TugasAkhir extends Model
     }
 
     /**
+     * Cek apakah kelompok Tugas Akhir ini masih dapat menambah anggota (maksimal 3)
+     */
+    public function canAddAnggota(): bool
+    {
+        return $this->jumlahAnggota() < 3;
+    }
+
+    /**
      * Cek apakah mahasiswa tertentu merupakan anggota dari Tugas Akhir ini
      *
      * @param int|string|\App\Models\MahasiswaProfile|\App\Models\User|null $mahasiswaId

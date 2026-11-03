@@ -34,6 +34,7 @@ class DashboardController extends Controller
                 $tugasAkhir->loadMissing([
                     'pembimbing1.user',
                     'pembimbing2.user',
+                    'anggota.user',
                     'logbooks' => fn ($q) => $q->with('verifiedBy.user')->latest('tanggal'),
                     'janjiBimbingan' => fn ($q) => $q->with('dosen.user')->latest('tanggal_waktu'),
                     'ujianTa' => fn ($q) => $q->with('verifiedByTa')->latest(),
@@ -56,6 +57,7 @@ class DashboardController extends Controller
                 $mahasiswaBimbingan = $dosenProfile->tugasAkhirBimbingan()
                     ->with([
                         'mahasiswa.user',
+                        'anggota.user',
                         'logbooks' => fn ($q) => $q->latest('tanggal')->limit(1),
                         'pembimbing1.user',
                         'pembimbing2.user',

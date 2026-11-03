@@ -21,13 +21,18 @@ class LogbookController extends Controller
             abort(403, 'Akses ditolak: Fitur Logbook Aktivitas hanya tersedia untuk Mahasiswa TA dan Dosen Pembimbing.');
         }
 
-        $query = Logbook::with(['tugasAkhir.mahasiswa.user', 'verifiedBy.user']);
+        $query = Logbook::with([
+            'tugasAkhir.mahasiswa.user',
+            'tugasAkhir.anggota.user',
+            'verifiedBy.user',
+        ]);
         $myTa = null;
 
         if ($user->isMahasiswa()) {
             $myTa = $user->tugasAkhir();
 
             if ($myTa) {
+                $myTa->loadMissing('anggota.user');
                 $query->where('tugas_akhir_id', $myTa->id);
             } else {
                 $query->whereRaw('1 = 0');
@@ -67,6 +72,16 @@ class LogbookController extends Controller
         if (! $tugasAkhir) {
             abort(403, 'Akses ditolak: Anda belum terdaftar dalam pengerjaan Tugas Akhir.');
         }
+
+        // Mahasiswa di luar kelompok tidak bisa store logbook ke TA orang lain
+        if ($request->filled('tugas_akhir_id') && (int) $request->tugas_akhir_id !== $tugasAkhir->id) {
+            abort(403, 'Akses ditolak: Anda hanya dapat mengisi logbook untuk Tugas Akhir kelompok Anda sendiri.');
+        }
+
+        if (! $tugasAkhir->isAnggota($user)) {
+            abort(403, 'Akses ditolak: Anda bukan anggota kelompok Tugas Akhir ini.');
+        }
+
         $validated['tugas_akhir_id'] = $tugasAkhir->id;
 
         if ($request->hasFile('file_dokumen_mhs')) {

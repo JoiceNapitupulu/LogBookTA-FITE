@@ -17,6 +17,16 @@ class AnggotaTugasAkhir extends Model
         'mahasiswa_id',
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function ($anggota) {
+            $ta = TugasAkhir::find($anggota->tugas_akhir_id);
+            if ($ta && $ta->jumlahAnggota() >= 3) {
+                throw new \InvalidArgumentException('Maksimal anggota kelompok Tugas Akhir adalah 3 mahasiswa.');
+            }
+        });
+    }
+
     public function tugasAkhir(): BelongsTo
     {
         return $this->belongsTo(TugasAkhir::class, 'tugas_akhir_id');
