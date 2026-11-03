@@ -48,6 +48,22 @@ class UjianTa extends Model
         return $this->belongsTo(User::class, 'verified_by_ta_id');
     }
 
+    public function verifiedByKoordinator(): BelongsTo
+    {
+        return $this->verifiedByTa();
+    }
+
+    public function getJenisUjianLabelAttribute(): string
+    {
+        return match ($this->jenis_ujian) {
+            'seminar_proposal' => 'Seminar Proposal',
+            'seminar_ta_1' => 'Seminar TA 1',
+            'seminar_hasil' => 'Seminar Hasil',
+            'seminar_skripsi' => 'Seminar Tugas Akhir / Skripsi',
+            default => str_replace('_', ' ', (string) $this->jenis_ujian),
+        };
+    }
+
     public function penguji1(): BelongsTo
     {
         return $this->belongsTo(DosenProfile::class, 'dosen_penguji_1_id');

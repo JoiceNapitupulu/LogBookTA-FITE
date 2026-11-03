@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('ujian_ta', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tugas_akhir_id')->constrained('tugas_akhir')->cascadeOnDelete();
-            $table->enum('jenis_ujian', ['sempro', 'seminar_ta', 'sidang_akhir']);
+            $table->enum('jenis_ujian', ['seminar_proposal', 'seminar_ta_1', 'seminar_hasil', 'seminar_skripsi']);
             $table->string('file_persyaratan');
             $table->enum('status_dokumen', ['menunggu_verifikasi', 'berkas_lengkap', 'berkas_kurang'])->default('menunggu_verifikasi');
             $table->foreignId('verified_by_ta_id')->nullable()->constrained('users')->nullOnDelete();

@@ -64,21 +64,18 @@ class UjianController extends Controller
         }
 
         // Prioritas antrean operasional:
-        // - TA: dahulukan berkas yang menunggu verifikasi artefak
-        // - Koordinator: dahulukan ujian yang berkasnya sudah lengkap tapi belum ada tanggal/penguji
-        // - BAAK: dahulukan ujian yang sudah ada tanggal & penguji namun belum dialokasikan ruangan
-        if ($user->isTA()) {
+        // - Koordinator: antrean berkas yang menunggu verifikasi pendaftaran
+        // - BAAK: antrean berkas lengkap yang belum lengkap tanggal/penguji/fasilitas ruangan
+        if ($user->isKoordinator()) {
             $query->orderByRaw("CASE WHEN status_dokumen = 'menunggu_verifikasi' THEN 0 ELSE 1 END");
-        } elseif ($user->isKoordinator()) {
-            $query->orderByRaw("CASE WHEN status_dokumen = 'berkas_lengkap' AND (tanggal_ujian IS NULL OR dosen_penguji_1_id IS NULL OR dosen_penguji_2_id IS NULL) THEN 0 ELSE 1 END");
         } elseif ($user->isBaak()) {
-            $query->orderByRaw("CASE WHEN tanggal_ujian IS NOT NULL AND dosen_penguji_1_id IS NOT NULL AND dosen_penguji_2_id IS NOT NULL AND ruangan IS NULL THEN 0 ELSE 1 END");
+            $query->orderByRaw("CASE WHEN status_dokumen = 'berkas_lengkap' AND (tanggal_ujian IS NULL OR dosen_penguji_1_id IS NULL OR dosen_penguji_2_id IS NULL OR ruangan IS NULL) THEN 0 ELSE 1 END");
         }
 
         $allUjian = $query->latest()->paginate(20);
 
-        // Active lecturers for examiner selection (Koordinator TA & Kaprodi)
-        $dosenList = ($user->isKoordinator() || $user->isKaprodi())
+        // Active lecturers for examiner selection (BAAK, Koordinator, Kaprodi)
+        $dosenList = ($user->isBaak() || $user->isKoordinator() || $user->isKaprodi())
             ? DosenProfile::with('user')->get()
             : collect();
 
@@ -100,26 +97,34 @@ class UjianController extends Controller
         $validated = $request->validated();
         $jenisUjian = $validated['jenis_ujian'];
 
-        // Cek syarat akademik dasar pendaftaran ujian
+        // Cek syarat akademik dasar pendaftaran ujian (4 jenis resmi FITE)
         $approvedBabsCount = $tugasAkhir->logbooks()
             ->where('status_verifikasi', 'disetujui')
             ->distinct('bab_progress')
             ->count('bab_progress');
 
-        if ($jenisUjian === 'sempro') {
+        if ($jenisUjian === 'seminar_proposal') {
             $allowedStatuses = ['proposal', 'pengerjaan', 'sempro'];
             if (! in_array($tugasAkhir->status, $allowedStatuses)) {
                 return redirect()->back()->with('error', 'Pendaftaran Seminar Proposal gagal: Status Tugas Akhir Anda saat ini belum memenuhi syarat untuk Sempro.');
             }
-        } elseif ($jenisUjian === 'seminar_ta') {
+            if ($approvedBabsCount < 1) {
+                return redirect()->back()->with('error', "Pendaftaran Seminar Proposal gagal: Minimal 1 bab logbook harus disetujui oleh Dosen Pembimbing (saat ini: {$approvedBabsCount} bab disetujui).");
+            }
+        } elseif ($jenisUjian === 'seminar_ta_1') {
             $isAdvanced = in_array($tugasAkhir->status, ['seminar_ta', 'sidang_akhir', 'selesai']);
             if (! $isAdvanced && $approvedBabsCount < 3) {
-                return redirect()->back()->with('error', "Pendaftaran Seminar TA gagal: Minimal 3 bab logbook harus disetujui oleh Dosen Pembimbing (saat ini: {$approvedBabsCount} bab disetujui).");
+                return redirect()->back()->with('error', "Pendaftaran Seminar TA 1 gagal: Minimal 3 bab logbook harus disetujui oleh Dosen Pembimbing (saat ini: {$approvedBabsCount} bab disetujui).");
             }
-        } elseif ($jenisUjian === 'sidang_akhir') {
+        } elseif ($jenisUjian === 'seminar_hasil') {
+            $isAdvanced = in_array($tugasAkhir->status, ['sidang_akhir', 'selesai']);
+            if (! $isAdvanced && $approvedBabsCount < 4) {
+                return redirect()->back()->with('error', "Pendaftaran Seminar Hasil gagal: Minimal 4 bab logbook harus disetujui oleh Dosen Pembimbing (saat ini: {$approvedBabsCount} bab disetujui).");
+            }
+        } elseif ($jenisUjian === 'seminar_skripsi') {
             $isAdvanced = in_array($tugasAkhir->status, ['sidang_akhir', 'selesai']);
             if (! $isAdvanced && $approvedBabsCount < 5) {
-                return redirect()->back()->with('error', "Pendaftaran Sidang Akhir gagal: Minimal 5 bab logbook harus disetujui oleh Dosen Pembimbing (saat ini: {$approvedBabsCount} bab disetujui).");
+                return redirect()->back()->with('error', "Pendaftaran Seminar Tugas Akhir / Skripsi gagal: Minimal 5 bab logbook harus disetujui oleh Dosen Pembimbing (saat ini: {$approvedBabsCount} bab disetujui).");
             }
         }
 
@@ -138,14 +143,14 @@ class UjianController extends Controller
         });
 
         return redirect()->back()
-            ->with('success', 'Pendaftaran ujian berhasil dikirim! Berkas Anda sedang dalam antrean verifikasi Teaching Assistant FITE.');
+            ->with('success', 'Pendaftaran ujian berhasil dikirim! Berkas Anda sedang dalam antrean verifikasi Koordinator TA FITE.');
     }
 
     public function verifikasiDokumen(Request $request, UjianTa $ujian): RedirectResponse
     {
         $user = Auth::user();
-        if (! ($user->isTA() || $user->isKoordinator())) {
-            abort(403, 'Akses ditolak: Hanya Teaching Assistant atau Koordinator TA yang berwenang memverifikasi dokumen ujian.');
+        if (! $user || ! $user->isKoordinator()) {
+            abort(403, 'Akses ditolak: Hanya Koordinator TA yang berwenang memverifikasi dokumen pendaftaran ujian.');
         }
 
         $request->validate([
@@ -162,8 +167,8 @@ class UjianController extends Controller
         });
 
         $msg = $request->status_dokumen === 'berkas_lengkap'
-            ? 'Dokumen dinyatakan LENGKAP & VALID! Diteruskan ke Koordinator TA.'
-            : 'Dokumen ditandai KURANG LENGKAP. Catatan telah disampaikan ke mahasiswa.';
+            ? 'Dokumen dinyatakan LENGKAP & VALID oleh Koordinator TA! Disposisi diteruskan ke BAAK untuk penetapan jadwal, tim penguji, dan fasilitas ruangan.'
+            : 'Dokumen ditandai KURANG LENGKAP. Catatan revisi telah diteruskan ke mahasiswa.';
 
         return redirect()->back()->with('success', $msg);
     }
@@ -171,18 +176,22 @@ class UjianController extends Controller
     public function tetapkanJadwal(Request $request, UjianTa $ujian): RedirectResponse
     {
         $user = Auth::user();
-        if (! $user || ! $user->isKoordinator()) {
-            abort(403, 'Akses ditolak: Hanya Koordinator TA yang berwenang menetapkan jadwal ujian dan menunjuk dosen penguji.');
+        if (! $user || ! $user->isBaak()) {
+            abort(403, 'Akses ditolak: Hanya BAAK yang berwenang menetapkan tanggal ujian dan menunjuk dosen penguji.');
         }
 
         if ($ujian->status_dokumen !== 'berkas_lengkap') {
-            return redirect()->back()->with('error', 'Penetapan jadwal gagal: Berkas dokumen persyaratan ujian belum dinyatakan lengkap oleh Teaching Assistant.');
+            return redirect()->back()->with('error', 'Penetapan jadwal gagal: Berkas dokumen persyaratan ujian belum dinyatakan lengkap oleh Koordinator TA.');
         }
 
         $validated = $request->validate([
             'tanggal_ujian' => ['required', 'date'],
             'dosen_penguji_1_id' => ['required', 'exists:dosen_profiles,id'],
             'dosen_penguji_2_id' => ['required', 'exists:dosen_profiles,id', 'different:dosen_penguji_1_id'],
+            'ruangan' => ['nullable', 'string', 'max:100'],
+            'jam_mulai' => ['nullable'],
+            'jam_selesai' => ['nullable'],
+            'link_zoom' => ['nullable', 'url', 'max:255'],
         ], [
             'tanggal_ujian.required' => 'Tanggal pelaksanaan ujian wajib ditentukan.',
             'dosen_penguji_1_id.required' => 'Dosen Penguji 1 wajib dipilih.',
@@ -193,16 +202,31 @@ class UjianController extends Controller
         ]);
 
         DB::transaction(function () use ($validated, $ujian) {
-            $ujian->update([
+            $dataToUpdate = [
                 'tanggal_ujian' => $validated['tanggal_ujian'],
                 'dosen_penguji_1_id' => $validated['dosen_penguji_1_id'],
                 'dosen_penguji_2_id' => $validated['dosen_penguji_2_id'],
                 'status_ujian' => 'terjadwal',
-            ]);
+            ];
+
+            if (! empty($validated['ruangan'])) {
+                $dataToUpdate['ruangan'] = $validated['ruangan'];
+            }
+            if (! empty($validated['jam_mulai'])) {
+                $dataToUpdate['jam_mulai'] = $validated['jam_mulai'];
+            }
+            if (! empty($validated['jam_selesai'])) {
+                $dataToUpdate['jam_selesai'] = $validated['jam_selesai'];
+            }
+            if (array_key_exists('link_zoom', $validated)) {
+                $dataToUpdate['link_zoom'] = $validated['link_zoom'];
+            }
+
+            $ujian->update($dataToUpdate);
         });
 
         return redirect()->back()
-            ->with('success', 'Tanggal pelaksanaan ujian dan 2 Dosen Penguji berhasil ditetapkan oleh Koordinator TA! Berkas siap dialokasikan fasilitasnya oleh BAAK.');
+            ->with('success', 'Tanggal pelaksanaan ujian, 2 Dosen Penguji, dan fasilitas berhasil diterbitkan oleh BAAK IT Del.');
     }
 
     public function alokasiFasilitas(Request $request, UjianTa $ujian): RedirectResponse
@@ -212,12 +236,16 @@ class UjianController extends Controller
             abort(403, 'Akses ditolak: Hanya BAAK yang berwenang mengalokasikan fasilitas dan ruangan ujian/sidang.');
         }
 
+        if ($ujian->status_dokumen !== 'berkas_lengkap') {
+            return redirect()->back()->with('error', 'Alokasi fasilitas gagal: Berkas pendaftaran belum diverifikasi lengkap oleh Koordinator TA.');
+        }
+
         if (! $ujian->tanggal_ujian) {
-            return redirect()->back()->with('error', 'Alokasi fasilitas gagal: Koordinator TA belum menetapkan tanggal pelaksanaan ujian/sidang untuk berkas ini.');
+            return redirect()->back()->with('error', 'Alokasi fasilitas gagal: Tanggal pelaksanaan ujian/sidang belum ditetapkan.');
         }
 
         if (! $ujian->dosen_penguji_1_id || ! $ujian->dosen_penguji_2_id) {
-            return redirect()->back()->with('error', 'Alokasi fasilitas gagal: Koordinator TA belum menetapkan Dosen Penguji 1 dan Dosen Penguji 2 untuk ujian/sidang ini.');
+            return redirect()->back()->with('error', 'Alokasi fasilitas gagal: Dosen Penguji 1 dan Dosen Penguji 2 belum ditetapkan.');
         }
 
         $request->validate([

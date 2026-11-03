@@ -305,14 +305,14 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Ujian TA
+        // Ujian TA (Samuel Siahaan: Seminar TA 1)
         UjianTa::updateOrCreate(
-            ['tugas_akhir_id' => $tugasAkhir->id, 'jenis_ujian' => 'seminar_ta'],
+            ['tugas_akhir_id' => $tugasAkhir->id, 'jenis_ujian' => 'seminar_ta_1'],
             [
                 'file_persyaratan' => 'uploads/persyaratan/Bundel_Seminar_TA_11S21004.zip',
                 'status_dokumen' => 'berkas_lengkap',
-                'verified_by_ta_id' => $userTA->id,
-                'catatan_verifikasi_ta' => 'Semua berkas fisik dan digital telah diperiksa lengkap & valid.',
+                'verified_by_ta_id' => $userDosen1->id,
+                'catatan_verifikasi_ta' => 'Semua berkas fisik dan digital telah diperiksa lengkap & valid oleh Koordinator TA FITE.',
                 'tanggal_ujian' => now()->addDays(8)->toDateString(),
                 'dosen_penguji_1_id' => $kaprodiProfile->id,
                 'dosen_penguji_2_id' => $dosen2Profile->id,
