@@ -195,9 +195,13 @@
                   @endif
                 </td>
                 <td class="py-3 px-4 text-right">
-                  <button @click="openVerify({{ $item->toJson() }})" class="notion-btn-primary text-xs py-1 px-2.5">
-                    Verifikasi Dokumen
-                  </button>
+                  @if (auth()->user()->isTA() || auth()->user()->isKoordinator())
+                    <button @click="openVerify({{ $item->toJson() }})" class="notion-btn-primary text-xs py-1 px-2.5">
+                      Verifikasi Dokumen
+                    </button>
+                  @else
+                    <span class="text-[11px] text-[#787774] italic">Khusus TA</span>
+                  @endif
                 </td>
               </tr>
             @empty
@@ -251,9 +255,13 @@
                   <span class="notion-pill-green">{{ ucfirst($item->status_ujian) }}</span>
                 </td>
                 <td class="py-3 px-4 text-right">
-                  <button @click="openSchedule({{ $item->toJson() }})" class="notion-btn-primary text-xs py-1 px-2.5">
-                    Atur Tanggal & Penguji
-                  </button>
+                  @if (auth()->user()->isKoordinator())
+                    <button @click="openSchedule({{ $item->toJson() }})" class="notion-btn-primary text-xs py-1 px-2.5">
+                      Atur Tanggal & Penguji
+                    </button>
+                  @else
+                    <span class="text-[11px] text-[#787774] italic">Khusus Koordinator</span>
+                  @endif
                 </td>
               </tr>
             @empty
@@ -314,9 +322,13 @@
                   @endif
                 </td>
                 <td class="py-3 px-4 text-right">
-                  <button @click="openFacility({{ $item->toJson() }})" class="notion-btn-primary text-xs py-1 px-2.5">
-                    Plot Ruangan & Jam
-                  </button>
+                  @if (auth()->user()->isBaak())
+                    <button @click="openFacility({{ $item->toJson() }})" class="notion-btn-primary text-xs py-1 px-2.5">
+                      Plot Ruangan & Jam
+                    </button>
+                  @else
+                    <span class="text-[11px] text-[#787774] italic">Khusus BAAK</span>
+                  @endif
                 </td>
               </tr>
             @empty

@@ -16,6 +16,11 @@ class LogbookController extends Controller
     public function index(Request $request): View
     {
         $user = Auth::user();
+
+        if ($user->isTA() || $user->isBaak()) {
+            abort(403, 'Akses ditolak: Fitur Logbook Aktivitas hanya tersedia untuk Mahasiswa TA dan Dosen Pembimbing.');
+        }
+
         $query = Logbook::with(['tugasAkhir.mahasiswa.user', 'verifiedBy.user']);
         $myTa = null;
 
@@ -53,15 +58,16 @@ class LogbookController extends Controller
     public function store(StoreLogbookRequest $request): RedirectResponse
     {
         $user = $request->user() ?? Auth::user();
-        $validated = $request->validated();
-
-        if ($user && $user->isMahasiswa()) {
-            $tugasAkhir = $user->tugasAkhir();
-            if (! $tugasAkhir) {
-                abort(403, 'Akses ditolak: Anda belum terdaftar dalam pengerjaan Tugas Akhir.');
-            }
-            $validated['tugas_akhir_id'] = $tugasAkhir->id;
+        if (! $user || ! $user->isMahasiswaTa()) {
+            abort(403, 'Akses ditolak: Hanya Mahasiswa Tugas Akhir yang berwenang mengisi entri logbook.');
         }
+
+        $validated = $request->validated();
+        $tugasAkhir = $user->tugasAkhir();
+        if (! $tugasAkhir) {
+            abort(403, 'Akses ditolak: Anda belum terdaftar dalam pengerjaan Tugas Akhir.');
+        }
+        $validated['tugas_akhir_id'] = $tugasAkhir->id;
 
         if ($request->hasFile('file_dokumen_mhs')) {
             $path = $request->file('file_dokumen_mhs')->store('uploads/logbooks', 'public');

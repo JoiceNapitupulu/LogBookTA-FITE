@@ -43,4 +43,28 @@ class UjianTa extends Model
     {
         return $this->belongsTo(User::class, 'verified_by_ta_id');
     }
+
+    /**
+     * Scope untuk antrean verifikasi berkas Teaching Assistant
+     */
+    public function scopeMenungguVerifikasi($query)
+    {
+        return $query->where('status_dokumen', 'menunggu_verifikasi');
+    }
+
+    /**
+     * Scope untuk antrean plotting fasilitas dan ruangan BAAK
+     */
+    public function scopeMenungguFasilitas($query)
+    {
+        return $query->whereNotNull('tanggal_ujian')->whereNull('ruangan');
+    }
+
+    /**
+     * Scope untuk antrean penetapan jadwal Koordinator TA
+     */
+    public function scopeSiapJadwal($query)
+    {
+        return $query->where('status_dokumen', 'berkas_lengkap')->whereNull('tanggal_ujian');
+    }
 }

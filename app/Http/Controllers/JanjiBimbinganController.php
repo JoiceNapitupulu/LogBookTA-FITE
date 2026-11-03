@@ -17,6 +17,11 @@ class JanjiBimbinganController extends Controller
     public function index(Request $request): View
     {
         $user = Auth::user();
+
+        if ($user->isTA() || $user->isBaak()) {
+            abort(403, 'Akses ditolak: Fitur Janji Bimbingan hanya tersedia untuk Mahasiswa TA dan Dosen Pembimbing.');
+        }
+
         $query = JanjiBimbingan::with(['tugasAkhir.mahasiswa.user', 'dosen.user']);
 
         if ($user->isMahasiswa()) {

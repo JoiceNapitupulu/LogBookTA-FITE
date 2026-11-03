@@ -55,6 +55,15 @@ class UjianController extends Controller
             }
         }
 
+        // Prioritas antrean operasional:
+        // - TA: dahulukan berkas yang menunggu verifikasi artefak
+        // - BAAK: dahulukan ujian yang sudah bertanggal namun belum dialokasikan ruangan
+        if ($user->isTA()) {
+            $query->orderByRaw("CASE WHEN status_dokumen = 'menunggu_verifikasi' THEN 0 ELSE 1 END");
+        } elseif ($user->isBaak()) {
+            $query->orderByRaw("CASE WHEN tanggal_ujian IS NOT NULL AND ruangan IS NULL THEN 0 ELSE 1 END");
+        }
+
         $allUjian = $query->latest()->paginate(20);
 
         // Active lecturers for examiner selection

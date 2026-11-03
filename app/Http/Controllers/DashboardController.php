@@ -84,9 +84,9 @@ class DashboardController extends Controller
         $totalTaAktif = TugasAkhir::count();
         $totalMhsSiapSidang = TugasAkhir::whereIn('status', ['seminar_ta', 'sidang_akhir'])->count();
         $totalArsipCount = ArsipTugasAkhir::count();
-        $pendingUjianCount = UjianTa::where('status_dokumen', 'menunggu_verifikasi')->count();
-        $unassignedExamsCount = UjianTa::whereNull('tanggal_ujian')->where('status_dokumen', 'berkas_lengkap')->count();
-        $unscheduledBaakCount = UjianTa::whereNotNull('tanggal_ujian')->whereNull('ruangan')->count();
+        $pendingUjianCount = UjianTa::menungguVerifikasi()->count();
+        $unassignedExamsCount = UjianTa::siapJadwal()->count();
+        $unscheduledBaakCount = UjianTa::menungguFasilitas()->count();
 
         // All active lecturers for coordinator & supervisor assignment
         $allDosen = DosenProfile::with('user')->get();
