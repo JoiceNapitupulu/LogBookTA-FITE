@@ -87,6 +87,8 @@ class DashboardController extends Controller
         $pendingUjianCount = UjianTa::menungguVerifikasi()->count();
         $unassignedExamsCount = UjianTa::siapJadwal()->count();
         $unscheduledBaakCount = UjianTa::menungguFasilitas()->count();
+        $menungguAssignCount = TugasAkhir::whereNull('dosen_pembimbing_1_id')->count() +
+            MahasiswaProfile::where('is_ta', true)->whereDoesntHave('tugasAkhir')->count();
 
         // All active lecturers for coordinator & supervisor assignment
         $allDosen = DosenProfile::with('user')->get();
@@ -108,6 +110,7 @@ class DashboardController extends Controller
             'pendingUjianCount',
             'unassignedExamsCount',
             'unscheduledBaakCount',
+            'menungguAssignCount',
             'allDosen'
         ));
     }

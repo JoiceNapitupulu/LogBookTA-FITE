@@ -58,10 +58,13 @@ class UjianController extends Controller
         // Prioritas antrean operasional:
         // - TA: dahulukan berkas yang menunggu verifikasi artefak
         // - BAAK: dahulukan ujian yang sudah bertanggal namun belum dialokasikan ruangan
+        // - Koordinator: dahulukan ujian yang berkasnya sudah lengkap dan siap dijadwalkan
         if ($user->isTA()) {
             $query->orderByRaw("CASE WHEN status_dokumen = 'menunggu_verifikasi' THEN 0 ELSE 1 END");
         } elseif ($user->isBaak()) {
             $query->orderByRaw("CASE WHEN tanggal_ujian IS NOT NULL AND ruangan IS NULL THEN 0 ELSE 1 END");
+        } elseif ($user->isKoordinator()) {
+            $query->orderByRaw("CASE WHEN status_dokumen = 'berkas_lengkap' AND tanggal_ujian IS NULL THEN 0 ELSE 1 END");
         }
 
         $allUjian = $query->latest()->paginate(20);
@@ -135,8 +138,12 @@ class UjianController extends Controller
     public function tetapkanJadwal(Request $request, UjianTa $ujian): RedirectResponse
     {
         $user = Auth::user();
-        if (! $user->isKoordinator()) {
+        if (! $user || ! $user->isKoordinator()) {
             abort(403, 'Akses ditolak: Hanya Koordinator TA yang berwenang menetapkan jadwal ujian.');
+        }
+
+        if ($ujian->status_dokumen !== 'berkas_lengkap') {
+            abort(422, 'Akses ditolak: Jadwal ujian hanya dapat ditetapkan setelah berkas dinyatakan lengkap oleh Teaching Assistant.');
         }
 
         $request->validate([

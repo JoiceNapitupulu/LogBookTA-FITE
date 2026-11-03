@@ -6,6 +6,7 @@ use App\Models\DosenProfile;
 use App\Models\TugasAkhir;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
@@ -13,6 +14,11 @@ class KaprodiController extends Controller
 {
     public function index(Request $request): View
     {
+        $user = Auth::user();
+        if (! $user || ! $user->isKaprodi()) {
+            abort(403, 'Akses ditolak: Hanya Kaprodi yang berwenang mengakses panel eksekutif Kaprodi.');
+        }
+
         $dosenList = DosenProfile::with(['user', 'tugasAkhirPembimbing1', 'tugasAkhirPembimbing2'])->get();
 
         $totalMhsAktif = TugasAkhir::count();

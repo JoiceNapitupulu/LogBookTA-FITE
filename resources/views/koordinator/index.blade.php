@@ -15,7 +15,53 @@
       </div>
       <p class="text-xs text-[#787774]">Penetapan Dosen Pembimbing 1 & 2 serta pengawasan rekapitulasi capaian bab tugas akhir mahasiswa.</p>
     </div>
+
+    <div class="flex items-center gap-2">
+      <a href="{{ route('ujian.index') }}" class="notion-btn-secondary text-xs">
+        <span>🏛️</span> Kelola Jadwal Ujian ({{ $siapJadwalCount }})
+      </a>
+    </div>
   </div>
+
+  <!-- Metrik Ringkas Koordinator TA ala Notion -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div class="p-4 bg-[#F7F6F3] rounded-lg border border-[#E9E9E7]">
+      <p class="text-xs text-[#787774]">Total Tugas Akhir</p>
+      <p class="text-2xl font-bold text-[#37352F] mt-1">{{ $totalTaAktif }}</p>
+      <p class="text-[10px] text-[#787774] mt-0.5">Mahasiswa aktif FITE</p>
+    </div>
+
+    <div class="p-4 {{ $menungguAssignCount > 0 ? 'bg-[#FDF5E6] border-[#F3E0A2]' : 'bg-[#F7F6F3] border-[#E9E9E7]' }} rounded-lg border">
+      <p class="text-xs {{ $menungguAssignCount > 0 ? 'text-[#B86200]' : 'text-[#787774]' }}">Menunggu Pembimbing</p>
+      <p class="text-2xl font-bold {{ $menungguAssignCount > 0 ? 'text-[#B86200]' : 'text-[#37352F]' }} mt-1">{{ $menungguAssignCount }}</p>
+      <p class="text-[10px] {{ $menungguAssignCount > 0 ? 'text-[#B86200]' : 'text-[#787774]' }} mt-0.5">Perlu alokasi dospem</p>
+    </div>
+
+    <div class="p-4 bg-[#EBF5EE] rounded-lg border border-[#C4E5D1]">
+      <p class="text-xs text-[#2A7E4B]">Siap Dijadwalkan</p>
+      <p class="text-2xl font-bold text-[#2A7E4B] mt-1">{{ $siapJadwalCount }}</p>
+      <a href="{{ route('ujian.index') }}" class="text-[10px] font-semibold text-[#2A7E4B] underline mt-0.5 inline-block">Atur Tanggal Ujian &rarr;</a>
+    </div>
+
+    <div class="p-4 bg-[#F7F6F3] rounded-lg border border-[#E9E9E7]">
+      <p class="text-xs text-[#787774]">Tahap Lanjut / Sidang</p>
+      <p class="text-2xl font-bold text-[#37352F] mt-1">{{ $totalSiapSidang }}</p>
+      <p class="text-[10px] text-[#787774] mt-0.5">Seminar TA & Sidang</p>
+    </div>
+  </div>
+
+  @if ($unassignedMhs->isNotEmpty())
+    <div class="notion-callout">
+      <span class="text-xl">ℹ️</span>
+      <div class="text-xs">
+        <p class="font-bold text-[#37352F]">Informasi: Terdapat {{ $unassignedMhs->count() }} Mahasiswa TA yang belum dibuatkan entri Tugas Akhir</p>
+        <p class="text-[#787774] mt-0.5">
+          Mahasiswa berikut terdata sebagai peserta TA aktif:
+          <span class="font-semibold text-[#37352F]">{{ $unassignedMhs->pluck('user.name')->implode(', ') }}</span>
+        </p>
+      </div>
+    </div>
+  @endif
 
   <!-- Tabel Rekapitulasi Mahasiswa TA & Penetapan Pembimbing -->
   <div class="border border-[#E9E9E7] rounded-xl overflow-hidden bg-[#FFFFFF] shadow-xs">

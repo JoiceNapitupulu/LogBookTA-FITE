@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\DosenProfile;
 use App\Models\MahasiswaProfile;
 use App\Models\TugasAkhir;
+use App\Models\UjianTa;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
@@ -14,6 +16,11 @@ class KoordinatorController extends Controller
 {
     public function index(Request $request): View
     {
+        $user = Auth::user();
+        if (! $user || ! $user->isKoordinator()) {
+            abort(403, 'Akses ditolak: Hanya Koordinator TA yang berwenang mengakses panel ini.');
+        }
+
         $query = TugasAkhir::with([
             'mahasiswa.user',
             'pembimbing1.user',
@@ -37,12 +44,27 @@ class KoordinatorController extends Controller
             ->with('user')
             ->get();
 
-        return view('koordinator.index', compact('tugasAkhirList', 'dosenList', 'unassignedMhs'));
+        // Metrik Ringkasan Khusus Koordinator TA
+        $totalTaAktif = TugasAkhir::count();
+        $menungguAssignCount = TugasAkhir::whereNull('dosen_pembimbing_1_id')->count() + $unassignedMhs->count();
+        $siapJadwalCount = UjianTa::siapJadwal()->count();
+        $totalSiapSidang = TugasAkhir::whereIn('status', ['seminar_ta', 'sidang_akhir'])->count();
+
+        return view('koordinator.index', compact(
+            'tugasAkhirList',
+            'dosenList',
+            'unassignedMhs',
+            'totalTaAktif',
+            'menungguAssignCount',
+            'siapJadwalCount',
+            'totalSiapSidang'
+        ));
     }
 
     public function assignPembimbing(Request $request): RedirectResponse
     {
-        if (! Auth::user()->isKoordinator()) {
+        $user = Auth::user();
+        if (! $user || ! $user->isKoordinator()) {
             abort(403, 'Akses ditolak: Hanya Koordinator TA yang berwenang menetapkan Dosen Pembimbing.');
         }
 
