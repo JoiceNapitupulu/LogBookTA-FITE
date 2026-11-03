@@ -4,10 +4,10 @@
 @section('breadcrumb', 'Eksekutif Kaprodi')
 
 @section('content')
-<div class="space-y-6">
+<div class="space-y-4 md:space-y-5">
 
   <!-- Header Notion -->
-  <div class="border-b border-[#E9E9E7] pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <div class="border-b border-[#E9E9E7] pb-3 mb-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
       <div class="flex items-center gap-2 mb-1">
         <h1 class="text-2xl font-bold tracking-tight text-[#37352F]">Panel Eksekutif & Statistik Kelulusan TA</h1>
@@ -109,7 +109,7 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     
     <!-- Distribusi TA per Program Studi -->
-    <div class="border border-[#E9E9E7] rounded-xl p-5 bg-[#FFFFFF] shadow-xs">
+    <div class="border border-[#E9E9E7] rounded-xl p-4 bg-[#FFFFFF] shadow-xs">
       <div class="flex items-center justify-between mb-4">
         <div>
           <h3 class="text-sm font-bold text-[#37352F]">Distribusi Tugas Akhir per Program Studi</h3>
@@ -137,7 +137,7 @@
     </div>
 
     <!-- Sebaran Progres Bab Mahasiswa TA -->
-    <div class="border border-[#E9E9E7] rounded-xl p-5 bg-[#FFFFFF] shadow-xs">
+    <div class="border border-[#E9E9E7] rounded-xl p-4 bg-[#FFFFFF] shadow-xs">
       <div class="flex items-center justify-between mb-4">
         <div>
           <h3 class="text-sm font-bold text-[#37352F]">Rekapitulasi Sebaran Status Pengerjaan TA</h3>

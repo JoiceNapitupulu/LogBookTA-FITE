@@ -4,7 +4,7 @@
 @section('breadcrumb', 'Ujian TA')
 
 @section('content')
-<div class="space-y-6" x-data="{ 
+<div class="space-y-4 md:space-y-5" x-data="{ 
   activeTab: '{{ auth()->user()->isBaak() ? 'baak' : (auth()->user()->isKoordinator() ? 'koordinator' : (auth()->user()->isTA() ? 'ta' : 'mahasiswa')) }}',
   selectedUjian: null,
   verifyModalOpen: false,
@@ -20,7 +20,7 @@
 }">
 
   <!-- Header Notion -->
-  <div class="border-b border-[#E9E9E7] pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <div class="border-b border-[#E9E9E7] pb-3 mb-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
       <div class="flex items-center gap-2 mb-1">
         <h1 class="text-2xl font-bold tracking-tight text-[#37352F]">Alur Pendaftaran & Manajemen Ujian TA</h1>
@@ -50,11 +50,11 @@
   <!-- ================================================================= -->
   <!-- TAB 1: MAHASISWA TA -->
   <!-- ================================================================= -->
-  <div x-show="activeTab === 'mahasiswa'" class="space-y-6">
+  <div x-show="activeTab === 'mahasiswa'" class="space-y-4 md:space-y-5">
     
     <!-- Status Alur Verifikasi Terkini -->
     @if ($myUjian)
-      <div class="border border-[#E9E9E7] rounded-xl p-6 bg-[#FFFFFF] shadow-xs">
+      <div class="border border-[#E9E9E7] rounded-xl p-4 md:p-5 bg-[#FFFFFF] shadow-xs">
         <h3 class="text-sm font-bold text-[#37352F] mb-1">Status Pendaftaran Ujian Terkini</h3>
         <p class="text-xs text-[#787774] mb-4">Jenis Ujian: <strong class="text-[#37352F]">{{ $myUjian->jenis_ujian_label }}</strong></p>
 
@@ -112,7 +112,7 @@
 
     <!-- Formulir Pendaftaran Ujian Baru -->
     @if ($myTugasAkhir)
-      <div class="border border-[#E9E9E7] rounded-xl p-6 bg-[#FFFFFF] shadow-xs">
+      <div class="border border-[#E9E9E7] rounded-xl p-4 md:p-5 bg-[#FFFFFF] shadow-xs">
         <div class="pb-3 border-b border-[#E9E9E7] mb-5">
           <h3 class="text-sm font-bold text-[#37352F]">Formulir Pendaftaran Ujian Tugas Akhir FITE</h3>
           <p class="text-xs text-[#787774]">Pilih tahapan ujian resmi dan unggah bundel naskah serta berkas persyaratan</p>
@@ -164,7 +164,7 @@
   <!-- ================================================================= -->
   <!-- TAB 2: KOORDINATOR TA (VERIFIKASI BERKAS PENDAFTARAN) -->
   <!-- ================================================================= -->
-  <div x-show="activeTab === 'koordinator'" class="space-y-6">
+  <div x-show="activeTab === 'koordinator'" class="space-y-4 md:space-y-5">
     <div class="border border-[#E9E9E7] rounded-xl overflow-hidden bg-[#FFFFFF] shadow-xs">
       <div class="p-4 border-b border-[#E9E9E7] flex items-center justify-between">
         <div>
@@ -249,7 +249,7 @@
   <!-- ================================================================= -->
   <!-- TAB 3: BAAK (JADWAL, 2 PENGUJI & FASILITAS RUANGAN) -->
   <!-- ================================================================= -->
-  <div x-show="activeTab === 'baak'" class="space-y-6">
+  <div x-show="activeTab === 'baak'" class="space-y-4 md:space-y-5">
     <div class="border border-[#E9E9E7] rounded-xl overflow-hidden bg-[#FFFFFF] shadow-xs">
       <div class="p-4 border-b border-[#E9E9E7] flex items-center justify-between">
         <div>
@@ -354,7 +354,7 @@
   <!-- ================================================================= -->
   <!-- TAB 4: TEACHING ASSISTANT / PANTAUAN STAF (READ-ONLY) -->
   <!-- ================================================================= -->
-  <div x-show="activeTab === 'ta'" class="space-y-6">
+  <div x-show="activeTab === 'ta'" class="space-y-4 md:space-y-5">
     <div class="border border-[#E9E9E7] rounded-xl overflow-hidden bg-[#FFFFFF] shadow-xs">
       <div class="p-4 border-b border-[#E9E9E7] flex items-center justify-between">
         <div>
@@ -433,7 +433,7 @@
   <div x-show="verifyModalOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
     <div class="fixed inset-0 bg-[#0A0A0B]/40 backdrop-blur-xs" @click="verifyModalOpen = false"></div>
     <div class="flex min-h-full items-center justify-center p-4">
-      <div class="relative w-full max-w-md bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-6 z-10" @click.away="verifyModalOpen = false">
+      <div class="relative w-full max-w-md bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-4 md:p-5 z-10" @click.away="verifyModalOpen = false">
         
         <div class="flex items-center justify-between pb-3 border-b border-[#E9E9E7] mb-4">
           <div>
@@ -484,7 +484,7 @@
   <div x-show="scheduleModalOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
     <div class="fixed inset-0 bg-[#0A0A0B]/40 backdrop-blur-xs" @click="scheduleModalOpen = false"></div>
     <div class="flex min-h-full items-center justify-center p-4">
-      <div class="relative w-full max-w-lg bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-6 z-10" @click.away="scheduleModalOpen = false">
+      <div class="relative w-full max-w-lg bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-4 md:p-5 z-10" @click.away="scheduleModalOpen = false">
         
         <div class="flex items-center justify-between pb-3 border-b border-[#E9E9E7] mb-4">
           <div>

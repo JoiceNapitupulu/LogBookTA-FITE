@@ -22,6 +22,10 @@
     p {
       margin-bottom: 0;
     }
+    h1, h2, h3, h4, h5, h6 {
+      margin-bottom: 0;
+      color: inherit;
+    }
     a {
       text-decoration: none;
       color: inherit;
@@ -29,6 +33,14 @@
     a:hover {
       color: inherit;
     }
+
+    /* Normalize Bootstrap 5 oversized 48px spacing to compact 16px-24px */
+    .p-5 { padding: 1.25rem !important; }
+    .pb-5 { padding-bottom: 1.25rem !important; }
+    .pt-5 { padding-top: 1.25rem !important; }
+    .py-5 { padding-top: 1.25rem !important; padding-bottom: 1.25rem !important; }
+    .px-5 { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+    .mb-5 { margin-bottom: 1.25rem !important; }
 
     /* Notion Aesthetic Specific Tokens */
     :root {
@@ -201,15 +213,15 @@
       <div class="overflow-y-auto">
         <!-- Workspace Switcher IT Del FITE -->
         <div class="h-[52px] border-b border-[#E9E9E7] px-3 flex items-center justify-between">
-          <a href="{{ route('dashboard') }}" class="flex items-center gap-2 overflow-hidden hover:opacity-90">
-            <img src="{{ asset('images/logo-del.png') }}" alt="Logo IT Del" class="w-8 h-8 object-contain shrink-0">
-            <div x-show="sidebarOpen" class="truncate">
-              <h2 class="text-xs font-bold text-[#37352F] tracking-tight leading-none truncate">TA FITE IT Del</h2>
-              <p class="text-[10px] text-[#787774] truncate mt-0.5">Workspace Akademik</p>
+          <a href="{{ route('dashboard') }}" class="flex items-center gap-2 overflow-hidden hover:opacity-90 min-w-0">
+            <img src="{{ asset('images/logo-del.png') }}" alt="Logo IT Del" class="shrink-0 object-contain" style="width: 28px; height: 28px;">
+            <div x-show="sidebarOpen" class="truncate min-w-0">
+              <span class="block font-bold text-[#37352F] tracking-tight leading-tight truncate" style="font-size: 13px; font-weight: 700; margin: 0; line-height: 1.2;">TA FITE IT Del</span>
+              <span class="block text-[#787774] truncate" style="font-size: 10px; margin-top: 2px; line-height: 1.2;">Workspace Akademik</span>
             </div>
           </a>
 
-          <button @click="sidebarOpen = !sidebarOpen" class="p-1 rounded text-[#787774] hover:bg-[#EBEBE9] hover:text-[#37352F]" title="Toggle Sidebar">
+          <button @click="sidebarOpen = !sidebarOpen" class="p-1.5 rounded text-[#787774] hover:bg-[#EBEBE9] hover:text-[#37352F] shrink-0" title="Toggle Sidebar">
             <i class="bi bi-layout-sidebar text-sm"></i>
           </button>
         </div>
@@ -421,7 +433,7 @@
       </header>
 
       <!-- Main Canvas View -->
-      <main class="flex-1 overflow-y-auto p-8 max-w-7xl w-full mx-auto">
+      <main class="flex-1 overflow-y-auto p-4 md:p-6 max-w-7xl w-full mx-auto">
         @yield('content')
       </main>
 

@@ -4,7 +4,7 @@
 @section('breadcrumb', 'Logbook Aktivitas')
 
 @section('content')
-<div class="space-y-6" x-data="{ 
+<div class="space-y-4 md:space-y-5" x-data="{ 
   viewMode: 'table',
   openCreateModal: false,
   selectedLogbook: null,
@@ -16,7 +16,7 @@
 }">
 
   <!-- Page Header Ala Notion -->
-  <div class="border-b border-[#E9E9E7] pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <div class="border-b border-[#E9E9E7] pb-3 mb-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
       <div class="flex items-center gap-2 mb-1">
         <h1 class="text-2xl font-bold tracking-tight text-[#37352F]">Logbook Aktivitas & Progres TA</h1>
@@ -320,7 +320,7 @@
     <div x-show="openCreateModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
       <div class="fixed inset-0 bg-[#0A0A0B]/40 backdrop-blur-xs" @click="openCreateModal = false"></div>
       <div class="flex min-h-full items-center justify-center p-4">
-        <div class="relative w-full max-w-lg bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-6 z-10" @click.away="openCreateModal = false">
+        <div class="relative w-full max-w-lg bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-4 md:p-5 z-10" @click.away="openCreateModal = false">
           
           <div class="flex items-center justify-between pb-3 border-b border-[#E9E9E7] mb-4">
             <div>
@@ -395,7 +395,7 @@
   <div x-show="reviewDrawerOpen" x-cloak class="fixed inset-0 z-50 overflow-hidden" style="display: none;">
     <div class="fixed inset-0 bg-[#0A0A0B]/40 backdrop-blur-xs" @click="reviewDrawerOpen = false"></div>
     <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
-      <div class="w-screen max-w-xl bg-[#FFFFFF] border-l border-[#E9E9E7] shadow-2xl flex flex-col p-6 overflow-y-auto">
+      <div class="w-screen max-w-xl bg-[#FFFFFF] border-l border-[#E9E9E7] shadow-2xl flex flex-col p-4 md:p-5 overflow-y-auto">
         
         <div class="flex items-center justify-between pb-3 border-b border-[#E9E9E7] mb-4">
           <div>

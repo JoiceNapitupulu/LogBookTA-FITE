@@ -4,7 +4,7 @@
 @section('breadcrumb', 'Janji Bimbingan')
 
 @section('content')
-<div class="space-y-6" x-data="{ 
+<div class="space-y-4 md:space-y-5" x-data="{ 
   openModal: false,
   completeModalOpen: false,
   selectedJanji: null,
@@ -15,7 +15,7 @@
 }">
 
   <!-- Header Notion -->
-  <div class="border-b border-[#E9E9E7] pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <div class="border-b border-[#E9E9E7] pb-3 mb-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
       <div class="flex items-center gap-2 mb-1">
         <h1 class="text-2xl font-bold tracking-tight text-[#37352F]">Janji Bimbingan Tugas Akhir</h1>
@@ -34,7 +34,7 @@
   @endphp
 
   @if ($pendingList->isNotEmpty())
-    <div class="border border-[#F3E0A2] rounded-xl p-5 bg-[#FDF5E6]/40 shadow-xs">
+    <div class="border border-[#F3E0A2] rounded-xl p-4 bg-[#FDF5E6]/40 shadow-xs">
       <div class="flex items-center justify-between mb-3">
         <div class="flex items-center gap-2">
           <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
@@ -200,7 +200,7 @@
   <div x-show="openModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
     <div class="fixed inset-0 bg-[#0A0A0B]/40 backdrop-blur-xs" @click="openModal = false"></div>
     <div class="flex min-h-full items-center justify-center p-4">
-      <div class="relative w-full max-w-lg bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-6 z-10" @click.away="openModal = false">
+      <div class="relative w-full max-w-lg bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-4 md:p-5 z-10" @click.away="openModal = false">
         
         <div class="flex items-center justify-between pb-3 border-b border-[#E9E9E7] mb-4">
           <div>
@@ -284,7 +284,7 @@
   <div x-show="completeModalOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
     <div class="fixed inset-0 bg-[#0A0A0B]/40 backdrop-blur-xs" @click="completeModalOpen = false"></div>
     <div class="flex min-h-full items-center justify-center p-4">
-      <div class="relative w-full max-w-lg bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-6 z-10" @click.away="completeModalOpen = false">
+      <div class="relative w-full max-w-lg bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-4 md:p-5 z-10" @click.away="completeModalOpen = false">
         
         <div class="flex items-center justify-between pb-3 border-b border-[#E9E9E7] mb-4">
           <div>

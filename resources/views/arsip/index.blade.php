@@ -4,10 +4,10 @@
 @section('breadcrumb', 'Pustaka Arsip TA')
 
 @section('content')
-<div class="space-y-6" x-data="{ uploadModal: false }">
+<div class="space-y-4 md:space-y-5" x-data="{ uploadModal: false }">
 
   <!-- Header Notion -->
-  <div class="border-b border-[#E9E9E7] pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <div class="border-b border-[#E9E9E7] pb-3 mb-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
       <div class="flex items-center gap-2 mb-1">
         <h1 class="text-2xl font-bold tracking-tight text-[#37352F]">Pustaka Arsip Tugas Akhir FITE</h1>
@@ -27,7 +27,7 @@
   </div>
 
   <!-- Search Bar & Filters Form -->
-  <div class="border border-[#E9E9E7] rounded-xl p-5 bg-[#FFFFFF] shadow-xs space-y-4">
+  <div class="border border-[#E9E9E7] rounded-xl p-4 bg-[#FFFFFF] shadow-xs space-y-4">
     <form method="GET" action="{{ route('arsip.index') }}" class="space-y-3">
       
       <!-- Big Search Input -->
@@ -150,7 +150,7 @@
   <div x-show="uploadModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
     <div class="fixed inset-0 bg-[#0A0A0B]/40 backdrop-blur-xs" @click="uploadModal = false"></div>
     <div class="flex min-h-full items-center justify-center p-4">
-      <div class="relative w-full max-w-lg bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-6 z-10" @click.away="uploadModal = false">
+      <div class="relative w-full max-w-lg bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-4 md:p-5 z-10" @click.away="uploadModal = false">
         
         <div class="flex items-center justify-between pb-3 border-b border-[#E9E9E7] mb-4">
           <div>

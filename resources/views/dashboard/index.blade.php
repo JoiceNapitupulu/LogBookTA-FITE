@@ -4,10 +4,10 @@
 @section('breadcrumb', 'Dashboard')
 
 @section('content')
-<div class="space-y-6">
+<div class="space-y-4 md:space-y-5">
 
   <!-- Notion Cover / Page Title Header -->
-  <div class="border-b border-[#E9E9E7] pb-5">
+  <div class="border-b border-[#E9E9E7] pb-3 mb-3">
     <div class="flex items-center gap-3 mb-2">
       <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-[#37352F]">
         Workspace Tugas Akhir FITE
@@ -40,7 +40,7 @@
     </div>
 
     <!-- Arsip Terpopuler Preview -->
-    <div class="border border-[#E9E9E7] rounded-xl p-5 bg-[#FFFFFF]">
+    <div class="border border-[#E9E9E7] rounded-xl p-4 bg-[#FFFFFF]">
       <h3 class="text-sm font-bold text-[#37352F] mb-3">Rekomendasi Naskah Tugas Akhir FITE Terdahulu</h3>
       <p class="text-xs text-[#787774] mb-4">Gunakan naskah alumni berikut sebagai rujukan metodologi, format penulisan, dan instrumen pengujian.</p>
       
@@ -82,7 +82,7 @@
     
     <!-- Header Card Judul TA -->
     @if ($tugasAkhir)
-      <div class="border border-[#E9E9E7] rounded-xl p-6 bg-[#FFFFFF] shadow-xs">
+      <div class="border border-[#E9E9E7] rounded-xl p-4 md:p-5 bg-[#FFFFFF] shadow-xs">
         <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div>
             <div class="flex items-center gap-2 mb-2">
@@ -151,7 +151,7 @@
       </div>
 
       <!-- Stepper Horizontal Pencapaian BAB TA ala Notion -->
-      <div class="border border-[#E9E9E7] rounded-xl p-6 bg-[#FFFFFF]">
+      <div class="border border-[#E9E9E7] rounded-xl p-4 md:p-5 bg-[#FFFFFF]">
         <div class="flex items-center justify-between mb-4">
           <div>
             <h3 class="text-sm font-bold text-[#37352F]">Stepper Capaian Bab Tugas Akhir</h3>
@@ -375,7 +375,7 @@
 
     @if ($user->isKoordinator())
       <!-- Panel Ringkas Koordinator TA -->
-      <div class="border border-[#E9E9E7] rounded-xl p-5 bg-[#FAFAF9] shadow-xs">
+      <div class="border border-[#E9E9E7] rounded-xl p-4 bg-[#FAFAF9] shadow-xs">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#E9E9E7] gap-2 mb-4">
           <div class="d-flex align-items-center gap-2">
             <div class="w-8 h-8 rounded-3 bg-secondary-subtle d-flex align-items-center justify-center text-dark">
@@ -417,7 +417,7 @@
 
     @if ($user->isKaprodi())
       <!-- Panel Ringkas Kaprodi -->
-      <div class="border border-[#E9E9E7] rounded-xl p-5 bg-[#FAFAF9] shadow-xs">
+      <div class="border border-[#E9E9E7] rounded-xl p-4 bg-[#FAFAF9] shadow-xs">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#E9E9E7] gap-2 mb-4">
           <div class="d-flex align-items-center gap-2">
             <div class="w-8 h-8 rounded-3 bg-secondary-subtle d-flex align-items-center justify-center text-dark">
@@ -544,39 +544,39 @@
   <!-- KONDISI 4: TEACHING ASSISTANT & BAAK -->
   <!-- ================================================================= -->
   @if ($user->isTA() || $user->isBaak())
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="p-5 rounded-3 border border-light-subtle bg-light shadow-xs">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div class="p-4 rounded-3 border border-light-subtle bg-light shadow-xs">
         <div class="d-flex align-items-center justify-content-between text-muted">
           <h4 class="text-xs font-bold uppercase tracking-wider mb-0">Antrean Verifikasi Berkas (TA)</h4>
           <i class="bi bi-file-earmark-check text-secondary"></i>
         </div>
         <p class="text-3xl font-extrabold text-[#37352F] mt-2 mb-0">{{ $pendingUjianCount }}</p>
         <p class="text-xs text-[#787774] mt-1">Berkas ujian mahasiswa menunggu validasi fisik/soft-copy</p>
-        <div class="mt-4">
+        <div class="mt-3">
           <a href="{{ route('ujian.index') }}" class="btn btn-dark btn-sm text-xs">Periksa Berkas &rarr;</a>
         </div>
       </div>
 
-      <div class="p-5 rounded-3 border border-light-subtle bg-light shadow-xs">
+      <div class="p-4 rounded-3 border border-light-subtle bg-light shadow-xs">
         <div class="d-flex align-items-center justify-content-between text-muted">
           <h4 class="text-xs font-bold uppercase tracking-wider mb-0">Alokasi Ruangan Ujian (BAAK)</h4>
           <i class="bi bi-building text-secondary"></i>
         </div>
         <p class="text-3xl font-extrabold text-[#37352F] mt-2 mb-0">{{ $unscheduledBaakCount }}</p>
         <p class="text-xs text-[#787774] mt-1">Jadwal tanggal terbit menanti alokasi ruang GD & link Zoom</p>
-        <div class="mt-4">
+        <div class="mt-3">
           <a href="{{ route('ujian.index') }}" class="btn btn-dark btn-sm text-xs">Kelola Fasilitas &rarr;</a>
         </div>
       </div>
 
-      <div class="p-5 rounded-3 border border-light-subtle bg-light shadow-xs">
+      <div class="p-4 rounded-3 border border-light-subtle bg-light shadow-xs">
         <div class="d-flex align-items-center justify-content-between text-muted">
           <h4 class="text-xs font-bold uppercase tracking-wider mb-0">Total Arsip Digital Alumni</h4>
           <i class="bi bi-archive text-secondary"></i>
         </div>
         <p class="text-3xl font-extrabold text-[#37352F] mt-2 mb-0">{{ $totalArsipCount }}</p>
         <p class="text-xs text-[#787774] mt-1">Karya naskah skripsi terunggah di repositori FITE</p>
-        <div class="mt-4">
+        <div class="mt-3">
           <a href="{{ route('arsip.index') }}" class="btn btn-outline-dark btn-sm text-xs">Pustaka Naskah &rarr;</a>
         </div>
       </div>
