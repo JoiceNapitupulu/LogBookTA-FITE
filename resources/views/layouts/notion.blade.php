@@ -187,8 +187,8 @@
         <!-- Workspace Switcher IT Del FITE -->
         <div class="h-[52px] border-b border-[#E9E9E7] px-3 flex items-center justify-between">
           <a href="{{ route('dashboard') }}" class="flex items-center gap-2 overflow-hidden hover:opacity-90">
-            <div class="w-7 h-7 rounded bg-[#2C2C2F] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
-              🎓
+            <div class="w-7 h-7 rounded bg-[#2C2C2F] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs tracking-wider">
+              TA
             </div>
             <div x-show="sidebarOpen" class="truncate">
               <h2 class="text-xs font-bold text-[#37352F] tracking-tight leading-none truncate">TA FITE IT Del</h2>
@@ -232,7 +232,7 @@
               <a href="{{ route('dashboard') }}" 
                  class="flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('dashboard') || request()->routeIs('workspace') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
                  title="Dashboard Workspace">
-                <span class="text-sm">🏠</span>
+                <span class="w-5 text-[10px] font-bold text-[#787774] text-center shrink-0">DB</span>
                 <span x-show="sidebarOpen" class="truncate">Dashboard Utama</span>
               </a>
 
@@ -241,15 +241,15 @@
               <a href="{{ route('logbook.index') }}" 
                  class="flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('logbook.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
                  title="Logbook Aktivitas & Progres">
-                <span class="text-sm">📝</span>
+                <span class="w-5 text-[10px] font-bold text-[#787774] text-center shrink-0">LB</span>
                 <span x-show="sidebarOpen" class="truncate">Logbook Aktivitas</span>
               </a>
 
               <!-- Janji Bimbingan -->
               <a href="{{ route('bimbingan.index') }}" 
                  class="flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('bimbingan.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
-                 title="Janji Bimbingan Dua Arah">
-                <span class="text-sm">📅</span>
+                 title="Janji Bimbingan">
+                <span class="w-5 text-[10px] font-bold text-[#787774] text-center shrink-0">JB</span>
                 <span x-show="sidebarOpen" class="truncate">Janji Bimbingan</span>
               </a>
               @endif
@@ -259,7 +259,7 @@
               <a href="{{ route('ujian.index') }}" 
                  class="flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('ujian.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
                  title="Pendaftaran & Jadwal Ujian">
-                <span class="text-sm">🏛️</span>
+                <span class="w-5 text-[10px] font-bold text-[#787774] text-center shrink-0">UJ</span>
                 <span x-show="sidebarOpen" class="truncate">Manajemen Ujian TA</span>
               </a>
               @endif
@@ -276,7 +276,7 @@
               <a href="{{ route('arsip.index') }}" 
                  class="flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('arsip.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
                  title="Pustaka Arsip Tugas Akhir Alumni">
-                <span class="text-sm">📚</span>
+                <span class="w-5 text-[10px] font-bold text-[#787774] text-center shrink-0">AR</span>
                 <span x-show="sidebarOpen" class="truncate">Pustaka Arsip TA</span>
               </a>
             </div>
@@ -293,7 +293,7 @@
               <a href="{{ route('koordinator.index') }}" 
                  class="flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('koordinator.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
                  title="Panel Koordinator TA">
-                <span class="text-sm">⚙️</span>
+                <span class="w-5 text-[10px] font-bold text-[#787774] text-center shrink-0">KD</span>
                 <span x-show="sidebarOpen" class="truncate">Koordinator TA</span>
               </a>
               @endif
@@ -302,7 +302,7 @@
               <a href="{{ route('kaprodi.index') }}" 
                  class="flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('kaprodi.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
                  title="Panel Eksekutif Kaprodi">
-                <span class="text-sm">📊</span>
+                <span class="w-5 text-[10px] font-bold text-[#787774] text-center shrink-0">KP</span>
                 <span x-show="sidebarOpen" class="truncate">Panel Kaprodi</span>
               </a>
               @endif

@@ -14,7 +14,7 @@
       </h1>
     </div>
     <p class="text-xs text-[#787774]">
-      Sistem Logbook, Asistensi Dua Arah & Manajemen Ujian Tugas Akhir • Institut Teknologi Del
+      Logbook, bimbingan, dan ujian tugas akhir FITE · IT Del
     </p>
   </div>
 
@@ -23,7 +23,6 @@
   <!-- ================================================================= -->
   @if ($user->isMahasiswa() && (!$mahasiswaProfile || !$mahasiswaProfile->is_ta))
     <div class="notion-callout">
-      <span class="text-xl">ℹ️</span>
       <div class="text-xs">
         <p class="font-bold text-[#37352F]">Status: Mahasiswa Non-TA (Tahap Persiapan Tugas Akhir)</p>
         <p class="text-[#787774] mt-1 leading-relaxed">
@@ -31,7 +30,7 @@
         </p>
         <div class="mt-3">
           <a href="{{ route('arsip.index') }}" class="notion-btn-primary text-xs">
-            <span>📚</span> Buka Pustaka Arsip Tugas Akhir
+            Buka Pustaka Arsip Tugas Akhir
           </a>
         </div>
       </div>
@@ -105,26 +104,43 @@
               </div>
             </div>
 
-            @if ($tugasAkhir->anggota && $tugasAkhir->anggota->isNotEmpty())
-              <div class="mt-3 pt-3 border-t border-[#F0F0EE] flex flex-wrap items-center gap-2 text-xs">
-                <span class="font-semibold text-[#787774]">Anggota Kelompok ({{ $tugasAkhir->jumlahAnggota() }}):</span>
-                @foreach ($tugasAkhir->anggota as $member)
-                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F7F7F5] border border-[#E9E9E7] text-[#37352F] text-xs">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    <span class="font-semibold">{{ $member->user->name ?? '-' }}</span>
-                    <span class="text-[11px] text-[#787774]">({{ $member->nim }})</span>
+            @php
+              $members = $tugasAkhir->anggota && $tugasAkhir->anggota->isNotEmpty()
+                ? $tugasAkhir->anggota
+                : ($tugasAkhir->mahasiswa ? collect([$tugasAkhir->mahasiswa]) : collect());
+              $countMhs = $members->count();
+            @endphp
+            @if ($countMhs > 0)
+              <div class="mt-3 pt-3 border-t border-[#F0F0EE]">
+                <div class="flex items-center gap-2 mb-1.5">
+                  <span class="text-xs font-semibold text-[#787774]">
+                    Kelompok TA · {{ $countMhs }} mahasiswa
                   </span>
-                @endforeach
+                </div>
+                <div class="flex flex-wrap items-center gap-2 text-xs">
+                  @foreach ($members as $member)
+                    @php
+                      $isCurrentUser = auth()->check() && (auth()->id() === $member->user_id);
+                    @endphp
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F7F7F5] {{ $isCurrentUser ? 'border border-[#37352F] shadow-2xs' : 'border border-[#E9E9E7]' }} text-[#37352F] text-xs">
+                      <span class="font-semibold">{{ $member->user->name ?? '-' }}</span>
+                      <span class="text-[11px] text-[#787774]">{{ $member->nim }}</span>
+                      @if ($isCurrentUser)
+                        <span class="text-[10px] text-[#787774] font-medium">(Anda)</span>
+                      @endif
+                    </span>
+                  @endforeach
+                </div>
               </div>
             @endif
           </div>
 
           <div class="flex items-center gap-2 shrink-0">
             <a href="{{ route('bimbingan.index') }}" class="notion-btn-secondary text-xs">
-              <span>📅</span> Ajukan Jadwal
+              Ajukan bimbingan
             </a>
             <a href="{{ route('logbook.index') }}" class="notion-btn-primary text-xs">
-              <span>+</span> Isi Logbook Baru
+              Isi logbook
             </a>
           </div>
         </div>
@@ -149,7 +165,7 @@
                 'step' => 'Tahap 1',
                 'name' => 'Proposal',
                 'status' => in_array($tugasAkhir->status, ['sempro', 'seminar_ta', 'sidang_akhir', 'selesai']) ? 'approved' : ($tugasAkhir->status === 'proposal' ? 'in_progress' : 'empty'),
-                'label' => in_array($tugasAkhir->status, ['sempro', 'seminar_ta', 'sidang_akhir', 'selesai']) ? 'Lulus Sempro ✓' : ($tugasAkhir->status === 'proposal' ? 'Pengajuan' : 'Belum Mulai'),
+                'label' => in_array($tugasAkhir->status, ['sempro', 'seminar_ta', 'sidang_akhir', 'selesai']) ? 'Lulus Sempro' : ($tugasAkhir->status === 'proposal' ? 'Pengajuan' : 'Belum Mulai'),
               ],
             ];
 
@@ -165,13 +181,13 @@
 
               if ($isApproved) {
                 $sStatus = 'approved';
-                $sLabel = 'Disetujui ✓';
+                $sLabel = 'Disetujui';
               } elseif ($isRevisi) {
                 $sStatus = 'revision';
-                $sLabel = 'Perlu Revisi ⚠️';
+                $sLabel = 'Perlu revisi';
               } elseif ($isPending) {
                 $sStatus = 'pending';
-                $sLabel = 'Pending Review ⏳';
+                $sLabel = 'Menunggu review';
               } else {
                 $sStatus = 'empty';
                 $sLabel = 'Belum Ada Entri';
@@ -190,7 +206,7 @@
             $sidangLabel = 'Terkunci';
             if ($tugasAkhir->status === 'selesai') {
               $sidangStatus = 'approved';
-              $sidangLabel = 'Lulus Sidang ✓';
+              $sidangLabel = 'Lulus Sidang';
             } elseif ($tugasAkhir->status === 'sidang_akhir') {
               $sidangStatus = 'pending';
               $sidangLabel = 'Terdaftar Sidang';
@@ -288,7 +304,7 @@
               @empty
                 <tr>
                   <td colspan="5" class="py-6 text-center text-[#787774]">
-                    Belum ada catatan logbook yang terdata. Klik "+ Isi Logbook Baru" untuk memulai asistensi.
+                    Belum ada catatan logbook yang terdata. Klik "Isi logbook" untuk memulai bimbingan.
                   </td>
                 </tr>
               @endforelse
@@ -298,7 +314,6 @@
       </div>
     @else
       <div class="notion-callout">
-        <span class="text-xl">⚠️</span>
         <div class="text-xs">
           <p class="font-bold text-[#37352F]">Tugas Akhir Belum Terdaftar</p>
           <p class="text-[#787774] mt-1 leading-relaxed">
@@ -346,12 +361,9 @@
       <!-- Panel Ringkas Koordinator TA -->
       <div class="border border-[#E9E9E7] rounded-xl p-5 bg-[#FAFAF9] shadow-xs">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#E9E9E7] gap-2 mb-4">
-          <div class="flex items-center gap-2">
-            <span class="text-lg">⚙️</span>
-            <div>
-              <h3 class="text-sm font-bold text-[#37352F]">Ringkasan Operasional Koordinator TA</h3>
-              <p class="text-xs text-[#787774]">Penetapan pembimbing dan penjadwalan ujian program studi FITE</p>
-            </div>
+          <div>
+            <h3 class="text-sm font-bold text-[#37352F]">Ringkasan Operasional Koordinator TA</h3>
+            <p class="text-xs text-[#787774]">Penetapan pembimbing dan penjadwalan ujian program studi FITE</p>
           </div>
           <a href="{{ route('koordinator.index') }}" class="notion-btn-secondary text-xs">
             Buka Panel Koordinator &rarr;
@@ -386,12 +398,9 @@
       <!-- Panel Ringkas Kaprodi -->
       <div class="border border-[#E9E9E7] rounded-xl p-5 bg-[#FAFAF9] shadow-xs">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#E9E9E7] gap-2 mb-4">
-          <div class="flex items-center gap-2">
-            <span class="text-lg">📊</span>
-            <div>
-              <h3 class="text-sm font-bold text-[#37352F]">Ringkasan Mutu & Statistik Kaprodi</h3>
-              <p class="text-xs text-[#787774]">Pengawasan mutu kelulusan tugas akhir dan beban bimbingan dosen FITE</p>
-            </div>
+          <div>
+            <h3 class="text-sm font-bold text-[#37352F]">Ringkasan Mutu & Statistik Kaprodi</h3>
+            <p class="text-xs text-[#787774]">Pengawasan mutu kelulusan tugas akhir dan beban bimbingan dosen FITE</p>
           </div>
           <a href="{{ route('kaprodi.index') }}" class="notion-btn-secondary text-xs">
             Buka Panel Kaprodi &rarr;
@@ -449,19 +458,26 @@
             @forelse ($mahasiswaBimbingan as $ta)
               <tr class="hover:bg-[#F7F7F5] transition-colors">
                 <td class="py-3 px-4">
-                  @if ($ta->anggota && $ta->anggota->isNotEmpty())
-                    @foreach ($ta->anggota as $member)
-                      <p class="font-bold text-[#37352F]">{{ $member->user->name ?? '-' }}</p>
-                      <p class="text-[11px] text-[#787774] mb-1">{{ $member->nim }} • {{ $ta->prodi }}</p>
-                    @endforeach
-                    @if ($ta->jumlahAnggota() > 1)
-                      <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#E3E2E0] text-[#37352F]">
-                        Kelompok ({{ $ta->jumlahAnggota() }} Mhs)
-                      </span>
-                    @endif
+                  @php
+                    $dosenMembers = $ta->anggota && $ta->anggota->isNotEmpty()
+                      ? $ta->anggota
+                      : ($ta->mahasiswa ? collect([$ta->mahasiswa]) : collect());
+                  @endphp
+                  @if ($dosenMembers->isNotEmpty())
+                    <div class="space-y-1">
+                      <div class="flex flex-wrap gap-1.5">
+                        @foreach ($dosenMembers as $member)
+                          <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#F7F7F5] border border-[#E9E9E7] text-[#37352F] text-[11px]">
+                            <span class="font-semibold">{{ $member->user->name ?? '-' }}</span>
+                            <span class="text-[10px] text-[#787774]">({{ $member->nim }})</span>
+                          </span>
+                        @endforeach
+                      </div>
+                      <p class="text-[10px] text-[#787774]">{{ $ta->prodi }} · {{ $dosenMembers->count() }} mahasiswa</p>
+                    </div>
                   @else
-                    <p class="font-bold text-[#37352F]">{{ $ta->mahasiswa->user->name ?? '-' }}</p>
-                    <p class="text-[11px] text-[#787774]">{{ $ta->mahasiswa->nim ?? '-' }} • {{ $ta->prodi }}</p>
+                    <p class="font-bold text-[#37352F]">-</p>
+                    <p class="text-[11px] text-[#787774]">{{ $ta->prodi }}</p>
                   @endif
                 </td>
                 <td class="py-3 px-4 max-w-xs">

@@ -19,7 +19,6 @@
   <div class="border-b border-[#E9E9E7] pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
       <div class="flex items-center gap-2 mb-1">
-        <span class="text-2xl">📝</span>
         <h1 class="text-2xl font-bold tracking-tight text-[#37352F]">Logbook Aktivitas & Progres TA</h1>
       </div>
       <p class="text-xs text-[#787774]">Dokumentasi berkala pelaksanaan riset tugas akhir dan riwayat evaluasi pembimbing.</p>
@@ -27,7 +26,7 @@
 
     @if (auth()->user()->isMahasiswa())
       <button @click="openCreateModal = true" class="notion-btn-primary text-xs">
-        <span>+</span> Isi Logbook Baru
+        Isi Logbook Baru
       </button>
     @endif
   </div>
@@ -168,7 +167,7 @@
               <td class="py-3 px-4 whitespace-nowrap">
                 @if ($log->file_dokumen_mhs)
                   <a href="{{ asset('storage/' . $log->file_dokumen_mhs) }}" target="_blank" class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#37352F] bg-[#F7F7F5] px-2 py-1 rounded border border-[#E9E9E7] hover:bg-[#EBEBE9]">
-                    <span>📄</span> Draf Mhs
+                    Draf Mhs
                   </a>
                 @else
                   <span class="text-[11px] text-[#787774]">-</span>
@@ -176,7 +175,7 @@
 
                 @if ($log->file_revisi_dosen)
                   <a href="{{ asset('storage/' . $log->file_revisi_dosen) }}" target="_blank" class="inline-flex items-center gap-1 text-[11px] font-semibold text-red-700 bg-red-50 px-2 py-1 rounded border border-red-200 hover:bg-red-100 ml-1">
-                    <span>✏️</span> Coretan Dosen
+                    Coretan Dosen
                   </a>
                 @endif
               </td>

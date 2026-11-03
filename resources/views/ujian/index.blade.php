@@ -23,7 +23,6 @@
   <div class="border-b border-[#E9E9E7] pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
       <div class="flex items-center gap-2 mb-1">
-        <span class="text-2xl">🏛️</span>
         <h1 class="text-2xl font-bold tracking-tight text-[#37352F]">Alur Pendaftaran & Manajemen Ujian TA</h1>
       </div>
       <p class="text-xs text-[#787774]">Kolaborasi terintegrasi: Mahasiswa TA (Pendaftaran) &rarr; Koordinator TA (Verifikasi Berkas) &rarr; BAAK (Jadwal, Penguji & Fasilitas Ruangan).</p>
@@ -64,7 +63,7 @@
           <div class="p-3 rounded border border-[#C4E5D1] bg-[#EBF5EE]">
             <span class="text-[10px] font-bold text-[#2A7E4B] block uppercase">Langkah 1</span>
             <p class="font-bold text-[#37352F] mt-1">Pengajuan Berkas</p>
-            <p class="text-[10px] text-[#2A7E4B]">Diajukan Mahasiswa ✓</p>
+            <p class="text-[10px] text-[#2A7E4B]">Diajukan Mahasiswa</p>
           </div>
 
           <!-- Step 2 -->
@@ -72,7 +71,7 @@
             <span class="text-[10px] font-bold {{ $myUjian->status_dokumen === 'berkas_lengkap' ? 'text-[#2A7E4B]' : 'text-amber-800' }} block uppercase">Langkah 2</span>
             <p class="font-bold text-[#37352F] mt-1">Verifikasi Berkas</p>
             <p class="text-[10px] {{ $myUjian->status_dokumen === 'berkas_lengkap' ? 'text-[#2A7E4B]' : 'text-amber-800' }}">
-              {{ $myUjian->status_dokumen === 'berkas_lengkap' ? 'Lengkap & Valid (Koordinator) ✓' : 'Menunggu Koordinator TA' }}
+              {{ $myUjian->status_dokumen === 'berkas_lengkap' ? 'Lengkap & Valid (Koordinator)' : 'Menunggu Koordinator TA' }}
             </p>
           </div>
 
@@ -81,7 +80,7 @@
             <span class="text-[10px] font-bold block uppercase {{ $myUjian->tanggal_ujian ? 'text-[#2A7E4B]' : 'text-[#787774]' }}">Langkah 3</span>
             <p class="font-bold text-[#37352F] mt-1">Tanggal & Penguji</p>
             <p class="text-[10px] {{ $myUjian->tanggal_ujian ? 'text-[#2A7E4B]' : 'text-[#787774]' }}">
-              {{ $myUjian->tanggal_ujian ? $myUjian->tanggal_ujian->format('d M Y') . ' (BAAK) ✓' : 'Menunggu BAAK' }}
+              {{ $myUjian->tanggal_ujian ? $myUjian->tanggal_ujian->format('d M Y') . ' (BAAK)' : 'Menunggu BAAK' }}
             </p>
             @if ($myUjian->penguji1 || $myUjian->penguji2)
               <div class="mt-2 pt-2 border-t border-[#C4E5D1] text-[10px] text-[#2A7E4B] space-y-0.5">
@@ -214,7 +213,7 @@
                 </td>
                 <td class="py-3 px-4">
                   <a href="{{ asset('storage/' . $item->file_persyaratan) }}" target="_blank" class="inline-flex items-center gap-1 font-semibold text-[#37352F] underline">
-                    <span>📦</span> Unduh Berkas
+                    Unduh Berkas
                   </a>
                 </td>
                 <td class="py-3 px-4">
@@ -223,7 +222,7 @@
                   @elseif ($item->status_dokumen === 'berkas_kurang')
                     <span class="notion-pill-red">Kurang Lengkap</span>
                   @else
-                    <span class="notion-pill-orange font-semibold">Menunggu Verifikasi ⏳</span>
+                    <span class="notion-pill-orange font-semibold">Menunggu Verifikasi</span>
                   @endif
                 </td>
                 <td class="py-3 px-4 text-right">
@@ -313,7 +312,7 @@
                       <p><span class="font-semibold text-[#787774]">P2:</span> {{ $item->penguji2->user->name }}</p>
                     </div>
                   @else
-                    <span class="notion-pill-orange text-[10px]">Wajib 2 Penguji ⚠️</span>
+                    <span class="notion-pill-orange text-[10px]">Wajib 2 Penguji</span>
                   @endif
                 </td>
                 <td class="py-3 px-4">
@@ -321,7 +320,7 @@
                     <p class="font-semibold text-[#37352F]">{{ $item->ruangan }}</p>
                     <p class="text-[10px] text-[#787774]">{{ $item->jam_mulai ? substr($item->jam_mulai, 0, 5) . ' - ' . substr($item->jam_selesai, 0, 5) . ' WIB' : '-' }}</p>
                   @else
-                    <span class="notion-pill-orange font-bold">Siap Dijadwalkan BAAK ⚠️</span>
+                    <span class="notion-pill-orange font-bold">Siap Dijadwalkan BAAK</span>
                   @endif
                 </td>
                 <td class="py-3 px-4">

@@ -86,7 +86,7 @@
           <button @click="openDemo = !openDemo" type="button" class="w-full flex items-center justify-between text-[11px] font-mono-code text-gray-500 hover:text-black py-1">
             <span class="flex items-center gap-1.5 font-bold">
               <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              ⚡ Quick Demo Login (7 Roles FITE)
+              Quick Demo Login (7 Roles FITE)
             </span>
             <span x-text="openDemo ? '▲ Hide' : '▼ Show'"></span>
           </button>

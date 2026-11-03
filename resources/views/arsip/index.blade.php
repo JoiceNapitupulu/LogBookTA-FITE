@@ -10,7 +10,6 @@
   <div class="border-b border-[#E9E9E7] pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
       <div class="flex items-center gap-2 mb-1">
-        <span class="text-2xl">📚</span>
         <h1 class="text-2xl font-bold tracking-tight text-[#37352F]">Pustaka Arsip Tugas Akhir FITE</h1>
       </div>
       <p class="text-xs text-[#787774]">Basis repositori digital naskah ilmiah skripsi alumni FITE IT Del yang dapat diakses oleh seluruh mahasiswa & dosen.</p>
@@ -18,7 +17,7 @@
 
     @if (auth()->user()->isTA())
       <button @click="uploadModal = true" class="notion-btn-primary text-xs">
-        <span>+</span> Unggah Arsip Tugas Akhir
+        Unggah Arsip Tugas Akhir
       </button>
     @else
       <div class="text-[11px] text-[#787774] bg-[#F7F7F5] px-2.5 py-1 rounded border border-[#E9E9E7]">
@@ -124,7 +123,7 @@
               </td>
               <td class="py-3 px-4 text-right whitespace-nowrap">
                 <a href="{{ asset('storage/' . $item->file_dokumen) }}" target="_blank" class="notion-btn-secondary text-xs py-1 px-2.5">
-                  <span>📄</span> Unduh PDF
+                  Unduh PDF
                 </a>
               </td>
             </tr>

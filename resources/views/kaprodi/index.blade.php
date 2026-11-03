@@ -10,7 +10,6 @@
   <div class="border-b border-[#E9E9E7] pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
       <div class="flex items-center gap-2 mb-1">
-        <span class="text-2xl">📊</span>
         <h1 class="text-2xl font-bold tracking-tight text-[#37352F]">Panel Eksekutif & Statistik Kelulusan TA</h1>
       </div>
       <p class="text-xs text-[#787774]">Otoritas Ketua Program Studi FITE IT Del: Pengawasan mutu kelulusan dan penetapan Koordinator TA.</p>

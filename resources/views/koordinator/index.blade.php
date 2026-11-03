@@ -22,7 +22,6 @@
   <div class="border-b border-[#E9E9E7] pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
       <div class="flex items-center gap-2 mb-1">
-        <span class="text-2xl">⚙️</span>
         <h1 class="text-2xl font-bold tracking-tight text-[#37352F]">Panel Koordinator Tugas Akhir FITE</h1>
       </div>
       <p class="text-xs text-[#787774]">Penetapan Dosen Pembimbing 1 & 2 serta pengawasan rekapitulasi capaian bab tugas akhir mahasiswa.</p>
@@ -30,7 +29,7 @@
 
     <div class="flex items-center gap-2">
       <a href="{{ route('ujian.index') }}" class="notion-btn-secondary text-xs">
-        <span>🏛️</span> Kelola Jadwal Ujian ({{ $siapJadwalCount }})
+        Kelola Jadwal Ujian ({{ $siapJadwalCount }})
       </a>
     </div>
   </div>
@@ -64,7 +63,6 @@
 
   @if ($unassignedMhs->isNotEmpty())
     <div class="notion-callout">
-      <span class="text-xl">ℹ️</span>
       <div class="text-xs">
         <p class="font-bold text-[#37352F]">Informasi: Terdapat {{ $unassignedMhs->count() }} Mahasiswa TA yang belum dibuatkan entri Tugas Akhir</p>
         <p class="text-[#787774] mt-0.5">
@@ -287,8 +285,7 @@
             <div class="pt-3 border-t border-[#E9E9E7]">
               <!-- Jika sudah penuh 3 anggota -->
               <template x-if="(selectedTa.anggota?.length || 0) >= 3">
-                <div class="p-3 rounded bg-amber-50 border border-amber-200 text-amber-800 text-[11px] flex items-center gap-2">
-                  <span>⚠️</span>
+                <div class="p-3 rounded bg-amber-50 border border-amber-200 text-amber-800 text-[11px]">
                   <span>Kelompok ini sudah mencapai batas maksimal <strong>3 mahasiswa</strong>. Hapus anggota terlebih dahulu jika ingin mengganti.</span>
                 </div>
               </template>
@@ -316,7 +313,7 @@
 
                   <div class="flex items-center justify-end gap-2">
                     <button type="submit" class="notion-btn-primary text-xs">
-                      <span>+</span> Tambahkan ke Kelompok
+                      Tambahkan ke Kelompok
                     </button>
                   </div>
                 </form>
