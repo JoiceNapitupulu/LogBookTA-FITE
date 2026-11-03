@@ -35,15 +35,32 @@ class UjianController extends Controller
         }
 
         // 2. Data khusus Staf (Teaching Assistant, Koordinator, BAAK, atau Dosen)
-        $allUjian = UjianTa::with([
+        $query = UjianTa::with([
             'tugasAkhir.mahasiswa.user',
             'tugasAkhir.pembimbing1.user',
             'tugasAkhir.pembimbing2.user',
             'verifiedByTa',
-        ])->latest()->paginate(20);
+        ]);
+
+        // Dosen Pembimbing biasa (bukan Koordinator/Kaprodi/TA/BAAK) hanya boleh melihat ujian mahasiswa bimbingannya
+        if ($user->isDosen() && ! $user->isKoordinator() && ! $user->isKaprodi()) {
+            $dosenProfile = $user->dosenProfile;
+            if ($dosenProfile) {
+                $query->whereHas('tugasAkhir', function ($q) use ($dosenProfile) {
+                    $q->where('dosen_pembimbing_1_id', $dosenProfile->id)
+                      ->orWhere('dosen_pembimbing_2_id', $dosenProfile->id);
+                });
+            } else {
+                $query->whereRaw('1 = 0');
+            }
+        }
+
+        $allUjian = $query->latest()->paginate(20);
 
         // Active lecturers for examiner selection
-        $dosenList = DosenProfile::with('user')->get();
+        $dosenList = ($user->isKoordinator() || $user->isKaprodi())
+            ? DosenProfile::with('user')->get()
+            : collect();
 
         return view('ujian.index', compact('myUjian', 'myTugasAkhir', 'allUjian', 'dosenList'));
     }

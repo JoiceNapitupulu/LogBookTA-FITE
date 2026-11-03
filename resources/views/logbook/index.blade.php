@@ -175,10 +175,12 @@
               </td>
 
               <td class="py-3 px-4 text-right whitespace-nowrap">
-                @if (auth()->user()->isDosen() || auth()->user()->isKaprodi())
+                @if (auth()->user()->isDosen() && auth()->user()->isPembimbingOf($log->tugasAkhir))
                   <button @click="openReview({{ $log->toJson() }})" class="notion-btn-primary text-xs py-1 px-2.5">
                     Review & Revisi
                   </button>
+                @elseif (auth()->user()->isDosen())
+                  <span class="text-[11px] text-[#787774]">Bukan Pembimbing</span>
                 @else
                   <span class="text-[11px] text-[#787774]">Terdata</span>
                 @endif
@@ -363,6 +365,7 @@
     </div>
   @endif
 
+  @if (auth()->user()->isDosen())
   <!-- ================================================================= -->
   <!-- SLIDE-OVER DRAWER: REVIEW LOGBOOK OLEH DOSEN PEMBIMBING -->
   <!-- ================================================================= -->
@@ -436,6 +439,7 @@
       </div>
     </div>
   </div>
+  @endif
 
 </div>
 @endsection

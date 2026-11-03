@@ -56,23 +56,27 @@
 
             <!-- Tombol Setujui / Tolak -->
             <div class="mt-4 pt-3 border-t border-[#E9E9E7] flex items-center justify-end gap-2">
-              <form action="{{ route('bimbingan.status', $item->id) }}" method="POST">
-                @csrf
-                @method('PATCH')
-                <input type="hidden" name="status" value="ditolak">
-                <button type="submit" class="notion-btn-secondary text-xs py-1 px-2.5">
-                  Tolak
-                </button>
-              </form>
+              @if (auth()->user()->isDosen() && auth()->user()->dosenProfile?->id === $item->dosen_id)
+                <form action="{{ route('bimbingan.status', $item->id) }}" method="POST">
+                  @csrf
+                  @method('PATCH')
+                  <input type="hidden" name="status" value="ditolak">
+                  <button type="submit" class="notion-btn-secondary text-xs py-1 px-2.5">
+                    Tolak
+                  </button>
+                </form>
 
-              <form action="{{ route('bimbingan.status', $item->id) }}" method="POST">
-                @csrf
-                @method('PATCH')
-                <input type="hidden" name="status" value="disetujui">
-                <button type="submit" class="notion-btn-primary text-xs py-1 px-3">
-                  Setujui Jadwal
-                </button>
-              </form>
+                <form action="{{ route('bimbingan.status', $item->id) }}" method="POST">
+                  @csrf
+                  @method('PATCH')
+                  <input type="hidden" name="status" value="disetujui">
+                  <button type="submit" class="notion-btn-primary text-xs py-1 px-3">
+                    Setujui Jadwal
+                  </button>
+                </form>
+              @else
+                <span class="text-[10px] text-[#787774] italic">Menunggu konfirmasi {{ $item->dosen->user->name ?? 'Dosen' }}</span>
+              @endif
             </div>
           </div>
         @endforeach
@@ -132,7 +136,7 @@
                 @endif
               </td>
               <td class="py-3 px-4 text-right whitespace-nowrap">
-                @if ($janji->status === 'disetujui')
+                @if ($janji->status === 'disetujui' && auth()->user()->isDosen() && auth()->user()->dosenProfile?->id === $janji->dosen_id)
                   <form action="{{ route('bimbingan.status', $janji->id) }}" method="POST" class="inline">
                     @csrf
                     @method('PATCH')
@@ -179,6 +183,17 @@
 
           @if (auth()->user()->isMahasiswa() && $myTugasAkhir)
             <input type="hidden" name="tugas_akhir_id" value="{{ $myTugasAkhir->id }}">
+          @elseif (auth()->user()->isDosen())
+            <div>
+              <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Pilih Mahasiswa Bimbingan</label>
+              <select name="tugas_akhir_id" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
+                @forelse (($bimbinganTaList ?? []) as $ta)
+                  <option value="{{ $ta->id }}">{{ $ta->mahasiswa->user->name }} ({{ $ta->mahasiswa->nim }}) - {{ Str::limit($ta->judul, 40) }}</option>
+                @empty
+                  <option disabled value="">Belum ada mahasiswa bimbingan aktif</option>
+                @endforelse
+              </select>
+            </div>
           @else
             <div>
               <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Pilih Mahasiswa / Tugas Akhir</label>
@@ -190,14 +205,18 @@
             </div>
           @endif
 
-          <div>
-            <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Dosen Pembimbing</label>
-            <select name="dosen_id" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
-              @foreach ($dosenList as $dosen)
-                <option value="{{ $dosen->id }}">{{ $dosen->user->name }} ({{ $dosen->kode_dosen }})</option>
-              @endforeach
-            </select>
-          </div>
+          @if (auth()->user()->isDosen() && auth()->user()->dosenProfile)
+            <input type="hidden" name="dosen_id" value="{{ auth()->user()->dosenProfile->id }}">
+          @else
+            <div>
+              <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Dosen Pembimbing</label>
+              <select name="dosen_id" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
+                @foreach ($dosenList as $dosen)
+                  <option value="{{ $dosen->id }}">{{ $dosen->user->name }} ({{ $dosen->kode_dosen }})</option>
+                @endforeach
+              </select>
+            </div>
+          @endif
 
           <div>
             <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Tanggal & Jam Pertemuan</label>

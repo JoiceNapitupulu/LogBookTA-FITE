@@ -91,6 +91,11 @@ class User extends Authenticatable
         return $this->role === 'dosen';
     }
 
+    public function isPembimbingOf(TugasAkhir $tugasAkhir): bool
+    {
+        return $this->isDosen() && ($this->dosenProfile?->isPembimbingOf($tugasAkhir) ?? false);
+    }
+
     public function isKoordinator(): bool
     {
         return ($this->role === 'dosen' && ($this->dosenProfile?->is_koordinator_ta ?? false));

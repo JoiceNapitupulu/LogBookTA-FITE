@@ -78,8 +78,14 @@ class LogbookController extends Controller
 
     public function updateReview(UpdateLogbookReviewRequest $request, Logbook $logbook): RedirectResponse
     {
-        if (! Auth::user()->isDosen()) {
+        $user = $request->user() ?? Auth::user();
+        if (! $user || ! $user->isDosen()) {
             abort(403, 'Akses ditolak: Hanya Dosen Pembimbing yang berwenang mereview logbook mahasiswa.');
+        }
+
+        $dosenProfile = $user->dosenProfile;
+        if (! $dosenProfile || ! $dosenProfile->isPembimbingOf($logbook->tugasAkhir)) {
+            abort(403, 'Akses ditolak: Anda bukan dosen pembimbing untuk tugas akhir mahasiswa ini.');
         }
 
         $validated = $request->validated();
@@ -89,10 +95,7 @@ class LogbookController extends Controller
             $validated['file_revisi_dosen'] = $path;
         }
 
-        $dosenProfile = Auth::user()->dosenProfile;
-        if ($dosenProfile) {
-            $validated['verified_by_dosen_id'] = $dosenProfile->id;
-        }
+        $validated['verified_by_dosen_id'] = $dosenProfile->id;
 
         $logbook->update($validated);
 

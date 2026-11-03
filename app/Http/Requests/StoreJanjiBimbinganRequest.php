@@ -15,7 +15,7 @@ class StoreJanjiBimbinganRequest extends FormRequest
     {
         return [
             'tugas_akhir_id' => ['nullable', 'exists:tugas_akhir,id'],
-            'dosen_id' => ['required', 'exists:dosen_profiles,id'],
+            'dosen_id' => ['nullable', 'exists:dosen_profiles,id'],
             'tanggal_waktu' => ['required', 'date'],
             'topik_pembahasan' => ['required', 'string', 'max:255'],
             'metode' => ['required', 'in:offline,online'],

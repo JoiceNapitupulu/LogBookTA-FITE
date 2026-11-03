@@ -54,4 +54,24 @@ class DosenProfile extends Model
     {
         return $this->hasMany(Logbook::class, 'verified_by_dosen_id');
     }
+
+    /**
+     * Memeriksa apakah dosen ini adalah pembimbing 1 atau 2 dari Tugas Akhir tertentu
+     */
+    public function isPembimbingOf(TugasAkhir $tugasAkhir): bool
+    {
+        return $tugasAkhir->dosen_pembimbing_1_id === $this->id
+            || $tugasAkhir->dosen_pembimbing_2_id === $this->id;
+    }
+
+    /**
+     * Mendapatkan query Tugas Akhir mahasiswa bimbingan dosen ini
+     */
+    public function tugasAkhirBimbingan()
+    {
+        return TugasAkhir::where(function ($q) {
+            $q->where('dosen_pembimbing_1_id', $this->id)
+              ->orWhere('dosen_pembimbing_2_id', $this->id);
+        });
+    }
 }

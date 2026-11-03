@@ -47,11 +47,17 @@ class JanjiBimbinganController extends Controller
 
         // Get user's active tugas akhir for modal
         $myTugasAkhir = null;
+        $bimbinganTaList = collect();
         if ($user->isMahasiswa()) {
             $myTugasAkhir = $user->tugasAkhir();
+        } elseif ($user->isDosen() && $user->dosenProfile) {
+            $bimbinganTaList = TugasAkhir::where(function ($q) use ($user) {
+                $q->where('dosen_pembimbing_1_id', $user->dosenProfile->id)
+                  ->orWhere('dosen_pembimbing_2_id', $user->dosenProfile->id);
+            })->with('mahasiswa.user')->get();
         }
 
-        return view('bimbingan.index', compact('janjiList', 'dosenList', 'myTugasAkhir'));
+        return view('bimbingan.index', compact('janjiList', 'dosenList', 'myTugasAkhir', 'bimbinganTaList'));
     }
 
     public function store(StoreJanjiBimbinganRequest $request): RedirectResponse
@@ -64,13 +70,25 @@ class JanjiBimbinganController extends Controller
             if (! $tugasAkhir) {
                 abort(403, 'Akses ditolak: Anda belum memiliki Tugas Akhir aktif.');
             }
+            if (empty($validated['dosen_id'])) {
+                abort(422, 'Dosen pembimbing wajib dipilih.');
+            }
             $validated['tugas_akhir_id'] = $tugasAkhir->id;
             $validated['inisiator'] = 'mahasiswa';
         } else {
-            $validated['inisiator'] = 'dosen';
-            if ($user?->dosenProfile) {
-                $validated['dosen_id'] = $user->dosenProfile->id;
+            // Inisiator Dosen: hanya boleh untuk mahasiswa bimbingannya sendiri
+            $dosenProfile = $user?->dosenProfile;
+            if (! $dosenProfile) {
+                abort(403, 'Akses ditolak: Profil dosen tidak ditemukan.');
             }
+
+            $tugasAkhir = TugasAkhir::find($validated['tugas_akhir_id'] ?? null);
+            if (! $tugasAkhir || ! $dosenProfile->isPembimbingOf($tugasAkhir)) {
+                abort(403, 'Akses ditolak: Anda hanya dapat mengajukan janji bimbingan kepada mahasiswa bimbingan Anda.');
+            }
+
+            $validated['inisiator'] = 'dosen';
+            $validated['dosen_id'] = $dosenProfile->id;
         }
 
         $validated['status'] = 'menunggu_persetujuan';
@@ -85,8 +103,14 @@ class JanjiBimbinganController extends Controller
 
     public function updateStatus(Request $request, JanjiBimbingan $janjiBimbingan): RedirectResponse
     {
-        if (! Auth::user()->isDosen()) {
+        $user = $request->user() ?? Auth::user();
+        if (! $user || ! $user->isDosen()) {
             abort(403, 'Akses ditolak: Hanya Dosen yang berwenang memperbarui status janji bimbingan.');
+        }
+
+        $dosenProfile = $user->dosenProfile;
+        if (! $dosenProfile || $janjiBimbingan->dosen_id !== $dosenProfile->id) {
+            abort(403, 'Akses ditolak: Anda tidak memiliki wewenang untuk mengubah status janji bimbingan dosen lain.');
         }
 
         $request->validate([
