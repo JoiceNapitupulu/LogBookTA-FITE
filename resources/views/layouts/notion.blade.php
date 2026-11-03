@@ -378,32 +378,14 @@
         </nav>
       </div>
 
-      <!-- Bottom User Section & Logout (Pinned to the very bottom) -->
-      <div class="p-2 border-top bg-light mt-auto shrink-0" style="border-color: #e9ecef !important;">
-        @auth
-          <div class="d-flex align-items-center justify-content-between px-1 py-1">
-            <div class="d-flex align-items-center gap-2 overflow-hidden">
-              <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center fw-bold shrink-0 lh-1" style="width: 32px; height: 32px; font-size: 11px;">
-                {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
-              </div>
-              <div x-show="sidebarOpen" class="text-truncate text-start">
-                <p class="fw-semibold text-dark mb-0 text-truncate" style="font-size: 12px; line-height: 1.2;">{{ auth()->user()->name }}</p>
-                <p class="text-secondary mb-0 text-truncate" style="font-size: 10.5px; line-height: 1.2;">{{ auth()->user()->email }}</p>
-              </div>
-            </div>
-
-            <form action="{{ route('logout') }}" method="POST" x-show="sidebarOpen" class="mb-0">
-              @csrf
-              <button type="submit" class="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center p-0" title="Keluar dari akun" style="width: 30px; height: 30px;">
-                <i class="bi bi-box-arrow-right"></i>
-              </button>
-            </form>
-          </div>
-        @else
-          <a href="{{ route('login') }}" class="btn btn-dark btn-sm w-100">
-            Masuk Akun
-          </a>
-        @endauth
+      <!-- Sidebar Footer (System Version / Info) -->
+      <div class="p-2.5 border-top text-center mt-auto shrink-0 bg-light" style="border-color: #e9ecef !important;">
+        <span x-show="sidebarOpen" class="text-secondary small d-block" style="font-size: 11px;">
+          LogBookTA · FITE IT Del
+        </span>
+        <span x-show="!sidebarOpen" class="text-secondary small d-block" style="font-size: 9px;">
+          TA
+        </span>
       </div>
 
     </aside>
@@ -460,7 +442,7 @@
             </div>
           </div>
 
-          <!-- User Chip Kanan Atas -->
+          <!-- User Chip & Logout Kanan Atas -->
           @auth
             <div class="d-flex align-items-center gap-2 border-start ps-3" style="border-color: #e9ecef !important;">
               <div class="text-end d-none d-sm-block">
@@ -469,10 +451,22 @@
                   {{ strtoupper(str_replace('_', ' ', auth()->user()->role)) }}
                 </span>
               </div>
-              <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center fw-bold shrink-0 lh-1" style="width: 30px; height: 30px; font-size: 11px;">
+              <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center fw-bold shrink-0 lh-1" style="width: 32px; height: 32px; font-size: 11px;">
                 {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
               </div>
+
+              <!-- Tombol Logout Topbar -->
+              <form action="{{ route('logout') }}" method="POST" class="mb-0 ms-1">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center p-0" title="Keluar dari akun" style="width: 32px; height: 32px;">
+                  <i class="bi bi-box-arrow-right"></i>
+                </button>
+              </form>
             </div>
+          @else
+            <a href="{{ route('login') }}" class="btn btn-dark btn-sm">
+              Masuk Akun
+            </a>
           @endauth
 
         </div>

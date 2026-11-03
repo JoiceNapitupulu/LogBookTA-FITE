@@ -419,28 +419,41 @@
           </a>
         </div>
 
-        <div class="card-body">
+        <div class="card-body p-3 p-md-4">
           <div class="row g-3">
-            <div class="col-12 col-sm-6">
-              <div class="p-3 rounded border bg-light d-flex align-items-center justify-content-between">
-                <div>
-                  <span class="text-secondary small text-uppercase fw-semibold d-block">Menunggu Penunjukan Pembimbing</span>
-                  <p class="h4 fw-bold text-dark mt-1 mb-0">{{ $menungguAssignCount }} <span class="small fw-normal text-secondary">Mahasiswa</span></p>
+            <div class="col-12 col-md-6">
+              <div class="card h-100 border border-light-subtle bg-light shadow-xs d-flex flex-column">
+                <div class="card-body d-flex flex-column flex-grow-1 p-3">
+                  <span class="text-uppercase text-muted small fw-semibold d-block mb-1">Menunggu Penunjukan Pembimbing</span>
+                  <div class="d-flex align-items-baseline gap-1 mb-2">
+                    <span class="h3 fw-bold text-dark mb-0">{{ $menungguAssignCount }}</span>
+                    <span class="text-muted small">Mahasiswa</span>
+                  </div>
+                  <div class="mt-auto pt-3">
+                    <a href="{{ route('koordinator.index') }}" class="btn btn-dark btn-sm d-inline-flex align-items-center justify-content-center gap-1.5 w-100">
+                      <span>Plot Pembimbing</span>
+                      <i class="bi bi-arrow-right"></i>
+                    </a>
+                  </div>
                 </div>
-                <a href="{{ route('koordinator.index') }}" class="btn btn-dark btn-sm">Plot Pembimbing</a>
               </div>
             </div>
 
-            <div class="col-12 col-sm-6">
-              <div class="p-3 rounded border bg-light d-flex align-items-center justify-content-between">
-                <div>
-                  <span class="text-secondary small text-uppercase fw-semibold d-block">Ujian Siap Dijadwalkan (Berkas Lengkap)</span>
-                  <p class="h4 fw-bold text-success mt-1 mb-0">{{ $unassignedExamsCount }} <span class="small fw-normal text-secondary">Pengajuan</span></p>
+            <div class="col-12 col-md-6">
+              <div class="card h-100 border border-light-subtle bg-light shadow-xs d-flex flex-column">
+                <div class="card-body d-flex flex-column flex-grow-1 p-3">
+                  <span class="text-uppercase text-muted small fw-semibold d-block mb-1">Ujian Siap Dijadwalkan (Berkas Lengkap)</span>
+                  <div class="d-flex align-items-baseline gap-1 mb-2">
+                    <span class="h3 fw-bold text-success mb-0">{{ $unassignedExamsCount }}</span>
+                    <span class="text-muted small">Pengajuan</span>
+                  </div>
+                  <div class="mt-auto pt-3">
+                    <a href="{{ route('ujian.index') }}" class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center gap-1.5 w-100">
+                      <span>Tetapkan Jadwal</span>
+                      <i class="bi bi-arrow-right"></i>
+                    </a>
+                  </div>
                 </div>
-                <a href="{{ route('ujian.index') }}" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1">
-                  <span>Tetapkan Jadwal</span>
-                  <i class="bi bi-arrow-right"></i>
-                </a>
               </div>
             </div>
           </div>
@@ -467,28 +480,41 @@
           </a>
         </div>
 
-        <div class="card-body">
+        <div class="card-body p-3 p-md-4">
           <div class="row g-3">
-            <div class="col-12 col-sm-6">
-              <div class="p-3 rounded border bg-light d-flex align-items-center justify-content-between">
-                <div>
-                  <span class="text-secondary small text-uppercase fw-semibold d-block">Total Tugas Akhir Berjalan</span>
-                  <p class="h4 fw-bold text-dark mt-1 mb-0">{{ $totalTaAktif }} <span class="small fw-normal text-secondary">Mahasiswa</span></p>
+            <div class="col-12 col-md-6">
+              <div class="card h-100 border border-light-subtle bg-light shadow-xs d-flex flex-column">
+                <div class="card-body d-flex flex-column flex-grow-1 p-3">
+                  <span class="text-uppercase text-muted small fw-semibold d-block mb-1">Total Tugas Akhir Berjalan</span>
+                  <div class="d-flex align-items-baseline gap-1 mb-2">
+                    <span class="h3 fw-bold text-dark mb-0">{{ $totalTaAktif }}</span>
+                    <span class="text-muted small">Mahasiswa</span>
+                  </div>
+                  <div class="mt-auto pt-3">
+                    <a href="{{ route('kaprodi.index') }}" class="btn btn-dark btn-sm d-inline-flex align-items-center justify-content-center gap-1.5 w-100">
+                      <span>Pantau Mutu TA</span>
+                      <i class="bi bi-arrow-right"></i>
+                    </a>
+                  </div>
                 </div>
-                <a href="{{ route('kaprodi.index') }}" class="btn btn-dark btn-sm">Pantau Mutu TA</a>
               </div>
             </div>
 
-            <div class="col-12 col-sm-6">
-              <div class="p-3 rounded border bg-light d-flex align-items-center justify-content-between">
-                <div>
-                  <span class="text-secondary small text-uppercase fw-semibold d-block">Mahasiswa Siap Sidang</span>
-                  <p class="h4 fw-bold text-success mt-1 mb-0">{{ $totalMhsSiapSidang }} <span class="small fw-normal text-secondary">Mahasiswa</span></p>
+            <div class="col-12 col-md-6">
+              <div class="card h-100 border border-light-subtle bg-light shadow-xs d-flex flex-column">
+                <div class="card-body d-flex flex-column flex-grow-1 p-3">
+                  <span class="text-uppercase text-muted small fw-semibold d-block mb-1">Mahasiswa Siap Sidang</span>
+                  <div class="d-flex align-items-baseline gap-1 mb-2">
+                    <span class="h3 fw-bold text-success mb-0">{{ $totalMhsSiapSidang }}</span>
+                    <span class="text-muted small">Mahasiswa</span>
+                  </div>
+                  <div class="mt-auto pt-3">
+                    <a href="{{ route('kaprodi.index') }}" class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center gap-1.5 w-100">
+                      <span>Lihat Statistik</span>
+                      <i class="bi bi-arrow-right"></i>
+                    </a>
+                  </div>
                 </div>
-                <a href="{{ route('kaprodi.index') }}" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1">
-                  <span>Lihat Statistik</span>
-                  <i class="bi bi-arrow-right"></i>
-                </a>
               </div>
             </div>
           </div>
