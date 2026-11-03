@@ -146,6 +146,7 @@
 
   </div>
 
+  @if (!auth()->user()->isMahasiswa() && isset($allUjian))
   <!-- ================================================================= -->
   <!-- TAB 2: TEACHING ASSISTANT (VERIFIKATOR ARTEFAK) -->
   <!-- ================================================================= -->
@@ -328,6 +329,7 @@
       </div>
     </div>
   </div>
+  @endif
 
   @if (auth()->user()->isTA() || auth()->user()->isKoordinator())
   <!-- MODAL: VERIFIKASI DOKUMEN TA -->
@@ -402,7 +404,7 @@
             <div>
               <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Dosen Penguji 1</label>
               <select name="dosen_penguji_1" class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
-                @foreach ($dosenList as $d)
+                @foreach (($dosenList ?? []) as $d)
                   <option value="{{ $d->user->name }}">{{ $d->user->name }}</option>
                 @endforeach
               </select>
@@ -411,7 +413,7 @@
             <div>
               <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Dosen Penguji 2</label>
               <select name="dosen_penguji_2" class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
-                @foreach ($dosenList as $d)
+                @foreach (($dosenList ?? []) as $d)
                   <option value="{{ $d->user->name }}">{{ $d->user->name }}</option>
                 @endforeach
               </select>

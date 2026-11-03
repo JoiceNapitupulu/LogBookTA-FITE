@@ -29,9 +29,12 @@ class UjianController extends Controller
                     ->latest()
                     ->first();
             }
+
+            // Mahasiswa (baik TA maupun Non-TA) hanya menerima myUjian dan myTugasAkhir
+            return view('ujian.index', compact('myUjian', 'myTugasAkhir'));
         }
 
-        // 2. All exam dossiers with eager loading to prevent N+1 query
+        // 2. Data khusus Staf (Teaching Assistant, Koordinator, BAAK, atau Dosen)
         $allUjian = UjianTa::with([
             'tugasAkhir.mahasiswa.user',
             'tugasAkhir.pembimbing1.user',

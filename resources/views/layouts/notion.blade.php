@@ -149,10 +149,10 @@
 
   @if (session('error'))
     <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
-         class="fixed bottom-6 right-6 z-50 bg-[#C4383D] text-white px-4 py-3 rounded-lg shadow-xl flex items-center gap-3 text-xs">
-      <span class="w-2 h-2 rounded-full bg-white"></span>
-      <span>{{ session('error') }}</span>
-      <button @click="show = false" class="text-white hover:opacity-75 ml-2">&times;</button>
+         class="fixed bottom-6 right-6 z-50 bg-[#1B1B1E] text-white px-4 py-3 rounded-lg shadow-xl border border-[#3D3D3F] flex items-center gap-3 text-xs">
+      <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+      <span class="text-[#FCA5A5]">{{ session('error') }}</span>
+      <button @click="show = false" class="text-gray-400 hover:text-white ml-2">&times;</button>
     </div>
   @endif
 

@@ -46,7 +46,8 @@ class ArsipController extends Controller
 
     public function store(StoreArsipRequest $request): RedirectResponse
     {
-        if (! Auth::user()->isTA()) {
+        $user = $request->user() ?? Auth::user();
+        if (! ($user && $user->isTA())) {
             abort(403, 'Akses ditolak: Hanya Teaching Assistant yang berwenang mengunggah arsip tugas akhir alumni.');
         }
 
@@ -57,7 +58,7 @@ class ArsipController extends Controller
             $validated['file_dokumen'] = $path;
         }
 
-        $validated['uploaded_by_user_id'] = Auth::id();
+        $validated['uploaded_by_user_id'] = $user->id;
 
         ArsipTugasAkhir::create($validated);
 
