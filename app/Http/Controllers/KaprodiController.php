@@ -21,46 +21,63 @@ class KaprodiController extends Controller
 
         $dosenList = DosenProfile::with(['user', 'tugasAkhirPembimbing1', 'tugasAkhirPembimbing2'])->get();
 
+        $totalDosen = $dosenList->count();
+        $totalKoordinator = $dosenList->where('is_koordinator_ta', true)->count();
         $totalMhsAktif = TugasAkhir::count();
-        $proyeksiLulus = 89.4; // Persentase kelulusan tepat waktu FITE
-        $rasioDosen = $dosenList->count() > 0 ? round($totalMhsAktif / $dosenList->count(), 1) : 0;
+        $rasioDosen = $totalDosen > 0 ? round($totalMhsAktif / $totalDosen, 1) : 0;
         $siapSidang = TugasAkhir::whereIn('status', ['seminar_ta', 'sidang_akhir'])->count();
+        $selesaiCount = TugasAkhir::where('status', 'selesai')->count();
+        $persentaseSiapLulus = $totalMhsAktif > 0 ? round((($siapSidang + $selesaiCount) / $totalMhsAktif) * 100, 1) : 0;
 
-        // Sebaran bab progres
+        // Sebaran status TA konsisten dengan enum di DB:
+        // ['proposal', 'pengerjaan', 'sempro', 'seminar_ta', 'sidang_akhir', 'selesai', 'revisi']
         $sebaranBab = [
             'proposal' => TugasAkhir::where('status', 'proposal')->count(),
-            'bab_1_2' => TugasAkhir::where('status', 'pengerjaan')->count(),
+            'pengerjaan' => TugasAkhir::where('status', 'pengerjaan')->count(),
             'sempro' => TugasAkhir::where('status', 'sempro')->count(),
             'seminar_ta' => TugasAkhir::where('status', 'seminar_ta')->count(),
             'sidang_akhir' => TugasAkhir::where('status', 'sidang_akhir')->count(),
-            'selesai' => TugasAkhir::where('status', 'selesai')->count(),
+            'selesai' => $selesaiCount,
+            'revisi' => TugasAkhir::where('status', 'revisi')->count(),
+        ];
+
+        // Distribusi program studi riil dari DB
+        $sebaranProdi = [
+            'S1 Informatika' => TugasAkhir::where('prodi', 'S1 Informatika')->count(),
+            'S1 Sistem Informasi' => TugasAkhir::where('prodi', 'S1 Sistem Informasi')->count(),
+            'S1 Teknik Komputer' => TugasAkhir::where('prodi', 'S1 Teknik Komputer')->count(),
         ];
 
         return view('kaprodi.index', compact(
             'dosenList',
+            'totalDosen',
+            'totalKoordinator',
             'totalMhsAktif',
-            'proyeksiLulus',
             'rasioDosen',
             'siapSidang',
-            'sebaranBab'
+            'persentaseSiapLulus',
+            'sebaranBab',
+            'sebaranProdi'
         ));
     }
 
     public function toggleKoordinator(Request $request, DosenProfile $dosen): RedirectResponse
     {
-        if (! Auth::user()->isKaprodi()) {
+        $user = Auth::user();
+        if (! $user || ! $user->isKaprodi()) {
             abort(403, 'Akses ditolak: Hanya Kaprodi yang berwenang mengubah penugasan Koordinator TA.');
         }
 
         DB::transaction(function () use ($dosen) {
             $dosen->update([
-                'is_koordinator_ta' => !$dosen->is_koordinator_ta,
+                'is_koordinator_ta' => ! $dosen->is_koordinator_ta,
             ]);
         });
 
-        $status = $dosen->is_koordinator_ta ? 'diaktifkan sebagai Koordinator TA.' : 'dinonaktifkan dari Koordinator TA.';
+        $dosenName = $dosen->user->name ?? 'Dosen';
+        $status = $dosen->is_koordinator_ta ? 'diaktifkan sebagai Koordinator TA.' : 'dinonaktifkan dari status Koordinator TA.';
 
         return redirect()->back()
-            ->with('success', "Penugasan dosen {$dosen->user->name} {$status}");
+            ->with('success', "Penugasan dosen {$dosenName} {$status}");
     }
 }

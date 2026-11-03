@@ -26,9 +26,9 @@
     </div>
 
     <div class="p-4 bg-[#EBF5EE] rounded-xl border border-[#C4E5D1]">
-      <p class="text-xs text-[#2A7E4B]">Lulus Tepat Waktu</p>
-      <p class="text-3xl font-extrabold text-[#2A7E4B] mt-1">{{ $proyeksiLulus }}%</p>
-      <p class="text-[10px] text-[#2A7E4B] mt-0.5">Target Dikti &gt; 85%</p>
+      <p class="text-xs text-[#2A7E4B]">Tahap Akhir & Sidang</p>
+      <p class="text-3xl font-extrabold text-[#2A7E4B] mt-1">{{ $siapSidang }}</p>
+      <p class="text-[10px] text-[#2A7E4B] mt-0.5">{{ $persentaseSiapLulus }}% dari total TA aktif</p>
     </div>
 
     <div class="p-4 bg-[#F7F6F3] rounded-xl border border-[#E9E9E7]">
@@ -38,9 +38,9 @@
     </div>
 
     <div class="p-4 bg-[#2C2C2F] text-white rounded-xl border border-[#2C2C2F]">
-      <p class="text-xs text-gray-300">Siap Sidang Akhir</p>
-      <p class="text-3xl font-extrabold text-white mt-1">{{ $siapSidang }}</p>
-      <p class="text-[10px] text-gray-300 mt-0.5">Gelombang 1 Genap 25/26</p>
+      <p class="text-xs text-gray-300">Koordinator TA Ditugaskan</p>
+      <p class="text-3xl font-extrabold text-white mt-1">{{ $totalKoordinator }}</p>
+      <p class="text-[10px] text-gray-300 mt-0.5">Dari total {{ $totalDosen }} dosen FITE</p>
     </div>
   </div>
 
@@ -51,7 +51,7 @@
         <h3 class="text-sm font-bold text-[#37352F]">Penetapan & Penugasan Koordinator Tugas Akhir</h3>
         <p class="text-xs text-[#787774]">Kaprodi berwenang menetapkan dosen sebagai Koordinator TA program studi</p>
       </div>
-      <span class="text-xs text-[#787774]">Total Dosen: {{ $dosenList->count() }} Orang</span>
+      <span class="text-xs text-[#787774]">Total Dosen: {{ $totalDosen }} Orang ({{ $totalKoordinator }} Koordinator)</span>
     </div>
 
     <div class="overflow-x-auto">
@@ -66,11 +66,11 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-[#E9E9E7]">
-          @foreach ($dosenList as $dosen)
+          @forelse ($dosenList as $dosen)
             <tr class="hover:bg-[#F7F7F5] transition-colors">
               <td class="py-3 px-4">
                 <p class="font-bold text-[#37352F]">{{ $dosen->user->name }}</p>
-                <p class="text-[10px] text-[#787774]">NIDN: {{ $dosen->nidn }}</p>
+                <p class="text-[10px] text-[#787774]">NIDN: {{ $dosen->nidn ?? '-' }}</p>
               </td>
               <td class="py-3 px-4">
                 <span class="notion-pill-gray text-[10px] block mb-0.5">{{ $dosen->kode_dosen }}</span>
@@ -96,7 +96,11 @@
                 </form>
               </td>
             </tr>
-          @endforeach
+          @empty
+            <tr>
+              <td colspan="5" class="py-8 text-center text-[#787774]">Belum ada data dosen terdaftar.</td>
+            </tr>
+          @endforelse
         </tbody>
       </table>
     </div>
@@ -105,56 +109,31 @@
   <!-- Grafik & Analitik Statistik Kelulusan TA -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     
-    <!-- Statistik Kelulusan per Angkatan -->
+    <!-- Distribusi TA per Program Studi -->
     <div class="border border-[#E9E9E7] rounded-xl p-5 bg-[#FFFFFF] shadow-xs">
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h3 class="text-sm font-bold text-[#37352F]">Statistik Kelulusan Tepat Waktu (4 Tahun)</h3>
-          <p class="text-xs text-[#787774]">Tren tingkat penyelesaian TA mahasiswa FITE</p>
+          <h3 class="text-sm font-bold text-[#37352F]">Distribusi Tugas Akhir per Program Studi</h3>
+          <p class="text-xs text-[#787774]">Proporsi mahasiswa bimbingan pada fakultas FITE</p>
         </div>
-        <span class="notion-pill-green text-[10px]">Target &gt; 85%</span>
+        <span class="notion-pill-gray text-[10px]">Real-time Database</span>
       </div>
 
       <div class="space-y-3.5 text-xs">
-        <div>
-          <div class="flex justify-between font-semibold text-[#37352F] mb-1">
-            <span>Angkatan 2021 (Tahun Ajaran 2025/2026)</span>
-            <span>89.4% (Proyeksi)</span>
+        @foreach ($sebaranProdi as $namaProdi => $jumlahMhs)
+          @php
+            $persenProdi = $totalMhsAktif > 0 ? round(($jumlahMhs / $totalMhsAktif) * 100, 1) : 0;
+          @endphp
+          <div>
+            <div class="flex justify-between font-semibold text-[#37352F] mb-1">
+              <span>{{ $namaProdi }}</span>
+              <span>{{ $jumlahMhs }} Mhs ({{ $persenProdi }}%)</span>
+            </div>
+            <div class="w-full bg-[#E9E9E7] h-2.5 rounded-full overflow-hidden">
+              <div class="bg-[#2C2C2F] h-2.5 rounded-full" style="width: {{ $persenProdi }}%"></div>
+            </div>
           </div>
-          <div class="w-full bg-[#E9E9E7] h-2.5 rounded-full overflow-hidden">
-            <div class="bg-[#2C2C2F] h-2.5 rounded-full" style="width: 89.4%"></div>
-          </div>
-        </div>
-
-        <div>
-          <div class="flex justify-between font-semibold text-[#37352F] mb-1">
-            <span>Angkatan 2020 (Lulus 2024/2025)</span>
-            <span>87.2%</span>
-          </div>
-          <div class="w-full bg-[#E9E9E7] h-2.5 rounded-full overflow-hidden">
-            <div class="bg-[#3D3D3F] h-2.5 rounded-full" style="width: 87.2%"></div>
-          </div>
-        </div>
-
-        <div>
-          <div class="flex justify-between font-semibold text-[#37352F] mb-1">
-            <span>Angkatan 2019 (Lulus 2023/2024)</span>
-            <span>82.5%</span>
-          </div>
-          <div class="w-full bg-[#E9E9E7] h-2.5 rounded-full overflow-hidden">
-            <div class="bg-[#5D5D5F] h-2.5 rounded-full" style="width: 82.5%"></div>
-          </div>
-        </div>
-
-        <div>
-          <div class="flex justify-between font-semibold text-[#37352F] mb-1">
-            <span>Angkatan 2018 (Lulus 2022/2023)</span>
-            <span>78.9%</span>
-          </div>
-          <div class="w-full bg-[#E9E9E7] h-2.5 rounded-full overflow-hidden">
-            <div class="bg-[#787774] h-2.5 rounded-full" style="width: 78.9%"></div>
-          </div>
-        </div>
+        @endforeach
       </div>
     </div>
 
@@ -162,28 +141,28 @@
     <div class="border border-[#E9E9E7] rounded-xl p-5 bg-[#FFFFFF] shadow-xs">
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h3 class="text-sm font-bold text-[#37352F]">Rekapitulasi Sebaran Progres Bab TA</h3>
-          <p class="text-xs text-[#787774]">Distribusi mahasiswa pada semester berjalan</p>
+          <h3 class="text-sm font-bold text-[#37352F]">Rekapitulasi Sebaran Status Pengerjaan TA</h3>
+          <p class="text-xs text-[#787774]">Distribusi tahapan mahasiswa pada semester berjalan</p>
         </div>
-        <span class="notion-pill-gray text-[10px]">Genap 25/26</span>
+        <span class="notion-pill-gray text-[10px]">Data Terkini</span>
       </div>
 
       <div class="grid grid-cols-2 gap-2.5 text-xs">
         <div class="p-3 bg-[#F7F6F3] rounded border border-[#E9E9E7]">
-          <span class="text-[#787774] block">Proposal & Sempro</span>
-          <p class="text-xl font-bold text-[#37352F] mt-1">{{ $sebaranBab['proposal'] + $sebaranBab['sempro'] }} Mhs</p>
+          <span class="text-[#787774] block">Proposal & Pengerjaan</span>
+          <p class="text-xl font-bold text-[#37352F] mt-1">{{ ($sebaranBab['proposal'] ?? 0) + ($sebaranBab['pengerjaan'] ?? 0) }} Mhs</p>
         </div>
         <div class="p-3 bg-[#F7F6F3] rounded border border-[#E9E9E7]">
-          <span class="text-[#787774] block">Pengerjaan Bab 1-3</span>
-          <p class="text-xl font-bold text-[#37352F] mt-1">{{ $sebaranBab['bab_1_2'] }} Mhs</p>
+          <span class="text-[#787774] block">Seminar Proposal (Sempro)</span>
+          <p class="text-xl font-bold text-[#37352F] mt-1">{{ $sebaranBab['sempro'] ?? 0 }} Mhs</p>
         </div>
         <div class="p-3 bg-[#F7F6F3] rounded border border-[#E9E9E7]">
-          <span class="text-[#787774] block">Seminar TA (Bab 4-5)</span>
-          <p class="text-xl font-bold text-[#37352F] mt-1">{{ $sebaranBab['seminar_ta'] }} Mhs</p>
+          <span class="text-[#787774] block">Seminar TA (Progres)</span>
+          <p class="text-xl font-bold text-[#37352F] mt-1">{{ $sebaranBab['seminar_ta'] ?? 0 }} Mhs</p>
         </div>
         <div class="p-3 bg-[#EBF5EE] rounded border border-[#C4E5D1]">
-          <span class="text-[#2A7E4B] font-semibold block">Siap Sidang Akhir</span>
-          <p class="text-xl font-bold text-[#2A7E4B] mt-1">{{ $sebaranBab['sidang_akhir'] + $sebaranBab['selesai'] }} Mhs</p>
+          <span class="text-[#2A7E4B] font-semibold block">Siap Sidang & Selesai</span>
+          <p class="text-xl font-bold text-[#2A7E4B] mt-1">{{ ($sebaranBab['sidang_akhir'] ?? 0) + ($sebaranBab['selesai'] ?? 0) }} Mhs</p>
         </div>
       </div>
     </div>

@@ -318,6 +318,46 @@
       </div>
     @endif
 
+    @if ($user->isKaprodi())
+      <!-- Panel Ringkas Kaprodi -->
+      <div class="border border-[#E9E9E7] rounded-xl p-5 bg-[#FAFAF9] shadow-xs">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#E9E9E7] gap-2 mb-4">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">📊</span>
+            <div>
+              <h3 class="text-sm font-bold text-[#37352F]">Ringkasan Mutu & Statistik Kaprodi</h3>
+              <p class="text-xs text-[#787774]">Pengawasan mutu kelulusan tugas akhir dan beban bimbingan dosen FITE</p>
+            </div>
+          </div>
+          <a href="{{ route('kaprodi.index') }}" class="notion-btn-secondary text-xs">
+            Buka Panel Kaprodi &rarr;
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div class="p-4 rounded-lg border border-[#E9E9E7] bg-[#FFFFFF] flex items-center justify-between">
+            <div>
+              <p class="text-[#787774] text-[11px] font-medium uppercase tracking-wider">Total Tugas Akhir Berjalan</p>
+              <p class="text-2xl font-bold text-[#37352F] mt-1">{{ $totalTaAktif }} <span class="text-xs font-normal text-[#787774]">Mahasiswa</span></p>
+            </div>
+            <a href="{{ route('kaprodi.index') }}" class="notion-btn-primary text-xs py-1.5 px-3">
+              Pantau Mutu TA
+            </a>
+          </div>
+
+          <div class="p-4 rounded-lg border border-[#E9E9E7] bg-[#FFFFFF] flex items-center justify-between">
+            <div>
+              <p class="text-[#787774] text-[11px] font-medium uppercase tracking-wider">Mahasiswa Siap Sidang</p>
+              <p class="text-2xl font-bold text-[#2A7E4B] mt-1">{{ $totalMhsSiapSidang }} <span class="text-xs font-normal text-[#787774]">Mahasiswa</span></p>
+            </div>
+            <a href="{{ route('kaprodi.index') }}" class="notion-btn-primary text-xs py-1.5 px-3">
+              Lihat Statistik &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+    @endif
+
     <!-- Tabel Mahasiswa Bimbingan -->
     <div class="border border-[#E9E9E7] rounded-xl overflow-hidden bg-[#FFFFFF]">
       <div class="p-4 border-b border-[#E9E9E7] flex items-center justify-between">
