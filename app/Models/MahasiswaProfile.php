@@ -87,4 +87,19 @@ class MahasiswaProfile extends Model
             'tugas_akhir_id'
         );
     }
+
+    /**
+     * Scope mahasiswa yang eligible untuk dimasukkan ke kelompok TA
+     * (is_ta = true dan belum terdaftar di tabel pivot anggota_tugas_akhir)
+     */
+    public function scopeEligibleAnggotaTa($query, ?string $prodi = null)
+    {
+        $q = $query->where('is_ta', true)->whereDoesntHave('anggotaTugasAkhir');
+
+        if ($prodi) {
+            $q->where('prodi', $prodi);
+        }
+
+        return $q;
+    }
 }

@@ -32,6 +32,23 @@
     @endif
   </div>
 
+  @if (auth()->user()->isMahasiswa() && $myTa)
+    <div class="px-4 py-2.5 bg-[#F7F7F5] border border-[#E9E9E7] rounded-lg text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-[#37352F]">{{ Str::limit($myTa->judul, 70) }}</span>
+        <span class="notion-pill-gray text-[10px]">{{ $myTa->prodi }}</span>
+      </div>
+      @if ($myTa->anggota && $myTa->anggota->isNotEmpty())
+        <div class="flex items-center gap-1.5 text-[11px] text-[#787774]">
+          <span class="font-medium">Kelompok:</span>
+          @foreach ($myTa->anggota as $member)
+            <span class="font-semibold text-[#37352F]">{{ $member->user->name ?? '-' }} ({{ $member->nim }})</span>{{ !$loop->last ? ' • ' : '' }}
+          @endforeach
+        </div>
+      @endif
+    </div>
+  @endif
+
   <!-- Notion Database View Bar (Controls & Filters) -->
   <div class="flex flex-wrap items-center justify-between gap-3 text-xs">
     

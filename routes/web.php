@@ -57,6 +57,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['ensure.staff', 'role:koordinator'])->group(function () {
         Route::get('/koordinator', [KoordinatorController::class, 'index'])->name('koordinator.index');
         Route::post('/koordinator/assign-pembimbing', [KoordinatorController::class, 'assignPembimbing'])->name('koordinator.assign');
+        Route::post('/koordinator/tugas-akhir/{tugasAkhir}/anggota', [KoordinatorController::class, 'addAnggota'])->name('koordinator.anggota.store');
+        Route::delete('/koordinator/tugas-akhir/{tugasAkhir}/anggota/{mahasiswa}', [KoordinatorController::class, 'removeAnggota'])->name('koordinator.anggota.destroy');
     });
 
     // Panel Eksekutif Kaprodi (Hanya Kaprodi, Mahasiswa dilarang keras)

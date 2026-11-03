@@ -4,7 +4,19 @@
 @section('breadcrumb', 'Koordinator TA')
 
 @section('content')
-<div class="space-y-6" x-data="{ assignModal: false, selectedTa: null, openAssign(ta) { this.selectedTa = ta; this.assignModal = true; } }">
+<div class="space-y-6" x-data="{ 
+  assignModal: false, 
+  kelompokModal: false, 
+  selectedTa: null, 
+  openAssign(ta) { 
+    this.selectedTa = ta; 
+    this.assignModal = true; 
+  },
+  openKelompok(ta) {
+    this.selectedTa = ta;
+    this.kelompokModal = true;
+  }
+}">
 
   <!-- Header Notion -->
   <div class="border-b border-[#E9E9E7] pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -128,7 +140,10 @@
               <td class="py-3 px-4 whitespace-nowrap">
                 <span class="notion-pill-gray uppercase text-[10px]">{{ str_replace('_', ' ', $ta->status) }}</span>
               </td>
-              <td class="py-3 px-4 text-right whitespace-nowrap">
+              <td class="py-3 px-4 text-right whitespace-nowrap space-x-1.5">
+                <button @click="openKelompok({{ $ta->toJson() }})" class="notion-btn-secondary text-xs py-1 px-2.5">
+                  Kelola Anggota ({{ $ta->jumlahAnggota() }})
+                </button>
                 <button @click="openAssign({{ $ta->toJson() }})" class="notion-btn-primary text-xs py-1 px-2.5">
                   Atur Pembimbing
                 </button>
@@ -195,6 +210,123 @@
               <button type="submit" class="notion-btn-primary text-xs">Simpan Penetapan</button>
             </div>
           </form>
+        </template>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: KELOLA ANGGOTA KELOMPOK TUGAS AKHIR -->
+  <div x-show="kelompokModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
+    <div class="fixed inset-0 bg-[#0A0A0B]/40 backdrop-blur-xs" @click="kelompokModal = false"></div>
+    <div class="flex min-h-full items-center justify-center p-4">
+      <div class="relative w-full max-w-lg bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-6 z-10" @click.away="kelompokModal = false">
+        
+        <div class="flex items-center justify-between pb-3 border-b border-[#E9E9E7] mb-4">
+          <div>
+            <h3 class="text-sm font-bold text-[#37352F]">Kelola Anggota Kelompok Tugas Akhir</h3>
+            <p class="text-[11px] text-[#787774]">Setiap TA dapat memiliki 1 hingga maksimal 3 mahasiswa setara (tanpa ketua).</p>
+          </div>
+          <button @click="kelompokModal = false" class="text-gray-400 hover:text-black">&times;</button>
+        </div>
+
+        <template x-if="selectedTa">
+          <div class="space-y-5 text-xs">
+            <!-- Info TA -->
+            <div class="p-3 bg-[#F7F6F3] rounded border border-[#E9E9E7]">
+              <div class="flex items-center gap-1.5 mb-1">
+                <span class="notion-pill-gray text-[10px]" x-text="selectedTa.prodi"></span>
+                <span class="text-[10px] text-[#787774]">TA ID: #<span x-text="selectedTa.id"></span></span>
+              </div>
+              <p class="font-bold text-[#37352F] text-xs leading-snug" x-text="selectedTa.judul"></p>
+            </div>
+
+            <!-- Daftar Anggota Saat Ini -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-bold uppercase tracking-wider text-[#787774] text-[10px]">
+                  Anggota Saat Ini (<span x-text="selectedTa.anggota?.length ?? 0"></span>/3 Mahasiswa)
+                </span>
+                <span class="text-[10px] text-[#787774]">Minimal 1, Maksimal 3</span>
+              </div>
+
+              <div class="divide-y divide-[#E9E9E7] border border-[#E9E9E7] rounded-lg overflow-hidden bg-white">
+                <template x-for="(member, index) in (selectedTa.anggota || [])" :key="member.id">
+                  <div class="p-3 flex items-center justify-between hover:bg-[#F7F7F5] transition-colors">
+                    <div class="flex items-center gap-2.5">
+                      <div class="w-6 h-6 rounded-full bg-[#E3E2E0] flex items-center justify-center font-bold text-[10px] text-[#37352F]" x-text="index + 1"></div>
+                      <div>
+                        <p class="font-bold text-[#37352F]" x-text="member.user?.name ?? '-'"></p>
+                        <p class="text-[10px] text-[#787774]">NIM: <span x-text="member.nim"></span> • <span x-text="member.user?.email"></span></p>
+                      </div>
+                    </div>
+
+                    <!-- Tombol Hapus Anggota -->
+                    <div>
+                      <template x-if="(selectedTa.anggota?.length || 0) > 1">
+                        <form :action="'{{ url('/koordinator/tugas-akhir') }}/' + selectedTa.id + '/anggota/' + member.id" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mengeluarkan mahasiswa ini dari kelompok TA?');">
+                          @csrf
+                          @method('DELETE')
+                          <button type="submit" class="px-2 py-1 text-[11px] font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded border border-rose-200 transition-colors">
+                            Hapus
+                          </button>
+                        </form>
+                      </template>
+                      <template x-if="(selectedTa.anggota?.length || 0) <= 1">
+                        <span class="px-2 py-1 text-[10px] text-[#787774] bg-[#F7F7F5] rounded border border-[#E9E9E7]" title="Minimal 1 anggota tersisa">
+                          Terkunci (Min 1)
+                        </span>
+                      </template>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- Form Tambah Anggota Baru -->
+            <div class="pt-3 border-t border-[#E9E9E7]">
+              <!-- Jika sudah penuh 3 anggota -->
+              <template x-if="(selectedTa.anggota?.length || 0) >= 3">
+                <div class="p-3 rounded bg-amber-50 border border-amber-200 text-amber-800 text-[11px] flex items-center gap-2">
+                  <span>⚠️</span>
+                  <span>Kelompok ini sudah mencapai batas maksimal <strong>3 mahasiswa</strong>. Hapus anggota terlebih dahulu jika ingin mengganti.</span>
+                </div>
+              </template>
+
+              <!-- Jika masih bisa tambah (< 3) -->
+              <template x-if="(selectedTa.anggota?.length || 0) < 3">
+                <form :action="'{{ url('/koordinator/tugas-akhir') }}/' + selectedTa.id + '/anggota'" method="POST" class="space-y-3">
+                  @csrf
+                  <div>
+                    <label class="block font-semibold uppercase tracking-wider text-[#787774] text-[10px] mb-1">
+                      Tambah Mahasiswa ke Kelompok (Slot Tersedia: <span x-text="3 - (selectedTa.anggota?.length || 0)"></span>)
+                    </label>
+                    <select name="mahasiswa_id" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F] text-xs">
+                      <option value="">-- Pilih Mahasiswa Belum Berkelompok --</option>
+                      @forelse ($eligibleMhsList as $emhs)
+                        <option value="{{ $emhs->id }}" x-show="!selectedTa.anggota?.some(m => m.id === {{ $emhs->id }})">
+                          {{ $emhs->user->name ?? '-' }} (NIM: {{ $emhs->nim }}) — {{ $emhs->prodi }}
+                        </option>
+                      @empty
+                        <option disabled value="">Tidak ada mahasiswa yang eligible/belum berkelompok</option>
+                      @endforelse
+                    </select>
+                    <p class="text-[10px] text-[#787774] mt-1">Hanya menampilkan mahasiswa TA aktif yang belum terdaftar di kelompok manapun.</p>
+                  </div>
+
+                  <div class="flex items-center justify-end gap-2">
+                    <button type="submit" class="notion-btn-primary text-xs">
+                      <span>+</span> Tambahkan ke Kelompok
+                    </button>
+                  </div>
+                </form>
+              </template>
+            </div>
+
+            <div class="flex justify-end pt-2 border-t border-[#E9E9E7]">
+              <button type="button" @click="kelompokModal = false" class="notion-btn-secondary text-xs">Tutup</button>
+            </div>
+          </div>
         </template>
 
       </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreLogbookRequest;
 use App\Http\Requests\UpdateLogbookReviewRequest;
+use App\Models\DosenProfile;
 use App\Models\Logbook;
 use App\Models\TugasAkhir;
 use Illuminate\Http\RedirectResponse;
