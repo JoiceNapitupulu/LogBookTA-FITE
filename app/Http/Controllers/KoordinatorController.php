@@ -42,6 +42,10 @@ class KoordinatorController extends Controller
 
     public function assignPembimbing(Request $request): RedirectResponse
     {
+        if (! Auth::user()->isKoordinator()) {
+            abort(403, 'Akses ditolak: Hanya Koordinator TA yang berwenang menetapkan Dosen Pembimbing.');
+        }
+
         $request->validate([
             'tugas_akhir_id' => ['required', 'exists:tugas_akhir,id'],
             'dosen_pembimbing_1_id' => ['required', 'exists:dosen_profiles,id'],

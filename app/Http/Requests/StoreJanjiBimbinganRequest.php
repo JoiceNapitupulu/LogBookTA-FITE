@@ -8,13 +8,13 @@ class StoreJanjiBimbinganRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check();
+        return auth()->check() && (auth()->user()->isMahasiswaTa() || auth()->user()->isDosen());
     }
 
     public function rules(): array
     {
         return [
-            'tugas_akhir_id' => ['required', 'exists:tugas_akhir,id'],
+            'tugas_akhir_id' => ['nullable', 'exists:tugas_akhir,id'],
             'dosen_id' => ['required', 'exists:dosen_profiles,id'],
             'tanggal_waktu' => ['required', 'date'],
             'topik_pembahasan' => ['required', 'string', 'max:255'],

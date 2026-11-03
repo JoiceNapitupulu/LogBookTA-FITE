@@ -8,13 +8,13 @@ class StoreUjianTaRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->isMahasiswa();
+        return auth()->check() && auth()->user()->isMahasiswaTa();
     }
 
     public function rules(): array
     {
         return [
-            'tugas_akhir_id' => ['required', 'exists:tugas_akhir,id'],
+            'tugas_akhir_id' => ['nullable', 'exists:tugas_akhir,id'],
             'jenis_ujian' => ['required', 'in:sempro,seminar_ta,sidang_akhir'],
             'file_persyaratan' => ['required', 'file', 'mimes:pdf,zip,rar', 'max:35840'],
         ];

@@ -55,6 +55,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Dapatkan instance TugasAkhir milik mahasiswa jika ada
+     */
+    public function tugasAkhir(): ?TugasAkhir
+    {
+        return $this->mahasiswaProfile?->tugasAkhir;
+    }
+
+    /**
      * Relasi ke profil dosen jika role = dosen atau kaprodi
      */
     public function dosenProfile(): HasOne

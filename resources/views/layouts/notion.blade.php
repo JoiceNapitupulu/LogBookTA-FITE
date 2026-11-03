@@ -281,13 +281,13 @@
           </div>
 
           <!-- Section 3: Manajemen Program Studi (Koordinator & Kaprodi) -->
-          @if (auth()->check() && (auth()->user()->isKoordinator() || auth()->user()->isKaprodi() || auth()->user()->isDosen()))
+          @if (auth()->check() && (auth()->user()->isKoordinator() || auth()->user()->isKaprodi()))
           <div>
             <div x-show="sidebarOpen" class="px-2 mb-1 text-[10px] font-semibold uppercase tracking-wider text-[#787774]">
               Manajemen Program Studi
             </div>
             <div class="space-y-0.5">
-              @if (auth()->user()->isKoordinator() || auth()->user()->isKaprodi())
+              @if (auth()->user()->isKoordinator())
               <a href="{{ route('koordinator.index') }}" 
                  class="flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('koordinator.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
                  title="Panel Koordinator TA">

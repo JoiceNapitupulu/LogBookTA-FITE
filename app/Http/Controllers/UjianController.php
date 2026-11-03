@@ -22,7 +22,7 @@ class UjianController extends Controller
         $myUjian = null;
         $myTugasAkhir = null;
         if ($user->isMahasiswa()) {
-            $myTugasAkhir = TugasAkhir::whereHas('mahasiswa', fn ($q) => $q->where('user_id', $user->id))->first();
+            $myTugasAkhir = $user->tugasAkhir();
             if ($myTugasAkhir) {
                 $myUjian = UjianTa::where('tugas_akhir_id', $myTugasAkhir->id)
                     ->with(['verifiedByTa', 'tugasAkhir.pembimbing1.user', 'tugasAkhir.pembimbing2.user'])
@@ -47,7 +47,18 @@ class UjianController extends Controller
 
     public function store(StoreUjianTaRequest $request): RedirectResponse
     {
+        $user = $request->user() ?? Auth::user();
+        if (! $user || ! $user->isMahasiswa()) {
+            abort(403, 'Akses ditolak: Hanya Mahasiswa yang berwenang mendaftar ujian TA.');
+        }
+
+        $tugasAkhir = $user->tugasAkhir();
+        if (! $tugasAkhir) {
+            abort(403, 'Akses ditolak: Anda belum terdaftar dalam Tugas Akhir aktif.');
+        }
+
         $validated = $request->validated();
+        $validated['tugas_akhir_id'] = $tugasAkhir->id;
 
         if ($request->hasFile('file_persyaratan')) {
             $path = $request->file('file_persyaratan')->store('uploads/persyaratan', 'public');
@@ -67,6 +78,11 @@ class UjianController extends Controller
 
     public function verifikasiDokumen(Request $request, UjianTa $ujian): RedirectResponse
     {
+        $user = Auth::user();
+        if (! ($user->isTA() || $user->isKoordinator())) {
+            abort(403, 'Akses ditolak: Hanya Teaching Assistant atau Koordinator TA yang berwenang memverifikasi dokumen ujian.');
+        }
+
         $request->validate([
             'status_dokumen' => ['required', 'in:berkas_lengkap,berkas_kurang'],
             'catatan_verifikasi_ta' => ['nullable', 'string'],
@@ -89,6 +105,11 @@ class UjianController extends Controller
 
     public function tetapkanJadwal(Request $request, UjianTa $ujian): RedirectResponse
     {
+        $user = Auth::user();
+        if (! $user->isKoordinator()) {
+            abort(403, 'Akses ditolak: Hanya Koordinator TA yang berwenang menetapkan jadwal ujian.');
+        }
+
         $request->validate([
             'tanggal_ujian' => ['required', 'date'],
             'dosen_penguji_1' => ['nullable', 'string'],
@@ -108,6 +129,11 @@ class UjianController extends Controller
 
     public function alokasiFasilitas(Request $request, UjianTa $ujian): RedirectResponse
     {
+        $user = Auth::user();
+        if (! $user->isBaak()) {
+            abort(403, 'Akses ditolak: Hanya BAAK yang berwenang mengalokasikan fasilitas dan ruangan ujian.');
+        }
+
         $request->validate([
             'ruangan' => ['required', 'string', 'max:100'],
             'jam_mulai' => ['required'],

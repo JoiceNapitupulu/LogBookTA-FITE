@@ -42,6 +42,10 @@ class KaprodiController extends Controller
 
     public function toggleKoordinator(Request $request, DosenProfile $dosen): RedirectResponse
     {
+        if (! Auth::user()->isKaprodi()) {
+            abort(403, 'Akses ditolak: Hanya Kaprodi yang berwenang mengubah penugasan Koordinator TA.');
+        }
+
         DB::transaction(function () use ($dosen) {
             $dosen->update([
                 'is_koordinator_ta' => !$dosen->is_koordinator_ta,

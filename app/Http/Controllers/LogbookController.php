@@ -17,14 +17,13 @@ class LogbookController extends Controller
     {
         $user = Auth::user();
         $query = Logbook::with(['tugasAkhir.mahasiswa.user', 'verifiedBy.user']);
+        $myTa = null;
 
         if ($user->isMahasiswa()) {
-            $tugasAkhir = TugasAkhir::whereHas('mahasiswa', function ($q) use ($user) {
-                $q->where('user_id', $user->id);
-            })->first();
+            $myTa = $user->tugasAkhir();
 
-            if ($tugasAkhir) {
-                $query->where('tugas_akhir_id', $tugasAkhir->id);
+            if ($myTa) {
+                $query->where('tugas_akhir_id', $myTa->id);
             } else {
                 $query->whereRaw('1 = 0');
             }
@@ -48,12 +47,21 @@ class LogbookController extends Controller
 
         $logbooks = $query->latest('tanggal')->paginate(15)->withQueryString();
 
-        return view('logbook.index', compact('logbooks'));
+        return view('logbook.index', compact('logbooks', 'myTa'));
     }
 
     public function store(StoreLogbookRequest $request): RedirectResponse
     {
+        $user = $request->user() ?? Auth::user();
         $validated = $request->validated();
+
+        if ($user && $user->isMahasiswa()) {
+            $tugasAkhir = $user->tugasAkhir();
+            if (! $tugasAkhir) {
+                abort(403, 'Akses ditolak: Anda belum terdaftar dalam pengerjaan Tugas Akhir.');
+            }
+            $validated['tugas_akhir_id'] = $tugasAkhir->id;
+        }
 
         if ($request->hasFile('file_dokumen_mhs')) {
             $path = $request->file('file_dokumen_mhs')->store('uploads/logbooks', 'public');
@@ -70,6 +78,10 @@ class LogbookController extends Controller
 
     public function updateReview(UpdateLogbookReviewRequest $request, Logbook $logbook): RedirectResponse
     {
+        if (! Auth::user()->isDosen()) {
+            abort(403, 'Akses ditolak: Hanya Dosen Pembimbing yang berwenang mereview logbook mahasiswa.');
+        }
+
         $validated = $request->validated();
 
         if ($request->hasFile('file_revisi_dosen')) {

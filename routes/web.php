@@ -53,11 +53,15 @@ Route::middleware('auth')->group(function () {
         Route::patch('/ujian/{ujian}/fasilitas', [UjianController::class, 'alokasiFasilitas'])->name('ujian.fasilitas');
     });
 
-    // Panel Koordinator TA
-    Route::get('/koordinator', [KoordinatorController::class, 'index'])->name('koordinator.index');
-    Route::post('/koordinator/assign-pembimbing', [KoordinatorController::class, 'assignPembimbing'])->name('koordinator.assign');
+    // Panel Koordinator TA (Hanya Koordinator TA, Mahasiswa dilarang keras)
+    Route::middleware(['ensure.staff', 'role:koordinator'])->group(function () {
+        Route::get('/koordinator', [KoordinatorController::class, 'index'])->name('koordinator.index');
+        Route::post('/koordinator/assign-pembimbing', [KoordinatorController::class, 'assignPembimbing'])->name('koordinator.assign');
+    });
 
-    // Panel Eksekutif Kaprodi
-    Route::get('/kaprodi', [KaprodiController::class, 'index'])->name('kaprodi.index');
-    Route::patch('/kaprodi/dosen/{dosen}/toggle-koordinator', [KaprodiController::class, 'toggleKoordinator'])->name('kaprodi.toggle-koordinator');
+    // Panel Eksekutif Kaprodi (Hanya Kaprodi, Mahasiswa dilarang keras)
+    Route::middleware(['ensure.staff', 'role:kaprodi'])->group(function () {
+        Route::get('/kaprodi', [KaprodiController::class, 'index'])->name('kaprodi.index');
+        Route::patch('/kaprodi/dosen/{dosen}/toggle-koordinator', [KaprodiController::class, 'toggleKoordinator'])->name('kaprodi.toggle-koordinator');
+    });
 });

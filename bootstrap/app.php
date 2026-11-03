@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureIsMahasiswaTa;
+use App\Http\Middleware\EnsureIsStaff;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => RoleMiddleware::class,
             'ensure.mahasiswa.ta' => EnsureIsMahasiswaTa::class,
+            'ensure.staff' => EnsureIsStaff::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

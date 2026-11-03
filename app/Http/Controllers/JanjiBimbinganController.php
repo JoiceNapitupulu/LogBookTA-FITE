@@ -48,7 +48,7 @@ class JanjiBimbinganController extends Controller
         // Get user's active tugas akhir for modal
         $myTugasAkhir = null;
         if ($user->isMahasiswa()) {
-            $myTugasAkhir = TugasAkhir::whereHas('mahasiswa', fn ($q) => $q->where('user_id', $user->id))->first();
+            $myTugasAkhir = $user->tugasAkhir();
         }
 
         return view('bimbingan.index', compact('janjiList', 'dosenList', 'myTugasAkhir'));
@@ -56,8 +56,23 @@ class JanjiBimbinganController extends Controller
 
     public function store(StoreJanjiBimbinganRequest $request): RedirectResponse
     {
+        $user = $request->user() ?? Auth::user();
         $validated = $request->validated();
-        $validated['inisiator'] = Auth::user()->isMahasiswa() ? 'mahasiswa' : 'dosen';
+
+        if ($user && $user->isMahasiswa()) {
+            $tugasAkhir = $user->tugasAkhir();
+            if (! $tugasAkhir) {
+                abort(403, 'Akses ditolak: Anda belum memiliki Tugas Akhir aktif.');
+            }
+            $validated['tugas_akhir_id'] = $tugasAkhir->id;
+            $validated['inisiator'] = 'mahasiswa';
+        } else {
+            $validated['inisiator'] = 'dosen';
+            if ($user?->dosenProfile) {
+                $validated['dosen_id'] = $user->dosenProfile->id;
+            }
+        }
+
         $validated['status'] = 'menunggu_persetujuan';
 
         DB::transaction(function () use ($validated) {
@@ -70,6 +85,10 @@ class JanjiBimbinganController extends Controller
 
     public function updateStatus(Request $request, JanjiBimbingan $janjiBimbingan): RedirectResponse
     {
+        if (! Auth::user()->isDosen()) {
+            abort(403, 'Akses ditolak: Hanya Dosen yang berwenang memperbarui status janji bimbingan.');
+        }
+
         $request->validate([
             'status' => ['required', 'in:disetujui,ditolak,selesai'],
             'alasan_penolakan' => ['nullable', 'string', 'max:500'],

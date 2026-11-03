@@ -39,6 +39,7 @@
       <button @click="activeTab = 'mahasiswa'" :class="activeTab === 'mahasiswa' ? 'bg-[#FFFFFF] text-[#37352F] shadow-xs font-semibold' : 'text-[#787774] hover:text-[#37352F]'" class="px-3 py-1 rounded transition-colors">
         1. Mahasiswa TA
       </button>
+      @if (!auth()->user()->isMahasiswa())
       <button @click="activeTab = 'ta'" :class="activeTab === 'ta' ? 'bg-[#FFFFFF] text-[#37352F] shadow-xs font-semibold' : 'text-[#787774] hover:text-[#37352F]'" class="px-3 py-1 rounded transition-colors">
         2. Teaching Assistant
       </button>
@@ -48,6 +49,7 @@
       <button @click="activeTab = 'baak'" :class="activeTab === 'baak' ? 'bg-[#FFFFFF] text-[#37352F] shadow-xs font-semibold' : 'text-[#787774] hover:text-[#37352F]'" class="px-3 py-1 rounded transition-colors">
         4. BAAK
       </button>
+      @endif
     </div>
   </div>
 
@@ -327,6 +329,7 @@
     </div>
   </div>
 
+  @if (auth()->user()->isTA() || auth()->user()->isKoordinator())
   <!-- MODAL: VERIFIKASI DOKUMEN TA -->
   <div x-show="verifyModalOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
     <div class="fixed inset-0 bg-[#0A0A0B]/40 backdrop-blur-xs" @click="verifyModalOpen = false"></div>
@@ -372,7 +375,9 @@
       </div>
     </div>
   </div>
+  @endif
 
+  @if (auth()->user()->isKoordinator())
   <!-- MODAL: ATUR TANGGAL & PENGUJI (KOORDINATOR TA) -->
   <div x-show="scheduleModalOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
     <div class="fixed inset-0 bg-[#0A0A0B]/40 backdrop-blur-xs" @click="scheduleModalOpen = false"></div>
@@ -422,7 +427,9 @@
       </div>
     </div>
   </div>
+  @endif
 
+  @if (auth()->user()->isBaak())
   <!-- MODAL: ALOKASI FASILITAS BAAK -->
   <div x-show="facilityModalOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
     <div class="fixed inset-0 bg-[#0A0A0B]/40 backdrop-blur-xs" @click="facilityModalOpen = false"></div>
@@ -474,6 +481,7 @@
       </div>
     </div>
   </div>
+  @endif
 
 </div>
 @endsection
