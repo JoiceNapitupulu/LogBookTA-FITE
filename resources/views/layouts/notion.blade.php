@@ -227,6 +227,7 @@
                 <span x-show="sidebarOpen" class="truncate">Dashboard Utama</span>
               </a>
 
+              @if (auth()->check() && !auth()->user()->isMahasiswaNonTa())
               <!-- Logbook Aktivitas -->
               <a href="{{ route('logbook.index') }}" 
                  class="flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('logbook.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
@@ -250,6 +251,7 @@
                 <span class="text-sm">🏛️</span>
                 <span x-show="sidebarOpen" class="truncate">Manajemen Ujian TA</span>
               </a>
+              @endif
             </div>
           </div>
 

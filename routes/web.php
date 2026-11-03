@@ -25,30 +25,33 @@ Route::get('/demo-login/{role}', [AuthController::class, 'demoLogin'])->name('de
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Dashboard
+    // Dashboard (Boleh diakses semua role termasuk Mahasiswa Non-TA)
     Route::get('/', [DashboardController::class, 'index'])->name('workspace');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Logbook Aktivitas & Progres
-    Route::get('/logbook', [LogbookController::class, 'index'])->name('logbook.index');
-    Route::post('/logbook', [LogbookController::class, 'store'])->name('logbook.store');
-    Route::patch('/logbook/{logbook}/review', [LogbookController::class, 'updateReview'])->name('logbook.review');
-
-    // Modul Janji Bimbingan Dua Arah
-    Route::get('/bimbingan', [JanjiBimbinganController::class, 'index'])->name('bimbingan.index');
-    Route::post('/bimbingan', [JanjiBimbinganController::class, 'store'])->name('bimbingan.store');
-    Route::patch('/bimbingan/{janjiBimbingan}/status', [JanjiBimbinganController::class, 'updateStatus'])->name('bimbingan.status');
-
-    // Alur Pendaftaran & Manajemen Ujian TA
-    Route::get('/ujian', [UjianController::class, 'index'])->name('ujian.index');
-    Route::post('/ujian', [UjianController::class, 'store'])->name('ujian.store');
-    Route::patch('/ujian/{ujian}/verifikasi', [UjianController::class, 'verifikasiDokumen'])->name('ujian.verifikasi');
-    Route::patch('/ujian/{ujian}/jadwal', [UjianController::class, 'tetapkanJadwal'])->name('ujian.jadwal');
-    Route::patch('/ujian/{ujian}/fasilitas', [UjianController::class, 'alokasiFasilitas'])->name('ujian.fasilitas');
-
-    // Pustaka Arsip Tugas Akhir FITE (Terbuka untuk semua role & Non-TA)
+    // Pustaka Arsip Tugas Akhir FITE (Boleh diakses semua role termasuk Mahasiswa Non-TA)
     Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
     Route::post('/arsip', [ArsipController::class, 'store'])->name('arsip.store');
+
+    // Route yang TIDAK BOLEH diakses Mahasiswa Non-TA
+    Route::middleware('ensure.mahasiswa.ta')->group(function () {
+        // Logbook Aktivitas & Progres
+        Route::get('/logbook', [LogbookController::class, 'index'])->name('logbook.index');
+        Route::post('/logbook', [LogbookController::class, 'store'])->name('logbook.store');
+        Route::patch('/logbook/{logbook}/review', [LogbookController::class, 'updateReview'])->name('logbook.review');
+
+        // Modul Janji Bimbingan Dua Arah
+        Route::get('/bimbingan', [JanjiBimbinganController::class, 'index'])->name('bimbingan.index');
+        Route::post('/bimbingan', [JanjiBimbinganController::class, 'store'])->name('bimbingan.store');
+        Route::patch('/bimbingan/{janjiBimbingan}/status', [JanjiBimbinganController::class, 'updateStatus'])->name('bimbingan.status');
+
+        // Alur Pendaftaran & Manajemen Ujian TA
+        Route::get('/ujian', [UjianController::class, 'index'])->name('ujian.index');
+        Route::post('/ujian', [UjianController::class, 'store'])->name('ujian.store');
+        Route::patch('/ujian/{ujian}/verifikasi', [UjianController::class, 'verifikasiDokumen'])->name('ujian.verifikasi');
+        Route::patch('/ujian/{ujian}/jadwal', [UjianController::class, 'tetapkanJadwal'])->name('ujian.jadwal');
+        Route::patch('/ujian/{ujian}/fasilitas', [UjianController::class, 'alokasiFasilitas'])->name('ujian.fasilitas');
+    });
 
     // Panel Koordinator TA
     Route::get('/koordinator', [KoordinatorController::class, 'index'])->name('koordinator.index');

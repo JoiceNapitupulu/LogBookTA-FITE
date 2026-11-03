@@ -68,6 +68,16 @@ class User extends Authenticatable
         return $this->role === 'mahasiswa';
     }
 
+    public function isMahasiswaTa(): bool
+    {
+        return $this->isMahasiswa() && ($this->mahasiswaProfile?->is_ta ?? false);
+    }
+
+    public function isMahasiswaNonTa(): bool
+    {
+        return $this->isMahasiswa() && !($this->mahasiswaProfile?->is_ta ?? false);
+    }
+
     public function isDosen(): bool
     {
         return $this->role === 'dosen';
