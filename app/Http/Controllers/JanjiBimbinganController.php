@@ -25,9 +25,7 @@ class JanjiBimbinganController extends Controller
         $query = JanjiBimbingan::with(['tugasAkhir.mahasiswa.user', 'dosen.user']);
 
         if ($user->isMahasiswa()) {
-            $tugasAkhir = TugasAkhir::whereHas('mahasiswa', function ($q) use ($user) {
-                $q->where('user_id', $user->id);
-            })->first();
+            $tugasAkhir = $user->tugasAkhir();
 
             if ($tugasAkhir) {
                 $query->where('tugas_akhir_id', $tugasAkhir->id);

@@ -27,20 +27,17 @@ class DashboardController extends Controller
         $ujianTa = null;
 
         if ($user->isMahasiswa()) {
-            $mahasiswaProfile = MahasiswaProfile::where('user_id', $user->id)
-                ->with(['tugasAkhir' => function ($query) {
-                    $query->with([
-                        'pembimbing1.user',
-                        'pembimbing2.user',
-                        'logbooks' => fn ($q) => $q->with('verifiedBy.user')->latest('tanggal'),
-                        'janjiBimbingan' => fn ($q) => $q->with('dosen.user')->latest('tanggal_waktu'),
-                        'ujianTa' => fn ($q) => $q->with('verifiedByTa')->latest(),
-                    ]);
-                }])
-                ->first();
+            $mahasiswaProfile = $user->mahasiswaProfile;
+            $tugasAkhir = $user->tugasAkhir();
 
-            if ($mahasiswaProfile && $mahasiswaProfile->tugasAkhir) {
-                $tugasAkhir = $mahasiswaProfile->tugasAkhir;
+            if ($tugasAkhir) {
+                $tugasAkhir->loadMissing([
+                    'pembimbing1.user',
+                    'pembimbing2.user',
+                    'logbooks' => fn ($q) => $q->with('verifiedBy.user')->latest('tanggal'),
+                    'janjiBimbingan' => fn ($q) => $q->with('dosen.user')->latest('tanggal_waktu'),
+                    'ujianTa' => fn ($q) => $q->with('verifiedByTa')->latest(),
+                ]);
                 $logbooks = $tugasAkhir->logbooks;
                 $janjiBimbingan = $tugasAkhir->janjiBimbingan;
                 $ujianTa = $tugasAkhir->ujianTa->first();

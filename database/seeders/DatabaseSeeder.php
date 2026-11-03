@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\AnggotaTugasAkhir;
 use App\Models\ArsipTugasAkhir;
 use App\Models\DosenProfile;
 use App\Models\JanjiBimbingan;
@@ -131,7 +132,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 7. Mahasiswa TA Aktif 1: Samuel Siahaan (S1 Informatika)
+        // 7. Mahasiswa TA Aktif (S1 Informatika - Kelompok 3 Mahasiswa)
         $userMhsTa = User::updateOrCreate(
             ['email' => 'mhs.ta@students.del.ac.id'],
             [
@@ -152,7 +153,47 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Tugas Akhir Samuel Siahaan
+        $userMhsTa3 = User::updateOrCreate(
+            ['email' => 'mhs.ta3@students.del.ac.id'],
+            [
+                'name' => 'Daniel Siregar',
+                'password' => $defaultPassword,
+                'role' => 'mahasiswa',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $mhsTaProfile3 = MahasiswaProfile::updateOrCreate(
+            ['user_id' => $userMhsTa3->id],
+            [
+                'nim' => '11S21015',
+                'prodi' => 'S1 Informatika',
+                'angkatan' => 2021,
+                'is_ta' => true,
+            ]
+        );
+
+        $userMhsTa4 = User::updateOrCreate(
+            ['email' => 'mhs.ta4@students.del.ac.id'],
+            [
+                'name' => 'Joy Christine',
+                'password' => $defaultPassword,
+                'role' => 'mahasiswa',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $mhsTaProfile4 = MahasiswaProfile::updateOrCreate(
+            ['user_id' => $userMhsTa4->id],
+            [
+                'nim' => '11S21028',
+                'prodi' => 'S1 Informatika',
+                'angkatan' => 2021,
+                'is_ta' => true,
+            ]
+        );
+
+        // Tugas Akhir Samuel Siahaan dkk (Kelompok 3 Mahasiswa)
         $tugasAkhir = TugasAkhir::updateOrCreate(
             ['mahasiswa_id' => $mhsTaProfile->id],
             [
@@ -166,7 +207,21 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 8. Mahasiswa TA Aktif 2: Ruth Simanjuntak (S1 Sistem Informasi)
+        // Pivot keanggotaan kelompok TA Samuel dkk (3 anggota)
+        AnggotaTugasAkhir::updateOrCreate(
+            ['mahasiswa_id' => $mhsTaProfile->id],
+            ['tugas_akhir_id' => $tugasAkhir->id]
+        );
+        AnggotaTugasAkhir::updateOrCreate(
+            ['mahasiswa_id' => $mhsTaProfile3->id],
+            ['tugas_akhir_id' => $tugasAkhir->id]
+        );
+        AnggotaTugasAkhir::updateOrCreate(
+            ['mahasiswa_id' => $mhsTaProfile4->id],
+            ['tugas_akhir_id' => $tugasAkhir->id]
+        );
+
+        // 8. Mahasiswa TA Aktif (S1 Sistem Informasi - Solo TA 1 Mahasiswa)
         $userMhsTa2 = User::updateOrCreate(
             ['email' => 'mhs.ta2@students.del.ac.id'],
             [
@@ -187,7 +242,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Tugas Akhir Ruth Simanjuntak (Pembimbing 1: Marlina, Pembimbing 2: Johannes)
+        // Tugas Akhir Ruth Simanjuntak (Solo TA)
         $tugasAkhir2 = TugasAkhir::updateOrCreate(
             ['mahasiswa_id' => $mhsTaProfile2->id],
             [
@@ -199,6 +254,76 @@ class DatabaseSeeder extends Seeder
                 'tahun_ajaran' => '2025/2026',
                 'status' => 'pengerjaan',
             ]
+        );
+
+        // Pivot keanggotaan Solo TA Ruth Simanjuntak (1 anggota)
+        AnggotaTugasAkhir::updateOrCreate(
+            ['mahasiswa_id' => $mhsTaProfile2->id],
+            ['tugas_akhir_id' => $tugasAkhir2->id]
+        );
+
+        // 9. Mahasiswa TA Aktif (S1 Teknik Elektro - Kelompok 2 Mahasiswa)
+        $userMhsTa5 = User::updateOrCreate(
+            ['email' => 'mhs.ta5@students.del.ac.id'],
+            [
+                'name' => 'Andreas Nababan',
+                'password' => $defaultPassword,
+                'role' => 'mahasiswa',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $mhsTaProfile5 = MahasiswaProfile::updateOrCreate(
+            ['user_id' => $userMhsTa5->id],
+            [
+                'nim' => '14S21002',
+                'prodi' => 'S1 Teknik Elektro',
+                'angkatan' => 2021,
+                'is_ta' => true,
+            ]
+        );
+
+        $userMhsTa6 = User::updateOrCreate(
+            ['email' => 'mhs.ta6@students.del.ac.id'],
+            [
+                'name' => 'Maria Nainggolan',
+                'password' => $defaultPassword,
+                'role' => 'mahasiswa',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $mhsTaProfile6 = MahasiswaProfile::updateOrCreate(
+            ['user_id' => $userMhsTa6->id],
+            [
+                'nim' => '14S21009',
+                'prodi' => 'S1 Teknik Elektro',
+                'angkatan' => 2021,
+                'is_ta' => true,
+            ]
+        );
+
+        $tugasAkhir3 = TugasAkhir::updateOrCreate(
+            ['mahasiswa_id' => $mhsTaProfile5->id],
+            [
+                'dosen_pembimbing_1_id' => $kaprodiProfile->id,
+                'dosen_pembimbing_2_id' => $dosen1Profile->id,
+                'judul' => 'Rancang Bangun Sistem Monitoring Daya Panel Surya Berbasis ESP32 dan Protokol MQTT pada Laboratorium Energi Terbarukan',
+                'abstrak' => 'Implementasi sistem sensor telemetri tegangan dan arus sel surya untuk analisis efisiensi konversi daya secara real-time.',
+                'prodi' => 'S1 Teknik Elektro',
+                'tahun_ajaran' => '2025/2026',
+                'status' => 'pengerjaan',
+            ]
+        );
+
+        // Pivot keanggotaan kelompok TA Elektro (2 anggota)
+        AnggotaTugasAkhir::updateOrCreate(
+            ['mahasiswa_id' => $mhsTaProfile5->id],
+            ['tugas_akhir_id' => $tugasAkhir3->id]
+        );
+        AnggotaTugasAkhir::updateOrCreate(
+            ['mahasiswa_id' => $mhsTaProfile6->id],
+            ['tugas_akhir_id' => $tugasAkhir3->id]
         );
 
         // Logbook Ruth Simanjuntak

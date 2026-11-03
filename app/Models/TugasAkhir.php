@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -29,6 +30,66 @@ class TugasAkhir extends Model
     public function mahasiswa(): BelongsTo
     {
         return $this->belongsTo(MahasiswaProfile::class, 'mahasiswa_id');
+    }
+
+    /**
+     * Relasi ke baris data keanggotaan kelompok Tugas Akhir
+     */
+    public function anggotaKelompok(): HasMany
+    {
+        return $this->hasMany(AnggotaTugasAkhir::class, 'tugas_akhir_id');
+    }
+
+    /**
+     * Relasi ke seluruh mahasiswa anggota kelompok Tugas Akhir (1 - 3 mahasiswa)
+     */
+    public function anggota(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            MahasiswaProfile::class,
+            'anggota_tugas_akhir',
+            'tugas_akhir_id',
+            'mahasiswa_id'
+        )->withTimestamps();
+    }
+
+    /**
+     * Hitung total anggota yang tergabung dalam Tugas Akhir ini (1 - 3 mahasiswa)
+     */
+    public function jumlahAnggota(): int
+    {
+        if ($this->relationLoaded('anggota')) {
+            return $this->anggota->count();
+        }
+
+        return $this->anggota()->count();
+    }
+
+    /**
+     * Cek apakah mahasiswa tertentu merupakan anggota dari Tugas Akhir ini
+     *
+     * @param int|string|\App\Models\MahasiswaProfile|\App\Models\User|null $mahasiswaId
+     */
+    public function isAnggota($mahasiswaId): bool
+    {
+        if (! $mahasiswaId) {
+            return false;
+        }
+
+        if ($mahasiswaId instanceof User) {
+            $mahasiswaId = $mahasiswaId->mahasiswaProfile?->id;
+            if (! $mahasiswaId) {
+                return false;
+            }
+        } elseif ($mahasiswaId instanceof MahasiswaProfile) {
+            $mahasiswaId = $mahasiswaId->id;
+        }
+
+        if ($this->relationLoaded('anggota')) {
+            return $this->anggota->contains('id', $mahasiswaId);
+        }
+
+        return $this->anggota()->where('mahasiswa_id', $mahasiswaId)->exists();
     }
 
     public function pembimbing1(): BelongsTo

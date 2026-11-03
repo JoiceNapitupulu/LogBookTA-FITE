@@ -291,7 +291,7 @@
   <!-- ================================================================= -->
   @if (auth()->user()->isMahasiswa())
     @php
-      $myTa = \App\Models\TugasAkhir::whereHas('mahasiswa', fn ($q) => $q->where('user_id', auth()->id()))->first();
+      $myTa = auth()->user()->tugasAkhir();
     @endphp
 
     <div x-show="openCreateModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">

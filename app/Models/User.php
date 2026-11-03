@@ -55,11 +55,30 @@ class User extends Authenticatable
     }
 
     /**
-     * Dapatkan instance TugasAkhir milik mahasiswa jika ada
+     * Dapatkan instance TugasAkhir milik mahasiswa jika ada.
+     * Mengambil melalui keanggotaan kelompok (pivot anggota_tugas_akhir),
+     * dengan fallback ke relasi lama mahasiswa_id selama masa transisi.
+     * Berlaku untuk SEMUA anggota kelompok, bukan hanya yang tercatat di tugas_akhir.mahasiswa_id.
      */
     public function tugasAkhir(): ?TugasAkhir
     {
-        return $this->mahasiswaProfile?->tugasAkhir;
+        if (! $this->isMahasiswa() || ! $this->mahasiswaProfile) {
+            return null;
+        }
+
+        // 1. Jika relation tugasAkhirKelompok sudah dimuat
+        if ($this->mahasiswaProfile->relationLoaded('tugasAkhirKelompok') && $this->mahasiswaProfile->tugasAkhirKelompok->isNotEmpty()) {
+            return $this->mahasiswaProfile->tugasAkhirKelompok->first();
+        }
+
+        // 2. Resolve lewat keanggotaan pivot (hasOneThrough)
+        $ta = $this->mahasiswaProfile->tugasAkhir;
+        if ($ta) {
+            return $ta;
+        }
+
+        // 3. Fallback ke relasi lama lewat mahasiswa_id jika ada selama transisi
+        return $this->mahasiswaProfile->tugasAkhirDirect;
     }
 
     /**
