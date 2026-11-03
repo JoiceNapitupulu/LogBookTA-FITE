@@ -75,7 +75,11 @@ class AuthController extends Controller
             'mahasiswa_non_ta' => 'mhs.nonta@students.del.ac.id',
             'dosen' => 'dosen1@del.ac.id',
             'dosen2' => 'dosen2@del.ac.id',
+            'dosen3' => 'dosen3@del.ac.id',
             'kaprodi' => 'kaprodi@del.ac.id',
+            'kaprodi_si' => 'kaprodi@del.ac.id',
+            'kaprodi_if' => 'kaprodi.if@del.ac.id',
+            'kaprodi_te' => 'kaprodi.te@del.ac.id',
             'ta' => 'ta@del.ac.id',
             'baak' => 'baak@del.ac.id',
         ];

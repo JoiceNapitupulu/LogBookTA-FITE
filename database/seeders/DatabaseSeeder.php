@@ -66,7 +66,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 3. Dosen Pembimbing 2
+        // 3. Dosen Pembimbing 2 (S1 Sistem Informasi)
         $userDosen2 = User::updateOrCreate(
             ['email' => 'dosen2@del.ac.id'],
             [
@@ -88,7 +88,29 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 4. Kaprodi
+        // 3b. Dosen Tambahan (S1 Sistem Informasi - untuk uji pergantian 1 koor per prodi)
+        $userDosen3 = User::updateOrCreate(
+            ['email' => 'dosen3@del.ac.id'],
+            [
+                'name' => 'Togu Novriansyah, S.T., M.Kom.',
+                'password' => $defaultPassword,
+                'role' => 'dosen',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $dosen3Profile = DosenProfile::updateOrCreate(
+            ['user_id' => $userDosen3->id],
+            [
+                'nidn' => '0128038902',
+                'kode_dosen' => 'TNV',
+                'prodi' => 'S1 Sistem Informasi',
+                'is_koordinator_ta' => false,
+                'is_kaprodi' => false,
+            ]
+        );
+
+        // 4. Kaprodi S1 Sistem Informasi (1 Kaprodi per Prodi)
         $userKaprodi = User::updateOrCreate(
             ['email' => 'kaprodi@del.ac.id'],
             [
@@ -105,6 +127,50 @@ class DatabaseSeeder extends Seeder
                 'nidn' => '0102067801',
                 'kode_dosen' => 'AMS',
                 'prodi' => 'S1 Sistem Informasi',
+                'is_koordinator_ta' => false,
+                'is_kaprodi' => true,
+            ]
+        );
+
+        // 4b. Kaprodi S1 Informatika (1 Kaprodi per Prodi)
+        $userKaprodiIf = User::updateOrCreate(
+            ['email' => 'kaprodi.if@del.ac.id'],
+            [
+                'name' => 'Dr. Samuel Indra Gunawan, S.T., M.T.',
+                'password' => $defaultPassword,
+                'role' => 'kaprodi',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $kaprodiIfProfile = DosenProfile::updateOrCreate(
+            ['user_id' => $userKaprodiIf->id],
+            [
+                'nidn' => '0112057901',
+                'kode_dosen' => 'SIG',
+                'prodi' => 'S1 Informatika',
+                'is_koordinator_ta' => false,
+                'is_kaprodi' => true,
+            ]
+        );
+
+        // 4c. Kaprodi S1 Teknik Elektro (1 Kaprodi per Prodi)
+        $userKaprodiTe = User::updateOrCreate(
+            ['email' => 'kaprodi.te@del.ac.id'],
+            [
+                'name' => 'Dr. Parman Sukses, S.T., M.Sc.',
+                'password' => $defaultPassword,
+                'role' => 'kaprodi',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $kaprodiTeProfile = DosenProfile::updateOrCreate(
+            ['user_id' => $userKaprodiTe->id],
+            [
+                'nidn' => '0109048102',
+                'kode_dosen' => 'PSS',
+                'prodi' => 'S1 Teknik Elektro',
                 'is_koordinator_ta' => false,
                 'is_kaprodi' => true,
             ]

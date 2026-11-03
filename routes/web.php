@@ -65,5 +65,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['ensure.staff', 'role:kaprodi'])->group(function () {
         Route::get('/kaprodi', [KaprodiController::class, 'index'])->name('kaprodi.index');
         Route::patch('/kaprodi/dosen/{dosen}/toggle-koordinator', [KaprodiController::class, 'toggleKoordinator'])->name('kaprodi.toggle-koordinator');
+        Route::post('/kaprodi/dosen/{dosen}/tetapkan-koordinator', [KaprodiController::class, 'tetapkanKoordinator'])->name('kaprodi.tetapkan-koordinator');
+        Route::post('/kaprodi/dosen/{dosen}/nonaktifkan-koordinator', [KaprodiController::class, 'nonaktifkanKoordinator'])->name('kaprodi.nonaktifkan-koordinator');
     });
 });

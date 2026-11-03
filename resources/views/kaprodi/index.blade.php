@@ -16,8 +16,37 @@
     </div>
   </div>
 
+  <!-- Callout Otoritas Kaprodi & Status 1 Koor per Prodi -->
+  <div class="p-3.5 bg-light rounded-3 border border-[#E9E9E7] shadow-xs">
+    <div class="d-flex flex-column flex-md-row md:items-center justify-content-between gap-3 text-xs">
+      <div class="d-flex align-items-center gap-2.5">
+        <div class="w-8 h-8 rounded-circle bg-dark text-white d-flex align-items-center justify-center shrink-0 font-bold text-xs">
+          <i class="bi bi-shield-check"></i>
+        </div>
+        <div>
+          <p class="font-bold text-[#37352F] mb-0.5">
+            Otoritas Program Studi Anda: <span class="badge bg-dark text-white px-2 py-0.5">{{ $kaprodiProdi }}</span>
+          </p>
+          <p class="text-[#787774] mb-0">
+            Sesuai regulasi akademik FITE: Kaprodi hanya dapat menetapkan Koordinator TA di prodinya sendiri, dan setiap prodi hanya memiliki tepat 1 Koordinator TA.
+          </p>
+        </div>
+      </div>
+      <div class="bg-white px-3 py-2 rounded-2 border border-[#E9E9E7] shrink-0">
+        <span class="text-[10px] text-[#787774] block uppercase tracking-wider font-semibold">Koordinator TA Aktif {{ $kaprodiProdi }}</span>
+        @if ($koordinatorProdiIni)
+          <span class="font-bold text-[#2A7E4B] d-inline-flex align-items-center gap-1 mt-0.5">
+            <i class="bi bi-person-check-fill"></i> {{ $koordinatorProdiIni->user->name ?? '-' }} ({{ $koordinatorProdiIni->kode_dosen }})
+          </span>
+        @else
+          <span class="text-secondary italic mt-0.5 block">Belum ada Koordinator TA yang ditetapkan</span>
+        @endif
+      </div>
+    </div>
+  </div>
+
   <!-- Notion Monochrome Metric Cards -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
     <div class="p-4 bg-[#F7F6F3] rounded-xl border border-[#E9E9E7]">
       <p class="text-xs text-[#787774]">Total Mhs TA Aktif</p>
       <p class="text-3xl font-extrabold text-[#37352F] mt-1">{{ $totalMhsAktif }}</p>
@@ -45,12 +74,14 @@
 
   <!-- Tabel Manajemen Penetapan Koordinator TA (Khusus Kaprodi) -->
   <div class="border border-[#E9E9E7] rounded-xl overflow-hidden bg-[#FFFFFF] shadow-xs">
-    <div class="p-4 border-b border-[#E9E9E7] flex items-center justify-between">
+    <div class="p-4 border-b border-[#E9E9E7] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
       <div>
         <h3 class="text-sm font-bold text-[#37352F]">Penetapan & Penugasan Koordinator Tugas Akhir</h3>
-        <p class="text-xs text-[#787774]">Kaprodi berwenang menetapkan dosen sebagai Koordinator TA program studi</p>
+        <p class="text-xs text-[#787774]">
+          Dosen program studi Anda (<strong class="text-[#37352F]">{{ $kaprodiProdi }}</strong>) dapat Anda tetapkan sebagai Koordinator TA. Penetapan baru otomatis menggantikan koordinator lama.
+        </p>
       </div>
-      <span class="text-xs text-[#787774]">Total Dosen: {{ $totalDosen }} Orang ({{ $totalKoordinator }} Koordinator)</span>
+      <span class="text-xs text-[#787774]">Total: {{ $totalDosen }} Dosen FITE</span>
     </div>
 
     <div class="overflow-x-auto">
@@ -61,19 +92,27 @@
             <th class="py-2.5 px-4 font-semibold">Kode & Prodi</th>
             <th class="py-2.5 px-4 font-semibold">Beban Bimbingan (P1 / P2)</th>
             <th class="py-2.5 px-4 font-semibold">Status Koordinator TA</th>
-            <th class="py-2.5 px-4 text-right font-semibold">Aksi Toggle Status</th>
+            <th class="py-2.5 px-4 text-right font-semibold">Aksi Otoritas Kaprodi</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-[#E9E9E7]">
           @forelse ($dosenList as $dosen)
-            <tr class="hover:bg-[#F7F7F5] transition-colors">
+            @php
+              $isSameProdi = ($dosen->prodi === $kaprodiProdi);
+            @endphp
+            <tr class="hover:bg-[#F7F7F5] transition-colors {{ $isSameProdi ? 'bg-primary-subtle/10' : '' }}">
               <td class="py-3 px-4">
-                <p class="font-bold text-[#37352F]">{{ $dosen->user->name }}</p>
-                <p class="text-[10px] text-[#787774]">NIDN: {{ $dosen->nidn ?? '-' }}</p>
+                <div class="d-flex align-items-center gap-1.5">
+                  <p class="font-bold text-[#37352F] mb-0">{{ $dosen->user->name }}</p>
+                  @if ($isSameProdi)
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle text-[9px] px-1.5 py-0.5">Prodi Anda</span>
+                  @endif
+                </div>
+                <p class="text-[10px] text-[#787774] mb-0">NIDN: {{ $dosen->nidn ?? '-' }}</p>
               </td>
               <td class="py-3 px-4">
                 <span class="notion-pill-gray text-[10px] block mb-0.5">{{ $dosen->kode_dosen }}</span>
-                <span class="text-[11px] text-[#787774]">{{ $dosen->prodi }}</span>
+                <span class="text-[11px] {{ $isSameProdi ? 'font-semibold text-primary' : 'text-[#787774]' }}">{{ $dosen->prodi }}</span>
               </td>
               <td class="py-3 px-4">
                 {{ $dosen->tugasAkhirPembimbing1->count() }} Utama / {{ $dosen->tugasAkhirPembimbing2->count() }} Pendamping
@@ -86,13 +125,27 @@
                 @endif
               </td>
               <td class="py-3 px-4 text-right whitespace-nowrap">
-                <form action="{{ route('kaprodi.toggle-koordinator', $dosen->id) }}" method="POST">
-                  @csrf
-                  @method('PATCH')
-                  <button type="submit" class="{{ $dosen->is_koordinator_ta ? 'notion-btn-secondary text-[11px] py-1 px-2.5' : 'notion-btn-primary text-[11px] py-1 px-2.5' }}">
-                    {{ $dosen->is_koordinator_ta ? 'Nonaktifkan' : 'Tetapkan Koordinator' }}
-                  </button>
-                </form>
+                @if ($isSameProdi)
+                  @if ($dosen->is_koordinator_ta)
+                    <form action="{{ route('kaprodi.nonaktifkan-koordinator', $dosen->id) }}" method="POST" class="d-inline">
+                      @csrf
+                      <button type="submit" class="btn btn-outline-danger btn-sm text-xs py-1 px-2.5" onclick="return confirm('Apakah Anda yakin ingin menonaktifkan status Koordinator TA dosen {{ $dosen->user->name }}?')">
+                        <i class="bi bi-x-circle me-1"></i> Nonaktifkan
+                      </button>
+                    </form>
+                  @else
+                    <form action="{{ route('kaprodi.tetapkan-koordinator', $dosen->id) }}" method="POST" class="d-inline">
+                      @csrf
+                      <button type="submit" class="btn btn-dark btn-sm text-xs py-1 px-2.5" onclick="return confirm('Tetapkan dosen {{ $dosen->user->name }} sebagai Koordinator TA {{ $kaprodiProdi }}? Jika ada koordinator aktif lain di prodi ini, posisinya akan digantikan otomatis.')">
+                        <i class="bi bi-check2-circle me-1"></i> Tetapkan Koordinator
+                      </button>
+                    </form>
+                  @endif
+                @else
+                  <span class="badge bg-light text-secondary border border-light-subtle text-[11px] py-1 px-2 font-normal" title="Hanya Kaprodi {{ $dosen->prodi }} yang berwenang">
+                    <i class="bi bi-lock me-1"></i> Khusus Kaprodi {{ $dosen->prodi }}
+                  </span>
+                @endif
               </td>
             </tr>
           @empty

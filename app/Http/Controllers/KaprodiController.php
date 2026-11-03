@@ -19,7 +19,20 @@ class KaprodiController extends Controller
             abort(403, 'Akses ditolak: Hanya Kaprodi yang berwenang mengakses panel eksekutif Kaprodi.');
         }
 
-        $dosenList = DosenProfile::with(['user', 'tugasAkhirPembimbing1', 'tugasAkhirPembimbing2'])->get();
+        // Program studi Kaprodi yang sedang aktif
+        $kaprodiProdi = $user->kaprodiProdi() ?? $user->prodi() ?? 'S1 Sistem Informasi';
+
+        // 1 Koordinator TA aktif di program studi Kaprodi ini
+        $koordinatorProdiIni = DosenProfile::getKoordinatorByProdi($kaprodiProdi);
+
+        // Ambil daftar dosen, kelompokkan/urutkan: prodi Kaprodi terlebih dahulu
+        $dosenList = DosenProfile::with(['user', 'tugasAkhirPembimbing1', 'tugasAkhirPembimbing2'])
+            ->get()
+            ->sortBy(function ($dosen) use ($kaprodiProdi) {
+                // Bobot 0 untuk prodi Kaprodi (tampil paling atas), 1 untuk prodi lain
+                return $dosen->prodi === $kaprodiProdi ? 0 : 1;
+            })
+            ->values();
 
         $totalDosen = $dosenList->count();
         $totalKoordinator = $dosenList->where('is_koordinator_ta', true)->count();
@@ -50,6 +63,8 @@ class KaprodiController extends Controller
 
         return view('kaprodi.index', compact(
             'dosenList',
+            'kaprodiProdi',
+            'koordinatorProdiIni',
             'totalDosen',
             'totalKoordinator',
             'totalMhsAktif',
@@ -61,6 +76,12 @@ class KaprodiController extends Controller
         ));
     }
 
+    /**
+     * Toggle penugasan Koordinator TA.
+     * Aturan:
+     * 1. Kaprodi hanya bisa menetapkan koor TA di prodinya sendiri.
+     * 2. Koor TA hanya ada 1 tiap prodi.
+     */
     public function toggleKoordinator(Request $request, DosenProfile $dosen): RedirectResponse
     {
         $user = Auth::user();
@@ -68,16 +89,81 @@ class KaprodiController extends Controller
             abort(403, 'Akses ditolak: Hanya Kaprodi yang berwenang mengubah penugasan Koordinator TA.');
         }
 
+        $kaprodiProdi = $user->kaprodiProdi() ?? $user->prodi();
+
+        // Validasi aturan: Kaprodi hanya bisa menetapkan koor TA di prodinya sendiri
+        if (! $kaprodiProdi || $dosen->prodi !== $kaprodiProdi) {
+            abort(403, "Akses ditolak: Anda adalah Kaprodi {$kaprodiProdi}. Anda hanya berwenang menetapkan Koordinator TA untuk program studi {$kaprodiProdi}, bukan program studi {$dosen->prodi}.");
+        }
+
         DB::transaction(function () use ($dosen) {
-            $dosen->update([
-                'is_koordinator_ta' => ! $dosen->is_koordinator_ta,
-            ]);
+            if ($dosen->is_koordinator_ta) {
+                $dosen->nonaktifkanKoordinator();
+            } else {
+                // Otomatis menonaktifkan koordinator lama di prodi yang sama (koor TA hanya ada 1 per prodi)
+                $dosen->tetapkanSebagaiKoordinator();
+            }
         });
 
+        $dosen->refresh();
         $dosenName = $dosen->user->name ?? 'Dosen';
-        $status = $dosen->is_koordinator_ta ? 'diaktifkan sebagai Koordinator TA.' : 'dinonaktifkan dari status Koordinator TA.';
+        $status = $dosen->is_koordinator_ta
+            ? "berhasil ditetapkan sebagai Koordinator TA program studi {$dosen->prodi}. Koordinator TA aktif untuk program studi {$dosen->prodi} kini tepat 1 orang."
+            : "telah dinonaktifkan dari status Koordinator TA program studi {$dosen->prodi}.";
 
         return redirect()->back()
             ->with('success', "Penugasan dosen {$dosenName} {$status}");
+    }
+
+    /**
+     * Method eksplisit untuk menetapkan seorang dosen sebagai Koordinator TA di prodinya.
+     */
+    public function tetapkanKoordinator(Request $request, DosenProfile $dosen): RedirectResponse
+    {
+        $user = Auth::user();
+        if (! $user || ! $user->isKaprodi()) {
+            abort(403, 'Akses ditolak: Hanya Kaprodi yang berwenang menetapkan Koordinator TA.');
+        }
+
+        $kaprodiProdi = $user->kaprodiProdi() ?? $user->prodi();
+
+        if (! $kaprodiProdi || $dosen->prodi !== $kaprodiProdi) {
+            abort(403, "Akses ditolak: Anda adalah Kaprodi {$kaprodiProdi}. Anda hanya berwenang menetapkan Koordinator TA untuk program studi {$kaprodiProdi}, bukan program studi {$dosen->prodi}.");
+        }
+
+        DB::transaction(function () use ($dosen) {
+            $dosen->tetapkanSebagaiKoordinator();
+        });
+
+        $dosenName = $dosen->user->name ?? 'Dosen';
+
+        return redirect()->back()
+            ->with('success', "Dosen {$dosenName} berhasil ditetapkan sebagai Koordinator TA {$dosen->prodi}. Koordinator TA aktif pada prodi ini kini tepat 1 orang.");
+    }
+
+    /**
+     * Method eksplisit untuk menonaktifkan seorang dosen dari Koordinator TA di prodinya.
+     */
+    public function nonaktifkanKoordinator(Request $request, DosenProfile $dosen): RedirectResponse
+    {
+        $user = Auth::user();
+        if (! $user || ! $user->isKaprodi()) {
+            abort(403, 'Akses ditolak: Hanya Kaprodi yang berwenang menonaktifkan Koordinator TA.');
+        }
+
+        $kaprodiProdi = $user->kaprodiProdi() ?? $user->prodi();
+
+        if (! $kaprodiProdi || $dosen->prodi !== $kaprodiProdi) {
+            abort(403, "Akses ditolak: Anda adalah Kaprodi {$kaprodiProdi}. Anda hanya berwenang mengelola Koordinator TA untuk program studi {$kaprodiProdi}, bukan program studi {$dosen->prodi}.");
+        }
+
+        DB::transaction(function () use ($dosen) {
+            $dosen->nonaktifkanKoordinator();
+        });
+
+        $dosenName = $dosen->user->name ?? 'Dosen';
+
+        return redirect()->back()
+            ->with('success', "Dosen {$dosenName} berhasil dinonaktifkan dari Koordinator TA {$dosen->prodi}.");
     }
 }

@@ -134,4 +134,32 @@ class User extends Authenticatable
     {
         return $this->role === 'baak';
     }
+
+    /**
+     * Mendapatkan program studi user (mahasiswa atau dosen/kaprodi)
+     */
+    public function prodi(): ?string
+    {
+        if ($this->isMahasiswa()) {
+            return $this->mahasiswaProfile?->prodi;
+        }
+
+        if ($this->dosenProfile) {
+            return $this->dosenProfile->prodi;
+        }
+
+        return null;
+    }
+
+    /**
+     * Mendapatkan program studi yang dipimpin jika user bertindak sebagai Kaprodi
+     */
+    public function kaprodiProdi(): ?string
+    {
+        if (! $this->isKaprodi()) {
+            return null;
+        }
+
+        return $this->dosenProfile?->prodi;
+    }
 }

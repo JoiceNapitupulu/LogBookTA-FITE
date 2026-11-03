@@ -74,4 +74,74 @@ class DosenProfile extends Model
               ->orWhere('dosen_pembimbing_2_id', $this->id);
         });
     }
+
+    /**
+     * Mendapatkan 1 Koordinator TA aktif untuk program studi tertentu
+     */
+    public static function getKoordinatorByProdi(string $prodi): ?self
+    {
+        return static::where('prodi', $prodi)
+            ->where('is_koordinator_ta', true)
+            ->first();
+    }
+
+    /**
+     * Mendapatkan 1 Kaprodi aktif untuk program studi tertentu
+     */
+    public static function getKaprodiByProdi(string $prodi): ?self
+    {
+        return static::where('prodi', $prodi)
+            ->where('is_kaprodi', true)
+            ->first();
+    }
+
+    /**
+     * Menetapkan dosen ini sebagai Koordinator TA di prodinya.
+     * Aturan bisnis: Koor TA hanya ada 1 tiap prodi.
+     * Dosen lain di prodi yang sama otomatis dinonaktifkan dari koordinator.
+     */
+    public function tetapkanSebagaiKoordinator(): void
+    {
+        // 1. Nonaktifkan koordinator lain di prodi yang sama
+        static::where('prodi', $this->prodi)
+            ->where('id', '!=', $this->id)
+            ->where('is_koordinator_ta', true)
+            ->update(['is_koordinator_ta' => false]);
+
+        // 2. Aktifkan dosen ini sebagai koordinator
+        $this->update(['is_koordinator_ta' => true]);
+    }
+
+    /**
+     * Menonaktifkan dosen ini dari jabatan Koordinator TA.
+     */
+    public function nonaktifkanKoordinator(): void
+    {
+        $this->update(['is_koordinator_ta' => false]);
+    }
+
+    /**
+     * Menetapkan dosen ini sebagai Kaprodi di prodinya.
+     * Aturan bisnis: Kaprodi hanya ada 1 di prodi.
+     * Kaprodi lain di prodi yang sama otomatis dinonaktifkan.
+     */
+    public function tetapkanSebagaiKaprodi(): void
+    {
+        // 1. Nonaktifkan kaprodi lain di prodi yang sama
+        static::where('prodi', $this->prodi)
+            ->where('id', '!=', $this->id)
+            ->where('is_kaprodi', true)
+            ->update(['is_kaprodi' => false]);
+
+        // 2. Aktifkan dosen ini sebagai kaprodi
+        $this->update(['is_kaprodi' => true]);
+    }
+
+    /**
+     * Menonaktifkan dosen ini dari jabatan Kaprodi.
+     */
+    public function nonaktifkanKaprodi(): void
+    {
+        $this->update(['is_kaprodi' => false]);
+    }
 }
