@@ -442,30 +442,36 @@
             </div>
           </div>
 
-          <!-- User Chip & Logout Kanan Atas -->
+          <!-- User Block & Logout Topbar (Single Centered Flex Row) -->
           @auth
             <div class="d-flex align-items-center gap-2 border-start ps-3" style="border-color: #e9ecef !important;">
-              <div class="text-end d-none d-sm-block">
-                <p class="fw-semibold text-dark mb-0 lh-1" style="font-size: 12.5px;">{{ auth()->user()->name }}</p>
-                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-1.5 py-0.5 mt-1" style="font-size: 9.5px;">
-                  {{ strtoupper(str_replace('_', ' ', auth()->user()->role)) }}
-                </span>
-              </div>
-              <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center fw-bold shrink-0 lh-1" style="width: 32px; height: 32px; font-size: 11px;">
+              <!-- 1. Nama Lengkap (Single Line, Truncate on Small Screen) -->
+              <span class="fw-semibold text-dark text-truncate d-none d-sm-inline lh-1" style="font-size: 13px; max-width: 220px;" title="{{ auth()->user()->name }}">
+                {{ auth()->user()->name }}
+              </span>
+
+              <!-- 2. Badge Role (Aligned Middle, No Manual Margin) -->
+              <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle align-middle text-uppercase px-2 py-1" style="font-size: 10px; font-weight: 600;">
+                {{ str_replace('_', ' ', auth()->user()->role) }}
+              </span>
+
+              <!-- 3. Avatar Inisial (Fixed 32x32 Circle) -->
+              <div class="rounded-circle bg-dark text-white d-inline-flex align-items-center justify-content-center fw-bold shrink-0 lh-1" style="width: 32px; height: 32px; font-size: 11px;">
                 {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
               </div>
 
-              <!-- Tombol Logout Topbar -->
-              <form action="{{ route('logout') }}" method="POST" class="mb-0 ms-1">
+              <!-- 4. Tombol Logout (Fixed 32x32 Square) -->
+              <form action="{{ route('logout') }}" method="POST" class="d-inline-flex align-items-center mb-0">
                 @csrf
-                <button type="submit" class="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center p-0" title="Keluar dari akun" style="width: 32px; height: 32px;">
-                  <i class="bi bi-box-arrow-right"></i>
+                <button type="submit" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center justify-content-center p-0 rounded" title="Keluar dari akun" style="width: 32px; height: 32px;">
+                  <i class="bi bi-box-arrow-right fs-6"></i>
                 </button>
               </form>
             </div>
           @else
-            <a href="{{ route('login') }}" class="btn btn-dark btn-sm">
-              Masuk Akun
+            <a href="{{ route('login') }}" class="btn btn-dark btn-sm d-inline-flex align-items-center gap-1.5">
+              <i class="bi bi-box-arrow-in-right"></i>
+              <span>Masuk Akun</span>
             </a>
           @endauth
 
