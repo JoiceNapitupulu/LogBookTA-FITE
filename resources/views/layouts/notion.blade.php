@@ -147,6 +147,15 @@
     </div>
   @endif
 
+  @if (session('error'))
+    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+         class="fixed bottom-6 right-6 z-50 bg-[#C4383D] text-white px-4 py-3 rounded-lg shadow-xl flex items-center gap-3 text-xs">
+      <span class="w-2 h-2 rounded-full bg-white"></span>
+      <span>{{ session('error') }}</span>
+      <button @click="show = false" class="text-white hover:opacity-75 ml-2">&times;</button>
+    </div>
+  @endif
+
   @if (session('info'))
     <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
          class="fixed bottom-6 right-6 z-50 bg-[#1B1B1E] text-white px-4 py-3 rounded-lg shadow-xl border border-[#3D3D3F] flex items-center gap-3 text-xs">
@@ -156,7 +165,7 @@
     </div>
   @endif
 
-  @if ($errors->any())
+  @if (isset($errors) && $errors->any())
     <div x-data="{ show: true }" x-show="show"
          class="fixed bottom-6 right-6 z-50 bg-[#C4383D] text-white px-4 py-3 rounded-lg shadow-xl flex items-center gap-3 text-xs">
       <span class="w-2 h-2 rounded-full bg-white"></span>

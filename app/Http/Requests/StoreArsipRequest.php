@@ -8,7 +8,7 @@ class StoreArsipRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && (auth()->user()->isTA() || auth()->user()->isKaprodi() || auth()->user()->isBaak());
+        return auth()->check() && auth()->user()->isTA();
     }
 
     public function rules(): array

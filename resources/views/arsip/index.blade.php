@@ -16,7 +16,7 @@
       <p class="text-xs text-[#787774]">Basis repositori digital naskah ilmiah skripsi alumni FITE IT Del yang dapat diakses oleh seluruh mahasiswa & dosen.</p>
     </div>
 
-    @if (auth()->user()->isTA() || auth()->user()->isKaprodi() || auth()->user()->isBaak())
+    @if (auth()->user()->isTA())
       <button @click="uploadModal = true" class="notion-btn-primary text-xs">
         <span>+</span> Unggah Arsip Tugas Akhir
       </button>
@@ -146,6 +146,7 @@
     @endif
   </div>
 
+  @if (auth()->user()->isTA())
   <!-- MODAL: UNGGAH ARSIP TUGAS AKHIR ALUMNI (Teaching Assistant) -->
   <div x-show="uploadModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
     <div class="fixed inset-0 bg-[#0A0A0B]/40 backdrop-blur-xs" @click="uploadModal = false"></div>
@@ -229,6 +230,7 @@
       </div>
     </div>
   </div>
+  @endif
 
 </div>
 @endsection
