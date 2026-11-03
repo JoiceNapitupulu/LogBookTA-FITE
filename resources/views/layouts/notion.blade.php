@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>@yield('title', 'Logbook & Manajemen Tugas Akhir') - FITE Institut Teknologi Del</title>
 
-  <!-- Google Fonts: Plus Jakarta Sans & Inter (Gilroy fallback) -->
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Bootstrap 5.3 CSS & Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -19,22 +19,66 @@
   <style>
     [x-cloak] { display: none !important; }
     
-    p {
-      margin-bottom: 0;
-    }
-    h1, h2, h3, h4, h5, h6 {
-      margin-bottom: 0;
-      color: inherit;
-    }
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-    a:hover {
-      color: inherit;
+    html, body {
+      height: 100%;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
     }
 
-    /* Normalize Bootstrap 5 oversized 48px spacing to compact 16px-24px */
+    body {
+      font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f8f9fa;
+      color: #212529;
+    }
+
+    /* Academic sidebar styling */
+    .sidebar-academic {
+      background-color: #ffffff;
+      border-right: 1px solid #e9ecef;
+    }
+    
+    .nav-link-academic {
+      color: #495057;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.15s ease-in-out;
+      text-decoration: none;
+    }
+    .nav-link-academic:hover {
+      background-color: #f1f3f5;
+      color: #0d6efd;
+    }
+    .nav-link-academic.active {
+      background-color: #e7f1ff;
+      color: #0d6efd;
+      font-weight: 600;
+    }
+    .nav-link-academic.active i {
+      color: #0d6efd;
+    }
+
+    /* Modal Backdrop for Alpine.js without Bootstrap !important display conflict */
+    .modal-backdrop-custom {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1055;
+    }
+
+    /* Normalize legacy utilities for clean academic spacing */
     .p-5 { padding: 1.25rem !important; }
     .pb-5 { padding-bottom: 1.25rem !important; }
     .pt-5 { padding-top: 1.25rem !important; }
@@ -42,93 +86,76 @@
     .px-5 { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
     .mb-5 { margin-bottom: 1.25rem !important; }
 
-    /* Notion Aesthetic Specific Tokens */
-    :root {
-      --notion-sidebar-bg: #F7F7F5;
-      --notion-sidebar-border: #E9E9E7;
-      --notion-sidebar-hover: #EBEBE9;
-      --notion-text-main: #37352F;
-      --notion-text-secondary: #787774;
-      --notion-callout-bg: #F7F6F3;
-      --notion-border-subtle: #E0E0E0;
-    }
-
-    body {
-      color: var(--notion-text-main);
-      background-color: #FFFFFF;
-      font-family: 'Gilroy', 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
-    }
-
-    /* Notion Database Status Tag Pills */
+    /* Compatible Pills mapping to clean Bootstrap Badges */
     .notion-pill-green {
-      background-color: #EBF5EE;
-      color: #2A7E4B;
-      border: 1px solid #C4E5D1;
+      background-color: #d1e7dd;
+      color: #0f5132;
+      border: 1px solid #badbcc;
       border-radius: 4px;
-      padding: 2px 8px;
+      padding: 3px 8px;
       font-size: 11px;
-      font-weight: 500;
+      font-weight: 600;
       display: inline-flex;
       align-items: center;
       gap: 4px;
     }
 
     .notion-pill-orange {
-      background-color: #FDF5E6;
-      color: #B86200;
-      border: 1px solid #F3E0A2;
+      background-color: #fff3cd;
+      color: #664d03;
+      border: 1px solid #ffecb5;
       border-radius: 4px;
-      padding: 2px 8px;
+      padding: 3px 8px;
       font-size: 11px;
-      font-weight: 500;
+      font-weight: 600;
       display: inline-flex;
       align-items: center;
       gap: 4px;
     }
 
     .notion-pill-red {
-      background-color: #FDEBEC;
-      color: #C4383D;
-      border: 1px solid #F6C8C6;
+      background-color: #f8d7da;
+      color: #842029;
+      border: 1px solid #f5c2c7;
       border-radius: 4px;
-      padding: 2px 8px;
+      padding: 3px 8px;
       font-size: 11px;
-      font-weight: 500;
+      font-weight: 600;
       display: inline-flex;
       align-items: center;
       gap: 4px;
     }
 
     .notion-pill-gray {
-      background-color: #F1F1EF;
-      color: #5A5A58;
-      border: 1px solid #E0E0E0;
+      background-color: #e9ecef;
+      color: #495057;
+      border: 1px solid #dee2e6;
       border-radius: 4px;
-      padding: 2px 8px;
+      padding: 3px 8px;
       font-size: 11px;
-      font-weight: 500;
+      font-weight: 600;
       display: inline-flex;
       align-items: center;
       gap: 4px;
     }
 
-    /* Notion Callout Block */
     .notion-callout {
-      background-color: #F7F6F3;
-      border: 1px solid #E9E9E7;
+      background-color: #ffffff;
+      border: 1px solid #e9ecef;
+      border-left: 4px solid #0d6efd;
       border-radius: 6px;
       padding: 14px 16px;
       display: flex;
       align-items: flex-start;
       gap: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
 
-    /* Notion Buttons */
     .notion-btn-primary {
-      background-color: #2C2C2F;
-      color: #FFFFFF;
-      font-size: 14px;
-      font-weight: 500;
+      background-color: #212529;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 600;
       border-radius: 6px;
       padding: 6px 14px;
       display: inline-flex;
@@ -136,192 +163,212 @@
       gap: 6px;
       transition: background-color 0.15s ease-in-out;
       border: 1px solid transparent;
-      cursor: pointer;
+      text-decoration: none;
     }
     .notion-btn-primary:hover {
-      background-color: #0A0A0B;
+      background-color: #000000;
+      color: #ffffff;
     }
 
     .notion-btn-secondary {
-      background-color: #FFFFFF;
-      color: #0A0A0B;
-      font-size: 14px;
-      font-weight: 500;
+      background-color: #ffffff;
+      color: #212529;
+      font-size: 13px;
+      font-weight: 600;
       border-radius: 6px;
       padding: 6px 14px;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       transition: all 0.15s ease-in-out;
-      border: 1px solid #0A0A0B;
-      cursor: pointer;
+      border: 1px solid #dee2e6;
+      text-decoration: none;
     }
     .notion-btn-secondary:hover {
-      background-color: #0A0A0B;
-      color: #FFFFFF;
+      background-color: #f8f9fa;
+      color: #000000;
+      border-color: #ced4da;
     }
   </style>
 </head>
-<body class="bg-[#FFFFFF] antialiased overflow-x-hidden" x-data="{ sidebarOpen: true, roleTesterOpen: false, notifDropdownOpen: false }">
+<body class="antialiased overflow-x-hidden" x-data="{ sidebarOpen: true, notifDropdownOpen: false }">
 
-  <!-- Flash Toast Notifications -->
+  <!-- Flash Toast Notifications (Bootstrap Style) -->
   @if (session('success'))
     <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
-         class="fixed bottom-6 right-6 z-50 bg-[#0A0A0B] text-white px-4 py-3 rounded-lg shadow-xl border border-[#2C2C2F] flex items-center gap-3 text-xs">
-      <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-      <span>{{ session('success') }}</span>
-      <button @click="show = false" class="text-gray-400 hover:text-white ml-2">&times;</button>
+         class="toast show align-items-center text-bg-dark border-0 position-fixed bottom-0 end-0 m-3 z-3" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi bi-check-circle-fill text-success"></i>
+          <span>{{ session('success') }}</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" @click="show = false"></button>
+      </div>
     </div>
   @endif
 
   @if (session('error'))
     <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
-         class="fixed bottom-6 right-6 z-50 bg-[#1B1B1E] text-white px-4 py-3 rounded-lg shadow-xl border border-[#3D3D3F] flex items-center gap-3 text-xs">
-      <span class="w-2 h-2 rounded-full bg-rose-400"></span>
-      <span class="text-[#FCA5A5]">{{ session('error') }}</span>
-      <button @click="show = false" class="text-gray-400 hover:text-white ml-2">&times;</button>
+         class="toast show align-items-center text-bg-danger border-0 position-fixed bottom-0 end-0 m-3 z-3" role="alert">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          <span>{{ session('error') }}</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" @click="show = false"></button>
+      </div>
     </div>
   @endif
 
   @if (session('info'))
     <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
-         class="fixed bottom-6 right-6 z-50 bg-[#1B1B1E] text-white px-4 py-3 rounded-lg shadow-xl border border-[#3D3D3F] flex items-center gap-3 text-xs">
-      <span class="w-2 h-2 rounded-full bg-blue-400"></span>
-      <span>{{ session('info') }}</span>
-      <button @click="show = false" class="text-gray-400 hover:text-white ml-2">&times;</button>
+         class="toast show align-items-center text-bg-primary border-0 position-fixed bottom-0 end-0 m-3 z-3" role="alert">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi bi-info-circle-fill"></i>
+          <span>{{ session('info') }}</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" @click="show = false"></button>
+      </div>
     </div>
   @endif
 
   @if (isset($errors) && $errors->any())
     <div x-data="{ show: true }" x-show="show"
-         class="fixed bottom-6 right-6 z-50 bg-[#C4383D] text-white px-4 py-3 rounded-lg shadow-xl flex items-center gap-3 text-xs">
-      <span class="w-2 h-2 rounded-full bg-white"></span>
-      <span>{{ $errors->first() }}</span>
-      <button @click="show = false" class="text-white hover:opacity-75 ml-2">&times;</button>
+         class="toast show align-items-center text-bg-danger border-0 position-fixed bottom-0 end-0 m-3 z-3" role="alert">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi bi-exclamation-circle-fill"></i>
+          <span>{{ $errors->first() }}</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" @click="show = false"></button>
+      </div>
     </div>
   @endif
 
-  <div class="flex h-screen overflow-hidden">
+  <div class="d-flex h-100" style="height: 100vh; overflow: hidden;">
     
     <!-- ================================================================= -->
-    <!-- LEFT SIDEBAR (Lebar 240px, bg #F7F7F5, border-r 1px #E9E9E7) -->
+    <!-- LEFT SIDEBAR ACADEMIC (Width 240px, bg #ffffff, border-end #e9ecef) -->
     <!-- ================================================================= -->
     <aside :class="sidebarOpen ? 'w-60' : 'w-14'"
-           class="h-screen bg-[#F7F7F5] border-r border-[#E9E9E7] flex flex-col justify-between transition-all duration-200 shrink-0 z-30 select-none">
+           class="sidebar-academic d-flex flex-column justify-content-between transition-all shrink-0 z-3 select-none"
+           style="width: 240px; height: 100vh; min-height: 100vh; max-height: 100vh; transition: width 0.2s ease;">
       
-      <!-- Top Section -->
-      <div class="overflow-y-auto">
-        <!-- Workspace Switcher IT Del FITE -->
-        <div class="h-[52px] border-b border-[#E9E9E7] px-3 flex items-center justify-between">
-          <a href="{{ route('dashboard') }}" class="flex items-center gap-2 overflow-hidden hover:opacity-90 min-w-0">
-            <img src="{{ asset('images/logo-del.png') }}" alt="Logo IT Del" class="shrink-0 object-contain" style="width: 28px; height: 28px;">
-            <div x-show="sidebarOpen" class="truncate min-w-0">
-              <span class="block font-bold text-[#37352F] tracking-tight leading-tight truncate" style="font-size: 13px; font-weight: 700; margin: 0; line-height: 1.2;">TA FITE IT Del</span>
-              <span class="block text-[#787774] truncate" style="font-size: 10px; margin-top: 2px; line-height: 1.2;">Workspace Akademik</span>
+      <!-- Top Section (flex-grow-1 pushes user profile strictly to the bottom) -->
+      <div class="overflow-y-auto flex-grow-1">
+        
+        <!-- Logo Del & Brand Title -->
+        <div class="border-bottom px-3 py-2 d-flex align-items-center justify-content-between" style="height: 56px; border-color: #e9ecef !important;">
+          <a href="{{ route('dashboard') }}" class="d-flex align-items-center gap-2 text-decoration-none min-w-0">
+            <img src="{{ asset('images/logo-del.png') }}" alt="Logo Institut Teknologi Del" class="shrink-0 object-contain" style="width: 28px; height: 28px;">
+            <div x-show="sidebarOpen" style="min-width: 0;">
+              <span class="d-block fw-bold text-dark lh-1 text-nowrap" style="font-size: 13px; letter-spacing: -0.2px;">TA FITE IT Del</span>
+              <span class="d-block text-secondary lh-1 mt-1 text-nowrap" style="font-size: 10px;">Workspace Akademik</span>
             </div>
           </a>
 
-          <button @click="sidebarOpen = !sidebarOpen" class="p-1.5 rounded text-[#787774] hover:bg-[#EBEBE9] hover:text-[#37352F] shrink-0" title="Toggle Sidebar">
-            <i class="bi bi-layout-sidebar text-sm"></i>
+          <button @click="sidebarOpen = !sidebarOpen" class="btn btn-sm btn-light p-1 text-secondary shrink-0" title="Sembunyikan / Tampilkan Sidebar">
+            <i class="bi bi-layout-sidebar"></i>
           </button>
         </div>
 
-        <!-- Quick Jump / Search Placeholder -->
+        <!-- Pencarian Cepat Arsip -->
         <div x-show="sidebarOpen" class="px-3 pt-3">
-          <a href="{{ route('arsip.index') }}" class="w-full flex items-center justify-between px-2.5 py-1.5 text-xs text-[#787774] bg-[#FFFFFF] hover:bg-[#EBEBE9] border border-[#E9E9E7] rounded transition-colors">
-            <div class="flex items-center gap-1.5">
-              <i class="bi bi-search text-xs text-[#787774]"></i>
-              <span>Cari arsip & naskah...</span>
+          <a href="{{ route('arsip.index') }}" class="d-flex align-items-center justify-content-between px-2.5 py-1.5 text-secondary bg-light border rounded text-decoration-none" style="font-size: 11.5px;">
+            <div class="d-flex align-items-center gap-1.5">
+              <i class="bi bi-search text-secondary" style="font-size: 11px;"></i>
+              <span>Cari naskah arsip...</span>
             </div>
-            <span class="text-[10px] font-mono text-[#CCCCCC] bg-[#F7F7F5] px-1 rounded">⌘K</span>
+            <span class="badge bg-white text-secondary border font-monospace text-[9px] px-1 py-0.5">Katalog</span>
           </a>
         </div>
 
-        <!-- Sidebar Navigation Items with Notion indentation -->
-        <nav class="p-2.5 space-y-4 text-xs">
+        <!-- Sidebar Navigation Items with Bootstrap Icons -->
+        <nav class="p-2 space-y-3" style="font-size: 12.5px;">
           
-          <!-- Section 1: Halaman Utama -->
-          <div>
-            <div x-show="sidebarOpen" class="px-2 mb-1 text-[10px] font-semibold uppercase tracking-wider text-[#787774]">
-              Workspace
+          <!-- Menu Utama -->
+          <div class="mb-3">
+            <div x-show="sidebarOpen" class="px-2 mb-1 text-secondary text-uppercase fw-bold" style="font-size: 10px; letter-spacing: 0.5px;">
+              Menu Utama
             </div>
-            <div class="space-y-0.5">
+            <div class="d-flex flex-column gap-1">
               <!-- Dashboard -->
               <a href="{{ route('dashboard') }}" 
-                 class="flex items-center gap-2.5 px-2.5 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('dashboard') || request()->routeIs('workspace') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
-                 title="Dashboard Workspace">
-                <i class="bi bi-grid-1x2 text-sm text-[#787774] w-4 text-center shrink-0"></i>
-                <span x-show="sidebarOpen" class="truncate">Dashboard Utama</span>
+                 class="nav-link-academic {{ request()->routeIs('dashboard') || request()->routeIs('workspace') ? 'active' : '' }}"
+                 title="Dashboard Utama">
+                <i class="bi bi-grid-1x2 text-center" style="width: 18px;"></i>
+                <span x-show="sidebarOpen" class="text-truncate">Dashboard Utama</span>
               </a>
 
               @if (auth()->check() && (auth()->user()->isMahasiswaTa() || auth()->user()->isDosen()))
               <!-- Logbook Aktivitas -->
               <a href="{{ route('logbook.index') }}" 
-                 class="flex items-center gap-2.5 px-2.5 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('logbook.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
-                 title="Logbook Aktivitas & Progres">
-                <i class="bi bi-journal-text text-sm text-[#787774] w-4 text-center shrink-0"></i>
-                <span x-show="sidebarOpen" class="truncate">Logbook Aktivitas</span>
+                 class="nav-link-academic {{ request()->routeIs('logbook.*') ? 'active' : '' }}"
+                 title="Logbook Aktivitas">
+                <i class="bi bi-journal-text text-center" style="width: 18px;"></i>
+                <span x-show="sidebarOpen" class="text-truncate">Logbook Aktivitas</span>
               </a>
 
               <!-- Janji Bimbingan -->
               <a href="{{ route('bimbingan.index') }}" 
-                 class="flex items-center gap-2.5 px-2.5 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('bimbingan.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
+                 class="nav-link-academic {{ request()->routeIs('bimbingan.*') ? 'active' : '' }}"
                  title="Janji Bimbingan">
-                <i class="bi bi-calendar-event text-sm text-[#787774] w-4 text-center shrink-0"></i>
-                <span x-show="sidebarOpen" class="truncate">Janji Bimbingan</span>
+                <i class="bi bi-calendar-check text-center" style="width: 18px;"></i>
+                <span x-show="sidebarOpen" class="text-truncate">Janji Bimbingan</span>
               </a>
               @endif
 
               @if (auth()->check() && !auth()->user()->isMahasiswaNonTa())
-              <!-- Alur & Jadwal Ujian TA -->
+              <!-- Manajemen Ujian TA -->
               <a href="{{ route('ujian.index') }}" 
-                 class="flex items-center gap-2.5 px-2.5 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('ujian.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
-                 title="Pendaftaran & Jadwal Ujian">
-                <i class="bi bi-mortarboard text-sm text-[#787774] w-4 text-center shrink-0"></i>
-                <span x-show="sidebarOpen" class="truncate">Manajemen Ujian TA</span>
+                 class="nav-link-academic {{ request()->routeIs('ujian.*') ? 'active' : '' }}"
+                 title="Manajemen Ujian TA">
+                <i class="bi bi-mortarboard text-center" style="width: 18px;"></i>
+                <span x-show="sidebarOpen" class="text-truncate">Manajemen Ujian TA</span>
               </a>
               @endif
             </div>
           </div>
 
-          <!-- Section 2: Pustaka & Repositori -->
-          <div>
-            <div x-show="sidebarOpen" class="px-2 mb-1 text-[10px] font-semibold uppercase tracking-wider text-[#787774]">
-              Koleksi & Database
+          <!-- Pustaka & Repositori -->
+          <div class="mb-3">
+            <div x-show="sidebarOpen" class="px-2 mb-1 text-secondary text-uppercase fw-bold" style="font-size: 10px; letter-spacing: 0.5px;">
+              Pustaka & Naskah
             </div>
-            <div class="space-y-0.5">
+            <div class="d-flex flex-column gap-1">
               <!-- Pustaka Arsip TA -->
               <a href="{{ route('arsip.index') }}" 
-                 class="flex items-center gap-2.5 px-2.5 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('arsip.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
-                 title="Pustaka Arsip Tugas Akhir Alumni">
-                <i class="bi bi-collection text-sm text-[#787774] w-4 text-center shrink-0"></i>
-                <span x-show="sidebarOpen" class="truncate">Pustaka Arsip TA</span>
+                 class="nav-link-academic {{ request()->routeIs('arsip.*') ? 'active' : '' }}"
+                 title="Pustaka Arsip TA">
+                <i class="bi bi-archive text-center" style="width: 18px;"></i>
+                <span x-show="sidebarOpen" class="text-truncate">Pustaka Arsip TA</span>
               </a>
             </div>
           </div>
 
-          <!-- Section 3: Manajemen Program Studi (Koordinator & Kaprodi) -->
+          <!-- Otoritas Program Studi (Koordinator & Kaprodi) -->
           @if (auth()->check() && (auth()->user()->isKoordinator() || auth()->user()->isKaprodi()))
           <div>
-            <div x-show="sidebarOpen" class="px-2 mb-1 text-[10px] font-semibold uppercase tracking-wider text-[#787774]">
-              Manajemen Program Studi
+            <div x-show="sidebarOpen" class="px-2 mb-1 text-secondary text-uppercase fw-bold" style="font-size: 10px; letter-spacing: 0.5px;">
+              Program Studi
             </div>
-            <div class="space-y-0.5">
+            <div class="d-flex flex-column gap-1">
               @if (auth()->user()->isKoordinator())
               <a href="{{ route('koordinator.index') }}" 
-                 class="flex items-center gap-2.5 px-2.5 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('koordinator.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
+                 class="nav-link-academic {{ request()->routeIs('koordinator.*') ? 'active' : '' }}"
                  title="Panel Koordinator TA">
-                <i class="bi bi-sliders text-sm text-[#787774] w-4 text-center shrink-0"></i>
-                <span x-show="sidebarOpen" class="truncate">Koordinator TA</span>
+                <i class="bi bi-diagram-3 text-center" style="width: 18px;"></i>
+                <span x-show="sidebarOpen" class="text-truncate">Koordinator TA</span>
               </a>
               @endif
 
               @if (auth()->user()->isKaprodi())
               <a href="{{ route('kaprodi.index') }}" 
-                 class="flex items-center gap-2.5 px-2.5 py-1.5 rounded text-xs transition-colors {{ request()->routeIs('kaprodi.*') ? 'bg-[#EBEBE9] text-[#37352F] font-semibold' : 'text-[#37352F] hover:bg-[#EBEBE9]' }}"
-                 title="Panel Eksekutif Kaprodi">
-                <i class="bi bi-bar-chart-line text-sm text-[#787774] w-4 text-center shrink-0"></i>
-                <span x-show="sidebarOpen" class="truncate">Panel Kaprodi</span>
+                 class="nav-link-academic {{ request()->routeIs('kaprodi.*') ? 'active' : '' }}"
+                 title="Panel Kaprodi">
+                <i class="bi bi-bar-chart text-center" style="width: 18px;"></i>
+                <span x-show="sidebarOpen" class="text-truncate">Panel Kaprodi</span>
               </a>
               @endif
             </div>
@@ -331,29 +378,29 @@
         </nav>
       </div>
 
-      <!-- Bottom User Section & Logout -->
-      <div class="p-2.5 border-t border-[#E9E9E7] bg-[#F7F7F5]">
+      <!-- Bottom User Section & Logout (Pinned to the very bottom) -->
+      <div class="p-2 border-top bg-light mt-auto shrink-0" style="border-color: #e9ecef !important;">
         @auth
-          <div class="flex items-center justify-between px-1">
-            <div class="flex items-center gap-2 overflow-hidden">
-              <div class="w-7 h-7 rounded-full bg-[#37352F] text-white flex items-center justify-center font-bold text-[11px] shrink-0">
+          <div class="d-flex align-items-center justify-content-between px-1 py-1">
+            <div class="d-flex align-items-center gap-2 overflow-hidden">
+              <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center fw-bold shrink-0 lh-1" style="width: 32px; height: 32px; font-size: 11px;">
                 {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
               </div>
-              <div x-show="sidebarOpen" class="truncate text-left">
-                <p class="text-xs font-semibold text-[#37352F] leading-tight truncate">{{ auth()->user()->name }}</p>
-                <p class="text-[10px] text-[#787774] truncate">{{ auth()->user()->email }}</p>
+              <div x-show="sidebarOpen" class="text-truncate text-start">
+                <p class="fw-semibold text-dark mb-0 text-truncate" style="font-size: 12px; line-height: 1.2;">{{ auth()->user()->name }}</p>
+                <p class="text-secondary mb-0 text-truncate" style="font-size: 10.5px; line-height: 1.2;">{{ auth()->user()->email }}</p>
               </div>
             </div>
 
-            <form action="{{ route('logout') }}" method="POST" x-show="sidebarOpen">
+            <form action="{{ route('logout') }}" method="POST" x-show="sidebarOpen" class="mb-0">
               @csrf
-              <button type="submit" class="p-1.5 rounded text-[#787774] hover:text-[#C4383D] hover:bg-[#FDEBEC] transition-colors" title="Keluar">
-                <i class="bi bi-box-arrow-right text-sm"></i>
+              <button type="submit" class="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center p-0" title="Keluar dari akun" style="width: 30px; height: 30px;">
+                <i class="bi bi-box-arrow-right"></i>
               </button>
             </form>
           </div>
         @else
-          <a href="{{ route('login') }}" class="notion-btn-primary w-full text-xs justify-center py-1.5">
+          <a href="{{ route('login') }}" class="btn btn-dark btn-sm w-100">
             Masuk Akun
           </a>
         @endauth
@@ -362,67 +409,67 @@
     </aside>
 
     <!-- ================================================================= -->
-    <!-- MAIN CONTENT & TOP HEADER (Tinggi 52px, border-b 1px #E9E9E7) -->
+    <!-- MAIN CONTENT & TOP HEADER -->
     <!-- ================================================================= -->
-    <div class="flex-1 flex flex-col h-screen overflow-hidden">
+    <div class="flex-grow-1 d-flex flex-column h-100 overflow-hidden" style="background-color: #f8f9fa;">
       
-      <!-- Top Header 52px -->
-      <header class="h-[52px] bg-[#FFFFFF] border-b border-[#E9E9E7] px-6 flex items-center justify-between z-20 shrink-0">
+      <!-- Top Header 56px -->
+      <header class="bg-white border-bottom px-4 d-flex align-items-center justify-content-between shrink-0" style="height: 56px; border-color: #e9ecef !important;">
         
-        <!-- Breadcrumb Ala Notion -->
-        <div class="flex items-center gap-1.5 text-xs text-[#787774]">
-          <a href="{{ route('dashboard') }}" class="hover:text-[#37352F] flex items-center gap-1">
-            <span>FITE IT Del</span>
-          </a>
-          <span>/</span>
-          <span class="text-[#787774]">Tugas Akhir</span>
-          <span>/</span>
-          <span class="font-semibold text-[#37352F]">@yield('breadcrumb', 'Workspace')</span>
-        </div>
+        <!-- Breadcrumb Bootstrap Sederhana -->
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0 text-xs" style="font-size: 12px;">
+            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-secondary text-decoration-none">TA FITE</a></li>
+            <li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">@yield('breadcrumb', 'Workspace')</li>
+          </ol>
+        </nav>
 
         <!-- Right Quick Actions -->
-        <div class="flex items-center gap-3">
+        <div class="d-flex align-items-center gap-3">
           
           <!-- Lonceng Notifikasi In-App -->
-          <div class="relative" @click.away="notifDropdownOpen = false">
-            <button @click="notifDropdownOpen = !notifDropdownOpen" class="p-1.5 rounded hover:bg-[#F7F7F5] text-[#787774] hover:text-[#37352F] relative" title="Notifikasi">
-              <i class="bi bi-bell text-base"></i>
-              <span class="position-absolute top-1 end-1 p-1 bg-danger border border-light rounded-circle">
-                <span class="visually-hidden">Notifikasi Baru</span>
+          <div class="position-relative" @click.away="notifDropdownOpen = false">
+            <button @click="notifDropdownOpen = !notifDropdownOpen" class="btn btn-sm btn-light text-secondary position-relative p-1.5" title="Pemberitahuan">
+              <i class="bi bi-bell fs-6"></i>
+              <span class="position-absolute top-1 start-100 translate-middle p-1 bg-primary border border-light rounded-circle">
+                <span class="visually-hidden">Notifikasi</span>
               </span>
             </button>
 
             <!-- Dropdown Notifikasi -->
             <div x-show="notifDropdownOpen" x-cloak
-                 class="absolute right-0 mt-2 w-80 bg-[#FFFFFF] border border-[#E9E9E7] rounded-lg shadow-xl p-3 z-50 text-xs">
-              <div class="flex items-center justify-between pb-2 border-b border-[#E9E9E7] mb-2">
-                <span class="font-bold text-[#37352F]">Pemberitahuan Sistem</span>
-                <span class="badge bg-success-subtle text-success border border-success-subtle text-[10px]">3 Baru</span>
+                 class="position-absolute end-0 mt-2 bg-white border rounded shadow p-3 z-3 text-xs" style="width: 320px; font-size: 12px;">
+              <div class="d-flex align-items-center justify-content-between pb-2 border-bottom mb-2">
+                <span class="fw-bold text-dark">Pemberitahuan Sistem</span>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle text-[10px]">Aktif</span>
               </div>
-              <div class="space-y-2 max-h-60 overflow-y-auto">
-                <div class="p-2 rounded bg-[#F7F6F3] border border-[#E9E9E7]">
-                  <p class="font-semibold text-[#37352F]">Catatan Revisi Logbook Bab 4</p>
-                  <p class="text-[10px] text-[#787774] mt-0.5">Dr. Johannes Harungguan telah menyematkan evaluasi & coretan.</p>
+              <div class="d-flex flex-column gap-2" style="max-height: 240px; overflow-y: auto;">
+                <div class="p-2 rounded bg-light border">
+                  <p class="fw-semibold text-dark mb-0.5">Catatan Evaluasi Logbook</p>
+                  <p class="text-secondary mb-0" style="font-size: 11px;">Dosen pembimbing telah memperbarui catatan asistensi.</p>
                 </div>
-                <div class="p-2 rounded bg-[#F7F6F3] border border-[#E9E9E7]">
-                  <p class="font-semibold text-[#37352F]">Verifikasi Berkas Seminar TA: Lengkap</p>
-                  <p class="text-[10px] text-[#787774] mt-0.5">Teaching Assistant telah memvalidasi seluruh artefak ujian.</p>
+                <div class="p-2 rounded bg-light border">
+                  <p class="fw-semibold text-dark mb-0.5">Verifikasi Berkas Ujian TA</p>
+                  <p class="text-secondary mb-0" style="font-size: 11px;">Koordinator TA melakukan validasi persyaratan naskah.</p>
                 </div>
-                <div class="p-2 rounded bg-[#F7F6F3] border border-[#E9E9E7]">
-                  <p class="font-semibold text-[#37352F]">Jadwal Ruangan Seminar Ditetapkan</p>
-                  <p class="text-[10px] text-[#787774] mt-0.5">BAAK: Ruang Sidang FITE GD 514 & Zoom Room 1.</p>
+                <div class="p-2 rounded bg-light border">
+                  <p class="fw-semibold text-dark mb-0.5">Jadwal & Ruangan Ujian</p>
+                  <p class="text-secondary mb-0" style="font-size: 11px;">BAAK mengalokasikan ruang sidang dan tautan daring.</p>
                 </div>
               </div>
             </div>
           </div>
 
+          <!-- User Chip Kanan Atas -->
           @auth
-            <div class="d-flex align-items-center gap-2 border-start ps-3 border-[#E9E9E7]">
+            <div class="d-flex align-items-center gap-2 border-start ps-3" style="border-color: #e9ecef !important;">
               <div class="text-end d-none d-sm-block">
-                <p class="text-xs font-semibold text-[#37352F] leading-tight mb-0">{{ auth()->user()->name }}</p>
-                <p class="text-[10px] text-[#787774] mb-0">{{ strtoupper(str_replace('_', ' ', auth()->user()->role)) }}</p>
+                <p class="fw-semibold text-dark mb-0 lh-1" style="font-size: 12.5px;">{{ auth()->user()->name }}</p>
+                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-1.5 py-0.5 mt-1" style="font-size: 9.5px;">
+                  {{ strtoupper(str_replace('_', ' ', auth()->user()->role)) }}
+                </span>
               </div>
-              <div class="w-7 h-7 rounded-full bg-[#2C2C2F] text-white flex items-center justify-center font-bold text-[11px] shrink-0">
+              <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center fw-bold shrink-0 lh-1" style="width: 30px; height: 30px; font-size: 11px;">
                 {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
               </div>
             </div>
@@ -432,8 +479,8 @@
 
       </header>
 
-      <!-- Main Canvas View -->
-      <main class="flex-1 overflow-y-auto p-4 md:p-6 max-w-7xl w-full mx-auto">
+      <!-- Main Canvas View (Consistent 16px / 24px padding) -->
+      <main class="flex-grow-1 overflow-y-auto p-3 p-md-4 w-100 mx-auto" style="max-width: 1240px;">
         @yield('content')
       </main>
 

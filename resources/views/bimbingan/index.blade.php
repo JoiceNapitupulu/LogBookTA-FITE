@@ -4,7 +4,7 @@
 @section('breadcrumb', 'Janji Bimbingan')
 
 @section('content')
-<div class="space-y-4 md:space-y-5" x-data="{ 
+<div x-data="{ 
   openModal: false,
   completeModalOpen: false,
   selectedJanji: null,
@@ -14,175 +14,204 @@
   }
 }">
 
-  <!-- Header Notion -->
-  <div class="border-b border-[#E9E9E7] pb-3 mb-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <!-- 1. Header Halaman Akademik Bersih -->
+  <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 pb-3 mb-4 border-bottom">
     <div>
-      <div class="flex items-center gap-2 mb-1">
-        <h1 class="text-2xl font-bold tracking-tight text-[#37352F]">Janji Bimbingan Tugas Akhir</h1>
-      </div>
-      <p class="text-xs text-[#787774]">Koordinasi jadwal bimbingan tatap muka (Ruang Dosen GD 512/514) atau daring (Zoom IT Del) antara mahasiswa dan dosen.</p>
+      <h1 class="h3 fw-bold text-dark mb-1">Janji Bimbingan</h1>
+      <p class="text-secondary small mb-0">Koordinasi jadwal bimbingan mahasiswa dan dosen.</p>
     </div>
 
-    <button @click="openModal = true" class="btn btn-dark btn-sm d-inline-flex align-items-center gap-1.5 text-xs">
-      <i class="bi bi-calendar-plus"></i> Ajukan Janji Bimbingan
-    </button>
+    <div>
+      <button @click="openModal = true" class="btn btn-primary d-inline-flex align-items-center gap-2">
+        <i class="bi bi-plus-lg"></i>
+        <span>Ajukan Janji Bimbingan</span>
+      </button>
+    </div>
   </div>
 
-  <!-- Sesi Menunggu Persetujuan (Pending Approval Cards) -->
+  <!-- 2. Bagian Menunggu Persetujuan (Pending Approval Cards) -->
   @php
     $pendingList = $janjiList->where('status', 'menunggu_persetujuan');
   @endphp
 
   @if ($pendingList->isNotEmpty())
-    <div class="border border-[#F3E0A2] rounded-xl p-4 bg-[#FDF5E6]/40 shadow-xs">
-      <div class="flex items-center justify-between mb-3">
-        <div class="flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
-          <h3 class="text-sm font-bold text-[#37352F]">Menunggu Persetujuan (Pending Approval)</h3>
+    <div class="card border-warning-subtle bg-warning-subtle/20 shadow-sm mb-4">
+      <div class="card-header bg-transparent border-warning-subtle py-2.5 d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-hourglass-split text-warning"></i>
+          <h2 class="h6 fw-bold text-dark mb-0">Menunggu Persetujuan</h2>
         </div>
-        <span class="text-[11px] text-[#B86200] font-semibold">{{ $pendingList->count() }} Permintaan</span>
+        <span class="badge bg-warning text-dark">{{ $pendingList->count() }} Permintaan</span>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-        @foreach ($pendingList as $item)
-          <div class="bg-[#FFFFFF] border border-[#F3E0A2] rounded-lg p-4 flex flex-col justify-between shadow-xs">
-            <div>
-              <div class="flex items-center justify-between text-[11px] text-[#787774] mb-1.5">
-                <span class="notion-pill-orange">Inisiator: {{ ucfirst($item->inisiator) }}</span>
-                <span class="font-bold text-[#37352F]">{{ $item->tanggal_waktu->format('d M Y, H:i') }} WIB</span>
-              </div>
-              <h4 class="font-bold text-[#37352F] text-xs leading-snug">{{ $item->topik_pembahasan }}</h4>
-              <p class="text-[11px] text-[#787774] mt-1.5">
-                @if ($item->tugasAkhir->anggota && $item->tugasAkhir->anggota->isNotEmpty())
-                  Mahasiswa: <strong class="text-[#37352F]">{{ $item->tugasAkhir->anggota->pluck('user.name')->implode(', ') }}</strong> • 
-                @else
-                  Mahasiswa: <strong class="text-[#37352F]">{{ $item->tugasAkhir->mahasiswa->user->name ?? '-' }}</strong> • 
-                @endif
-                Dosen: <strong class="text-[#37352F]">{{ $item->dosen->user->name ?? '-' }}</strong>
-              </p>
-              <div class="mt-2 text-[11px] text-[#787774] bg-[#F7F7F5] px-2.5 py-1 rounded-md border border-[#E9E9E7] inline-flex align-items-center gap-1.5">
-                <i class="bi {{ $item->metode === 'offline' ? 'bi-geo-alt' : 'bi-camera-video' }} text-secondary"></i>
-                <span>{{ $item->metode === 'offline' ? 'Tatap Muka: ' : 'Daring: ' }} {{ $item->lokasi_atau_link ?? '-' }}</span>
+      <div class="card-body">
+        <div class="row g-3">
+          @foreach ($pendingList as $item)
+            <div class="col-12 col-lg-6">
+              <div class="card h-100 border shadow-xs bg-white">
+                <div class="card-body d-flex flex-column justify-content-between">
+                  <div>
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                      <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">
+                        Inisiator: {{ ucfirst($item->inisiator) }}
+                      </span>
+                      <span class="small fw-bold text-dark">
+                        <i class="bi bi-clock me-1 text-secondary"></i>{{ $item->tanggal_waktu->format('d M Y, H:i') }} WIB
+                      </span>
+                    </div>
+
+                    <h3 class="h6 fw-bold text-dark mb-1">{{ $item->topik_pembahasan }}</h3>
+
+                    <p class="small text-secondary mb-2">
+                      @if ($item->tugasAkhir->anggota && $item->tugasAkhir->anggota->isNotEmpty())
+                        Mahasiswa: <strong class="text-dark">{{ $item->tugasAkhir->anggota->pluck('user.name')->implode(', ') }}</strong> · 
+                      @else
+                        Mahasiswa: <strong class="text-dark">{{ $item->tugasAkhir->mahasiswa->user->name ?? '-' }}</strong> · 
+                      @endif
+                      Dosen: <strong class="text-dark">{{ $item->dosen->user->name ?? '-' }}</strong>
+                    </p>
+
+                    <div class="d-inline-flex align-items-center gap-1.5 px-2.5 py-1 rounded bg-light border text-secondary small">
+                      <i class="bi {{ $item->metode === 'offline' ? 'bi-geo-alt' : 'bi-camera-video' }}"></i>
+                      <span>{{ $item->metode === 'offline' ? 'Tatap Muka:' : 'Daring:' }} {{ $item->lokasi_atau_link ?? '-' }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Footer Card Aksi Dosen / Status Mahasiswa -->
+                  <div class="pt-3 mt-3 border-top d-flex align-items-center justify-content-between">
+                    @if (auth()->user()->isDosen() && auth()->user()->dosenProfile?->id === $item->dosen_id)
+                      <span class="small text-secondary">Aksi konfirmasi jadwal:</span>
+                      <div class="d-flex align-items-center gap-2">
+                        <form action="{{ route('bimbingan.status', $item->id) }}" method="POST" class="mb-0">
+                          @csrf
+                          @method('PATCH')
+                          <input type="hidden" name="status" value="ditolak">
+                          <button type="submit" class="btn btn-outline-danger btn-sm">Tolak</button>
+                        </form>
+
+                        <form action="{{ route('bimbingan.status', $item->id) }}" method="POST" class="mb-0">
+                          @csrf
+                          @method('PATCH')
+                          <input type="hidden" name="status" value="disetujui">
+                          <button type="submit" class="btn btn-success btn-sm">Setujui Jadwal</button>
+                        </form>
+                      </div>
+                    @else
+                      <span class="small text-secondary d-flex align-items-center gap-1">
+                        <i class="bi bi-clock-history"></i> Menunggu konfirmasi {{ $item->dosen->user->name ?? 'Dosen' }}
+                      </span>
+                    @endif
+                  </div>
+                </div>
               </div>
             </div>
-
-            <!-- Tombol Setujui / Tolak -->
-            <div class="mt-4 pt-3 border-t border-[#E9E9E7] flex items-center justify-end gap-2">
-              @if (auth()->user()->isDosen() && auth()->user()->dosenProfile?->id === $item->dosen_id)
-                <form action="{{ route('bimbingan.status', $item->id) }}" method="POST">
-                  @csrf
-                  @method('PATCH')
-                  <input type="hidden" name="status" value="ditolak">
-                  <button type="submit" class="notion-btn-secondary text-xs py-1 px-2.5">
-                    Tolak
-                  </button>
-                </form>
-
-                <form action="{{ route('bimbingan.status', $item->id) }}" method="POST">
-                  @csrf
-                  @method('PATCH')
-                  <input type="hidden" name="status" value="disetujui">
-                  <button type="submit" class="notion-btn-primary text-xs py-1 px-3">
-                    Setujui Jadwal
-                  </button>
-                </form>
-              @else
-                <span class="text-[10px] text-[#787774] italic">Menunggu konfirmasi {{ $item->dosen->user->name ?? 'Dosen' }}</span>
-              @endif
-            </div>
-          </div>
-        @endforeach
+          @endforeach
+        </div>
       </div>
     </div>
   @endif
 
-  <!-- Tabel Jadwal Terkonfirmasi & Riwayat -->
-  <div class="border border-[#E9E9E7] rounded-xl overflow-hidden bg-[#FFFFFF] shadow-xs">
-    <div class="p-4 border-b border-[#E9E9E7] flex items-center justify-between">
+  <!-- 3. Tabel Riwayat / Terkonfirmasi -->
+  <div class="card shadow-sm border-light-subtle">
+    <div class="card-header bg-white py-3 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
       <div>
-        <h3 class="text-sm font-bold text-[#37352F]">Daftar Jadwal Bimbingan Terkonfirmasi & Riwayat</h3>
-        <p class="text-xs text-[#787774]">Seluruh sesi bimbingan yang telah disepakati bersama</p>
+        <h2 class="h6 fw-bold text-dark mb-0">Riwayat & Jadwal Terkonfirmasi</h2>
+        <p class="text-secondary small mb-0">Seluruh sesi bimbingan tugas akhir yang terdaftar pada sistem.</p>
       </div>
-      <span class="text-xs text-[#787774]">Total: {{ $janjiList->total() }} Sesi</span>
+      <span class="badge bg-light text-secondary border">Total: {{ $janjiList->total() }} Sesi</span>
     </div>
 
-    <div class="overflow-x-auto">
-      <table class="w-full text-left text-xs">
-        <thead class="bg-[#F7F7F5] text-[#787774] uppercase text-[10px] tracking-wider border-b border-[#E9E9E7]">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0" style="font-size: 0.8125rem;">
+        <thead class="table-light">
           <tr>
-            <th class="py-2.5 px-4 font-semibold">Waktu Pelaksanaan</th>
-            <th class="py-2.5 px-4 font-semibold">Mahasiswa & Dosen</th>
-            <th class="py-2.5 px-4 font-semibold">Topik Bimbingan</th>
-            <th class="py-2.5 px-4 font-semibold">Metode & Lokasi / Link</th>
-            <th class="py-2.5 px-4 font-semibold">Status</th>
-            <th class="py-2.5 px-4 text-right font-semibold">Aksi</th>
+            <th class="py-2.5 px-3">Waktu Pelaksanaan</th>
+            <th class="py-2.5 px-3">Mahasiswa & Dosen</th>
+            <th class="py-2.5 px-3">Topik Bimbingan</th>
+            <th class="py-2.5 px-3">Metode & Lokasi</th>
+            <th class="py-2.5 px-3">Status</th>
+            <th class="py-2.5 px-3 text-end">Aksi</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-[#E9E9E7]">
+        <tbody>
           @forelse ($janjiList as $janji)
-            <tr class="hover:bg-[#F7F7F5] transition-colors">
-              <td class="py-3 px-4 whitespace-nowrap">
-                <span class="font-bold text-[#37352F] block">{{ $janji->tanggal_waktu->format('d M Y') }}</span>
-                <span class="text-[11px] text-[#787774]">{{ $janji->tanggal_waktu->format('H:i') }} WIB</span>
+            <tr>
+              <td class="px-3 py-3 text-nowrap">
+                <span class="fw-bold text-dark d-block">{{ $janji->tanggal_waktu->format('d M Y') }}</span>
+                <span class="text-secondary small">{{ $janji->tanggal_waktu->format('H:i') }} WIB</span>
               </td>
-              <td class="py-3 px-4">
+              <td class="px-3 py-3">
                 @if ($janji->tugasAkhir->anggota && $janji->tugasAkhir->anggota->isNotEmpty())
-                  @foreach ($janji->tugasAkhir->anggota as $member)
-                    <p class="font-semibold text-[#37352F] text-xs leading-tight">{{ $member->user->name ?? '-' }}</p>
-                    <p class="text-[10px] text-[#787774] mb-1">NIM: {{ $member->nim }}</p>
-                  @endforeach
+                  <div class="d-flex flex-column gap-0.5">
+                    @foreach ($janji->tugasAkhir->anggota as $member)
+                      <span class="fw-semibold text-dark">{{ $member->user->name ?? '-' }} <span class="text-secondary fw-normal">({{ $member->nim }})</span></span>
+                    @endforeach
+                  </div>
                 @else
-                  <p class="font-semibold text-[#37352F]">{{ $janji->tugasAkhir->mahasiswa->user->name ?? '-' }}</p>
-                  <p class="text-[10px] text-[#787774]">{{ $janji->tugasAkhir->mahasiswa->nim ?? '-' }}</p>
+                  <span class="fw-semibold text-dark d-block">{{ $janji->tugasAkhir->mahasiswa->user->name ?? '-' }}</span>
+                  <span class="text-secondary small">NIM: {{ $janji->tugasAkhir->mahasiswa->nim ?? '-' }}</span>
                 @endif
-                <p class="text-[10px] text-[#787774] mt-0.5 font-medium">Dosen: {{ $janji->dosen->user->name ?? '-' }}</p>
+                <div class="text-secondary small mt-1">
+                  Dosen: <strong class="text-dark">{{ $janji->dosen->user->name ?? '-' }}</strong>
+                </div>
               </td>
-              <td class="py-3 px-4 max-w-sm">
-                <p class="font-medium text-[#37352F]">{{ $janji->topik_pembahasan }}</p>
+              <td class="px-3 py-3" style="max-width: 320px;">
+                <p class="fw-medium text-dark mb-1">{{ $janji->topik_pembahasan }}</p>
+                
                 @if ($janji->status === 'selesai' && $janji->catatan_hasil)
-                  <div class="mt-2 p-2 bg-[#F7F7F5] rounded border border-[#E9E9E7] text-[11px]">
-                    <div class="font-bold text-[#787774] text-[10px] mb-0.5 uppercase tracking-wider">
-                      Catatan hasil bimbingan:
-                    </div>
-                    <p class="text-[#37352F] whitespace-pre-line leading-relaxed">{{ $janji->catatan_hasil }}</p>
+                  <div class="p-2 bg-light rounded border text-secondary mt-1" style="font-size: 0.75rem;">
+                    <span class="fw-bold text-dark d-block text-uppercase mb-0.5" style="font-size: 0.7rem;">Catatan Hasil Bimbingan:</span>
+                    <span class="text-dark lh-sm">{{ $janji->catatan_hasil }}</span>
                   </div>
                 @elseif ($janji->status === 'ditolak' && $janji->alasan_penolakan)
-                  <div class="mt-2 p-2 bg-rose-50 rounded border border-rose-200 text-[11px] text-rose-800">
-                    <span class="font-bold text-[10px] block uppercase tracking-wider text-rose-700">Alasan Penolakan:</span>
-                    <p class="leading-relaxed">{{ $janji->alasan_penolakan }}</p>
+                  <div class="p-2 bg-danger-subtle rounded border border-danger-subtle text-danger mt-1" style="font-size: 0.75rem;">
+                    <span class="fw-bold d-block text-uppercase mb-0.5" style="font-size: 0.7rem;">Alasan Penolakan:</span>
+                    <span class="lh-sm">{{ $janji->alasan_penolakan }}</span>
                   </div>
                 @endif
               </td>
-              <td class="py-3 px-4 text-[#787774]">
-                <span class="notion-pill-gray text-[10px] block mb-0.5">{{ ucfirst($janji->metode) }}</span>
-                <span class="text-[11px] text-[#37352F]">{{ $janji->lokasi_atau_link ?? '-' }}</span>
+              <td class="px-3 py-3 text-secondary">
+                <span class="badge bg-light text-dark border mb-1">{{ ucfirst($janji->metode) }}</span>
+                <span class="d-block small text-dark">{{ $janji->lokasi_atau_link ?? '-' }}</span>
               </td>
-              <td class="py-3 px-4 whitespace-nowrap">
+              <td class="px-3 py-3 text-nowrap">
                 @if ($janji->status === 'disetujui')
-                  <span class="notion-pill-green">Terkonfirmasi</span>
+                  <span class="badge bg-success-subtle text-success border border-success-subtle">
+                    <i class="bi bi-check-circle me-1"></i> Terkonfirmasi
+                  </span>
                 @elseif ($janji->status === 'menunggu_persetujuan')
-                  <span class="notion-pill-orange">Menunggu</span>
+                  <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">
+                    <i class="bi bi-hourglass me-1"></i> Menunggu Persetujuan
+                  </span>
                 @elseif ($janji->status === 'ditolak')
-                  <span class="notion-pill-red">Ditolak</span>
+                  <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                    <i class="bi bi-x-circle me-1"></i> Ditolak
+                  </span>
                 @else
-                  <span class="notion-pill-gray">Selesai</span>
+                  <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
+                    <i class="bi bi-check-all me-1"></i> Selesai
+                  </span>
                 @endif
               </td>
-              <td class="py-3 px-4 text-right whitespace-nowrap">
+              <td class="px-3 py-3 text-end text-nowrap">
                 @if ($janji->status === 'disetujui' && auth()->user()->isDosen() && auth()->user()->dosenProfile?->id === $janji->dosen_id)
-                  <button @click="openComplete({{ $janji->toJson() }})" class="btn btn-outline-success btn-sm text-xs py-1 px-2.5 inline-flex align-items-center gap-1.5">
-                    <i class="bi bi-check2-circle"></i> Selesaikan & Catat
+                  <button @click="openComplete({{ $janji->toJson() }})" class="btn btn-outline-success btn-sm d-inline-flex align-items-center gap-1">
+                    <i class="bi bi-pencil-square"></i>
+                    <span>Selesaikan & Catat</span>
                   </button>
                 @elseif ($janji->status === 'selesai')
-                  <span class="badge bg-success-subtle text-success border border-success-subtle text-[11px] font-semibold">Telah Selesai</span>
+                  <span class="text-secondary small">Selesai</span>
                 @else
-                  <span class="text-[11px] text-[#787774]">-</span>
+                  <span class="text-secondary small">-</span>
                 @endif
               </td>
             </tr>
           @empty
             <tr>
-              <td colspan="6" class="py-8 text-center text-[#787774]">Belum ada jadwal bimbingan yang terdata.</td>
+              <td colspan="6" class="text-center py-5 text-secondary">
+                <i class="bi bi-calendar-x fs-3 d-block mb-2 text-secondary"></i>
+                <p class="mb-0">Belum ada data jadwal bimbingan.</p>
+              </td>
             </tr>
           @endforelse
         </tbody>
@@ -190,89 +219,88 @@
     </div>
 
     @if ($janjiList->hasPages())
-      <div class="p-3 border-t border-[#E9E9E7] bg-[#F7F7F5]">
+      <div class="card-footer bg-white border-top py-2">
         {{ $janjiList->links() }}
       </div>
     @endif
   </div>
 
-  <!-- MODAL: AJUKAN JANJI BIMBINGAN BARU -->
-  <div x-show="openModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
-    <div class="fixed inset-0 bg-[#0A0A0B]/40 backdrop-blur-xs" @click="openModal = false"></div>
-    <div class="flex min-h-full items-center justify-center p-4">
-      <div class="relative w-full max-w-lg bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-4 md:p-5 z-10" @click.away="openModal = false">
+  <!-- 4. MODAL: AJUKAN JANJI BIMBINGAN (BOOTSTRAP 5) -->
+  <div x-show="openModal" x-cloak class="modal-backdrop-custom">
+    <div class="modal-dialog modal-dialog-centered w-100 p-3" style="max-width: 520px;" @click.away="openModal = false">
+      <div class="modal-content bg-white border-0 shadow-lg rounded-3">
         
-        <div class="flex items-center justify-between pb-3 border-b border-[#E9E9E7] mb-4">
-          <div>
-            <h3 class="text-base font-bold text-[#37352F]">Ajukan Jadwal Bimbingan</h3>
-            <p class="text-xs text-[#787774]">Pilih waktu, topik dan metode tatap muka / daring</p>
-          </div>
-          <button @click="openModal = false" class="text-gray-400 hover:text-black">&times;</button>
+        <div class="modal-header border-bottom py-3">
+          <h2 class="modal-title h5 fw-bold text-dark mb-0">Ajukan Janji Bimbingan</h2>
+          <button type="button" class="btn-close" @click="openModal = false"></button>
         </div>
 
-        <form action="{{ route('bimbingan.store') }}" method="POST" class="space-y-4 text-xs">
+        <form action="{{ route('bimbingan.store') }}" method="POST">
           @csrf
+          <div class="modal-body p-4">
+            
+            @if (auth()->user()->isMahasiswa() && $myTugasAkhir)
+              <input type="hidden" name="tugas_akhir_id" value="{{ $myTugasAkhir->id }}">
+            @elseif (auth()->user()->isDosen() || auth()->user()->isKaprodi())
+              <div class="mb-3">
+                <label class="form-label small fw-semibold text-dark">Pilih Mahasiswa Bimbingan</label>
+                <select name="tugas_akhir_id" required class="form-select form-select-sm">
+                  @forelse (($bimbinganTaList ?? []) as $ta)
+                    @php
+                      $namaMhs = $ta->anggota && $ta->anggota->isNotEmpty()
+                        ? $ta->anggota->map(fn($m) => ($m->user->name ?? '-') . ' (' . $m->nim . ')')->implode(', ')
+                        : (($ta->mahasiswa->user->name ?? 'Mahasiswa') . ' (' . ($ta->mahasiswa->nim ?? '-') . ')');
+                    @endphp
+                    <option value="{{ $ta->id }}">{{ $namaMhs }} — {{ Str::limit($ta->judul, 45) }}</option>
+                  @empty
+                    <option disabled value="">Belum ada mahasiswa bimbingan aktif</option>
+                  @endforelse
+                </select>
+              </div>
+            @endif
 
-          @if (auth()->user()->isMahasiswa() && $myTugasAkhir)
-            <input type="hidden" name="tugas_akhir_id" value="{{ $myTugasAkhir->id }}">
-          @elseif (auth()->user()->isDosen() || auth()->user()->isKaprodi())
-            <div>
-              <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Pilih Mahasiswa Bimbingan</label>
-              <select name="tugas_akhir_id" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
-                @forelse (($bimbinganTaList ?? []) as $ta)
-                  @php
-                    $namaMhs = $ta->anggota && $ta->anggota->isNotEmpty()
-                      ? $ta->anggota->map(fn($m) => ($m->user->name ?? '-') . ' (' . $m->nim . ')')->implode(', ')
-                      : (($ta->mahasiswa->user->name ?? 'Mahasiswa') . ' (' . ($ta->mahasiswa->nim ?? '-') . ')');
-                  @endphp
-                  <option value="{{ $ta->id }}">{{ $namaMhs }} — {{ Str::limit($ta->judul, 50) }}</option>
-                @empty
-                  <option disabled value="">Belum ada mahasiswa bimbingan aktif</option>
-                @endforelse
-              </select>
+            @if ((auth()->user()->isDosen() || auth()->user()->isKaprodi()) && auth()->user()->dosenProfile)
+              <input type="hidden" name="dosen_id" value="{{ auth()->user()->dosenProfile->id }}">
+            @else
+              <div class="mb-3">
+                <label class="form-label small fw-semibold text-dark">Dosen Pembimbing</label>
+                <select name="dosen_id" required class="form-select form-select-sm">
+                  @foreach ($dosenList as $dosen)
+                    <option value="{{ $dosen->id }}">{{ $dosen->user->name }} ({{ $dosen->kode_dosen }})</option>
+                  @endforeach
+                </select>
+              </div>
+            @endif
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold text-dark">Tanggal & Waktu Pertemuan</label>
+              <input type="datetime-local" name="tanggal_waktu" required class="form-control form-control-sm">
             </div>
-          @endif
 
-          @if ((auth()->user()->isDosen() || auth()->user()->isKaprodi()) && auth()->user()->dosenProfile)
-            <input type="hidden" name="dosen_id" value="{{ auth()->user()->dosenProfile->id }}">
-          @else
-            <div>
-              <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Dosen Pembimbing</label>
-              <select name="dosen_id" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
-                @foreach ($dosenList as $dosen)
-                  <option value="{{ $dosen->id }}">{{ $dosen->user->name }} ({{ $dosen->kode_dosen }})</option>
-                @endforeach
-              </select>
+            <div class="mb-3">
+              <label class="form-label small fw-semibold text-dark">Topik Pembahasan</label>
+              <input type="text" name="topik_pembahasan" required placeholder="Contoh: Diskusi Bab 4 dan analisis data..." class="form-control form-control-sm">
             </div>
-          @endif
 
-          <div>
-            <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Tanggal & Jam Pertemuan</label>
-            <input type="datetime-local" name="tanggal_waktu" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
+            <div class="row g-2 mb-2">
+              <div class="col-6">
+                <label class="form-label small fw-semibold text-dark">Metode</label>
+                <select name="metode" required class="form-select form-select-sm">
+                  <option value="offline">Tatap Muka (Offline)</option>
+                  <option value="online">Daring (Online)</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-semibold text-dark">Lokasi / Tautan</label>
+                <input type="text" name="lokasi_atau_link" placeholder="Ruang GD 512 / Tautan Zoom" class="form-control form-control-sm">
+              </div>
+            </div>
+
           </div>
 
-          <div>
-            <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Topik Pembahasan</label>
-            <input type="text" name="topik_pembahasan" required placeholder="Contoh: Konsultasi Bab 4 & Hasil Training Model..." class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Metode</label>
-              <select name="metode" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
-                <option value="offline">Tatap Muka (Offline)</option>
-                <option value="online">Daring (Online)</option>
-              </select>
-            </div>
-            <div>
-              <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Lokasi Fisik / Link Pertemuan</label>
-              <input type="text" name="lokasi_atau_link" placeholder="Ruang Dosen GD 512 / Link Zoom..." class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
-            </div>
-          </div>
-
-          <div class="flex items-center justify-end gap-2 pt-3 border-t border-[#E9E9E7]">
-            <button type="button" @click="openModal = false" class="notion-btn-secondary text-xs">Batal</button>
-            <button type="submit" class="notion-btn-primary text-xs">Kirimkan Pengajuan</button>
+          <div class="modal-footer border-top py-2.5">
+            <button type="button" @click="openModal = false" class="btn btn-outline-secondary btn-sm">Batal</button>
+            <button type="submit" class="btn btn-primary btn-sm">Kirim Pengajuan</button>
           </div>
         </form>
 
@@ -280,46 +308,47 @@
     </div>
   </div>
 
-  <!-- MODAL: SELESAIKAN SESI BIMBINGAN & CATATAN HASIL (DOSEN) -->
-  <div x-show="completeModalOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
-    <div class="fixed inset-0 bg-[#0A0A0B]/40 backdrop-blur-xs" @click="completeModalOpen = false"></div>
-    <div class="flex min-h-full items-center justify-center p-4">
-      <div class="relative w-full max-w-lg bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-4 md:p-5 z-10" @click.away="completeModalOpen = false">
+  <!-- 5. MODAL: SELESAIKAN SESI BIMBINGAN & CATATAN HASIL (BOOTSTRAP 5) -->
+  <div x-show="completeModalOpen" x-cloak class="modal-backdrop-custom">
+    <div class="modal-dialog modal-dialog-centered w-100 p-3" style="max-width: 540px;" @click.away="completeModalOpen = false">
+      <div class="modal-content bg-white border-0 shadow-lg rounded-3">
         
-        <div class="flex items-center justify-between pb-3 border-b border-[#E9E9E7] mb-4">
-          <div>
-            <h3 class="text-sm font-bold text-[#37352F]">Selesaikan Sesi Bimbingan & Catatan Hasil</h3>
-            <p class="text-[11px] text-[#787774] mt-0.5">Dosen pembimbing wajib mengisi catatan ringkasan evaluasi, progres, atau arahan revisi</p>
-          </div>
-          <button @click="completeModalOpen = false" class="text-gray-400 hover:text-black">&times;</button>
+        <div class="modal-header border-bottom py-3">
+          <h2 class="modal-title h5 fw-bold text-dark mb-0">Selesaikan Sesi Bimbingan</h2>
+          <button type="button" class="btn-close" @click="completeModalOpen = false"></button>
         </div>
 
         <template x-if="selectedJanji">
-          <form :action="'/bimbingan/' + selectedJanji.id + '/status'" method="POST" class="space-y-4 text-xs">
+          <form :action="'/bimbingan/' + selectedJanji.id + '/status'" method="POST">
             @csrf
             @method('PATCH')
             <input type="hidden" name="status" value="selesai">
 
-            <div class="p-3 bg-[#F7F7F5] rounded border border-[#E9E9E7] text-[11px]">
-              <p class="font-bold text-[#37352F]" x-text="selectedJanji.topik_pembahasan"></p>
-              <p class="text-[#787774] mt-0.5">
-                Mahasiswa: <span class="font-semibold text-[#37352F]" x-text="selectedJanji.tugas_akhir?.mahasiswa?.user?.name ?? '-'"></span>
-              </p>
+            <div class="modal-body p-4">
+              <div class="p-2.5 rounded bg-light border mb-3">
+                <p class="fw-bold text-dark small mb-0.5" x-text="selectedJanji.topik_pembahasan"></p>
+                <p class="text-secondary small mb-0">
+                  Mahasiswa: <span class="fw-semibold text-dark" x-text="selectedJanji.tugas_akhir?.mahasiswa?.user?.name ?? '-'"></span>
+                </p>
+              </div>
+
+              <div class="mb-2">
+                <label class="form-label small fw-semibold text-dark">
+                  Catatan Hasil Bimbingan <span class="text-danger">* (Wajib diisi, minimal 10 karakter)</span>
+                </label>
+                <textarea name="catatan_hasil" rows="4" required minlength="10" maxlength="2000"
+                          placeholder="Tuliskan evaluasi progres, arahan revisi, atau poin tindak lanjut untuk mahasiswa..."
+                          class="form-control form-control-sm"></textarea>
+                <div class="form-text small">Catatan ini akan tersimpan pada riwayat resmi bimbingan mahasiswa.</div>
+              </div>
             </div>
 
-            <div>
-              <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">
-                Catatan Hasil Bimbingan <span class="text-red-500">* (Wajib diisi, min 10 karakter)</span>
-              </label>
-              <textarea name="catatan_hasil" rows="4" required minlength="10" maxlength="2000"
-                        placeholder="Tuliskan evaluasi progres, poin revisi naskah/kode, atau action item yang harus dikerjakan mahasiswa untuk pertemuan berikutnya..."
-                        class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]"></textarea>
-              <p class="text-[10px] text-[#787774] mt-1">Catatan ini akan tampil pada riwayat bimbingan mahasiswa dan dosen pembimbing.</p>
-            </div>
-
-            <div class="flex items-center justify-end gap-2 pt-3 border-t border-[#E9E9E7]">
-              <button type="button" @click="completeModalOpen = false" class="notion-btn-secondary text-xs">Batal</button>
-              <button type="submit" class="notion-btn-primary text-xs">Simpan & Tandai Selesai</button>
+            <div class="modal-footer border-top py-2.5">
+              <button type="button" @click="completeModalOpen = false" class="btn btn-outline-secondary btn-sm">Batal</button>
+              <button type="submit" class="btn btn-success btn-sm d-inline-flex align-items-center gap-1.5">
+                <i class="bi bi-check2-circle"></i>
+                <span>Simpan Catatan & Selesaikan</span>
+              </button>
             </div>
           </form>
         </template>

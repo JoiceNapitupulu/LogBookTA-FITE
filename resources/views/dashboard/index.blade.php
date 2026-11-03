@@ -4,17 +4,15 @@
 @section('breadcrumb', 'Dashboard')
 
 @section('content')
-<div class="space-y-4 md:space-y-5">
+<div class="d-flex flex-column gap-4">
 
-  <!-- Notion Cover / Page Title Header -->
-  <div class="border-b border-[#E9E9E7] pb-3 mb-3">
-    <div class="flex items-center gap-3 mb-2">
-      <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-[#37352F]">
-        Workspace Tugas Akhir FITE
-      </h1>
-    </div>
-    <p class="text-xs text-[#787774]">
-      Logbook, bimbingan, dan ujian tugas akhir FITE · IT Del
+  <!-- Header Halaman Akademik -->
+  <div class="pb-3 mb-1 border-bottom">
+    <h1 class="h3 fw-bold text-dark mb-1">
+      Workspace Tugas Akhir FITE
+    </h1>
+    <p class="text-secondary small mb-0">
+      Logbook, bimbingan, dan ujian tugas akhir FITE · Institut Teknologi Del
     </p>
   </div>
 
@@ -22,54 +20,75 @@
   <!-- KONDISI 1: MAHASISWA NON-TA -->
   <!-- ================================================================= -->
   @if ($user->isMahasiswa() && (!$mahasiswaProfile || !$mahasiswaProfile->is_ta))
-    <div class="notion-callout">
-      <div class="text-xs">
-        <div class="d-flex align-items-center gap-2 mb-1">
-          <i class="bi bi-info-circle-fill text-primary"></i>
-          <p class="font-bold text-[#37352F]">Status: Mahasiswa Non-TA (Tahap Persiapan Tugas Akhir)</p>
-        </div>
-        <p class="text-[#787774] mt-1 leading-relaxed">
-          Akun Anda tercatat sebagai mahasiswa aktif <strong class="text-[#37352F]">{{ $mahasiswaProfile->prodi ?? 'FITE' }} (NIM: {{ $mahasiswaProfile->nim ?? '-' }})</strong> namun belum mengambil mata kuliah Tugas Akhir pada semester ini. Anda memiliki akses penuh untuk menelusuri katalog repositori naskah skripsi alumni FITE sebagai referensi topik penelitian Anda.
+    <div class="alert alert-primary d-flex align-items-start gap-3 shadow-sm border-primary-subtle" role="alert">
+      <i class="bi bi-info-circle-fill fs-5 text-primary shrink-0 mt-0.5"></i>
+      <div>
+        <h2 class="h6 fw-bold mb-1">Status: Mahasiswa Non-TA (Tahap Persiapan Tugas Akhir)</h2>
+        <p class="small text-secondary mb-3 lh-base">
+          Akun Anda tercatat sebagai mahasiswa aktif <strong class="text-dark">{{ $mahasiswaProfile->prodi ?? 'FITE' }} (NIM: {{ $mahasiswaProfile->nim ?? '-' }})</strong> namun belum mengambil mata kuliah Tugas Akhir pada semester ini. Anda memiliki akses penuh untuk menelusuri katalog repositori naskah skripsi alumni FITE sebagai referensi topik penelitian Anda.
         </p>
-        <div class="mt-3">
-          <a href="{{ route('arsip.index') }}" class="btn btn-dark btn-sm d-inline-flex align-items-center gap-1.5 text-xs">
-            <i class="bi bi-collection"></i> Buka Pustaka Arsip Tugas Akhir
-          </a>
-        </div>
+        <a href="{{ route('arsip.index') }}" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1.5">
+          <i class="bi bi-archive"></i>
+          <span>Buka Pustaka Arsip Tugas Akhir</span>
+        </a>
       </div>
     </div>
 
     <!-- Arsip Terpopuler Preview -->
-    <div class="border border-[#E9E9E7] rounded-xl p-4 bg-[#FFFFFF]">
-      <h3 class="text-sm font-bold text-[#37352F] mb-3">Rekomendasi Naskah Tugas Akhir FITE Terdahulu</h3>
-      <p class="text-xs text-[#787774] mb-4">Gunakan naskah alumni berikut sebagai rujukan metodologi, format penulisan, dan instrumen pengujian.</p>
-      
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div class="p-3 rounded bg-[#F7F6F3] border border-[#E9E9E7] flex flex-col justify-between">
-          <div>
-            <span class="notion-pill-gray text-[10px] mb-1">S1 Informatika • 2025</span>
-            <p class="font-semibold text-xs text-[#37352F] line-clamp-2">Sistem Pemantauan Kualitas Air Danau Toba Berbasis IoT</p>
-            <p class="text-[11px] text-[#787774] mt-1">Penulis: Grace Hutapea</p>
+    <div class="card shadow-sm border-light-subtle">
+      <div class="card-header bg-white py-3">
+        <h2 class="h6 fw-bold text-dark mb-1">Rekomendasi Naskah Tugas Akhir FITE Terdahulu</h2>
+        <p class="text-secondary small mb-0">Gunakan naskah alumni berikut sebagai rujukan metodologi, format penulisan, dan instrumen pengujian.</p>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-12 col-md-4">
+            <div class="p-3 rounded bg-light border h-100 d-flex flex-column justify-content-between">
+              <div>
+                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle mb-2">S1 Informatika · 2025</span>
+                <h3 class="h6 fw-bold text-dark mb-1">Sistem Pemantauan Kualitas Air Danau Toba Berbasis IoT</h3>
+                <p class="text-secondary small mb-0">Penulis: Grace Hutapea</p>
+              </div>
+              <div class="mt-3">
+                <a href="{{ route('arsip.index') }}" class="small fw-semibold text-primary text-decoration-none d-inline-flex align-items-center gap-1">
+                  <span>Detail Naskah</span>
+                  <i class="bi bi-arrow-right"></i>
+                </a>
+              </div>
+            </div>
           </div>
-          <a href="{{ route('arsip.index') }}" class="text-[11px] font-semibold text-[#37352F] underline mt-3">Detail Naskah &rarr;</a>
-        </div>
 
-        <div class="p-3 rounded bg-[#F7F6F3] border border-[#E9E9E7] flex flex-col justify-between">
-          <div>
-            <span class="notion-pill-gray text-[10px] mb-1">S1 Sistem Informasi • 2024</span>
-            <p class="font-semibold text-xs text-[#37352F] line-clamp-2">Microservices Architecture Platform E-Commerce Pertanian Toba</p>
-            <p class="text-[11px] text-[#787774] mt-1">Penulis: Bona Manurung</p>
+          <div class="col-12 col-md-4">
+            <div class="p-3 rounded bg-light border h-100 d-flex flex-column justify-content-between">
+              <div>
+                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle mb-2">S1 Sistem Informasi · 2024</span>
+                <h3 class="h6 fw-bold text-dark mb-1">Microservices Architecture Platform E-Commerce Pertanian Toba</h3>
+                <p class="text-secondary small mb-0">Penulis: Bona Manurung</p>
+              </div>
+              <div class="mt-3">
+                <a href="{{ route('arsip.index') }}" class="small fw-semibold text-primary text-decoration-none d-inline-flex align-items-center gap-1">
+                  <span>Detail Naskah</span>
+                  <i class="bi bi-arrow-right"></i>
+                </a>
+              </div>
+            </div>
           </div>
-          <a href="{{ route('arsip.index') }}" class="text-[11px] font-semibold text-[#37352F] underline mt-3">Detail Naskah &rarr;</a>
-        </div>
 
-        <div class="p-3 rounded bg-[#F7F6F3] border border-[#E9E9E7] flex flex-col justify-between">
-          <div>
-            <span class="notion-pill-gray text-[10px] mb-1">S1 Teknik Elektro • 2024</span>
-            <p class="font-semibold text-xs text-[#37352F] line-clamp-2">Node Sensor Nirkabel LoRaWAN Deteksi Longsor Sigumpar</p>
-            <p class="text-[11px] text-[#787774] mt-1">Penulis: Tulus Simanjuntak</p>
+          <div class="col-12 col-md-4">
+            <div class="p-3 rounded bg-light border h-100 d-flex flex-column justify-content-between">
+              <div>
+                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle mb-2">S1 Teknik Elektro · 2024</span>
+                <h3 class="h6 fw-bold text-dark mb-1">Node Sensor Nirkabel LoRaWAN Deteksi Longsor Sigumpar</h3>
+                <p class="text-secondary small mb-0">Penulis: Tulus Simanjuntak</p>
+              </div>
+              <div class="mt-3">
+                <a href="{{ route('arsip.index') }}" class="small fw-semibold text-primary text-decoration-none d-inline-flex align-items-center gap-1">
+                  <span>Detail Naskah</span>
+                  <i class="bi bi-arrow-right"></i>
+                </a>
+              </div>
+            </div>
           </div>
-          <a href="{{ route('arsip.index') }}" class="text-[11px] font-semibold text-[#37352F] underline mt-3">Detail Naskah &rarr;</a>
         </div>
       </div>
     </div>
@@ -82,233 +101,234 @@
     
     <!-- Header Card Judul TA -->
     @if ($tugasAkhir)
-      <div class="border border-[#E9E9E7] rounded-xl p-4 md:p-5 bg-[#FFFFFF] shadow-xs">
-        <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
-          <div>
-            <div class="flex items-center gap-2 mb-2">
-              <span class="notion-pill-gray">{{ $tugasAkhir->prodi }}</span>
-              <span class="notion-pill-green">TA Aktif • TA {{ $tugasAkhir->tahun_ajaran }}</span>
-              <span class="text-xs text-[#787774]">NIM: {{ $mahasiswaProfile->nim }}</span>
-            </div>
-            <h2 class="text-lg md:text-xl font-bold text-[#37352F] leading-snug">
-              {{ $tugasAkhir->judul }}
-            </h2>
-            <div class="mt-3 flex flex-wrap items-center gap-4 text-xs text-[#787774]">
-              <div>
-                Pembimbing 1: <strong class="text-[#37352F]">{{ $tugasAkhir->pembimbing1->user->name ?? '-' }}</strong>
+      <div class="card shadow-sm border-light-subtle mb-4">
+        <div class="card-body p-3 p-md-4">
+          <div class="d-flex flex-column flex-md-row align-items-md-start justify-content-between gap-3">
+            <div>
+              <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">{{ $tugasAkhir->prodi }}</span>
+                <span class="badge bg-success-subtle text-success border border-success-subtle">TA Aktif · TA {{ $tugasAkhir->tahun_ajaran }}</span>
+                <span class="small text-secondary">NIM: {{ $mahasiswaProfile->nim }}</span>
               </div>
-              <span>•</span>
-              <div>
-                Pembimbing 2: <strong class="text-[#37352F]">{{ $tugasAkhir->pembimbing2->user->name ?? '-' }}</strong>
+              <h2 class="h5 fw-bold text-dark lh-sm mb-2">
+                {{ $tugasAkhir->judul }}
+              </h2>
+              <div class="d-flex flex-wrap align-items-center gap-3 text-secondary small mb-3">
+                <div>Pembimbing 1: <strong class="text-dark">{{ $tugasAkhir->pembimbing1->user->name ?? '-' }}</strong></div>
+                <span>·</span>
+                <div>Pembimbing 2: <strong class="text-dark">{{ $tugasAkhir->pembimbing2->user->name ?? '-' }}</strong></div>
+                <span>·</span>
+                <div>Total Logbook: <span class="badge bg-light text-dark border">{{ $logbooks->count() }} Sesi Terdata</span></div>
               </div>
-              <span>•</span>
-              <div>
-                Total Logbook: <span class="notion-pill-green">{{ $logbooks->count() }} Sesi Terdata</span>
-              </div>
-            </div>
 
-            @php
-              $members = $tugasAkhir->anggota && $tugasAkhir->anggota->isNotEmpty()
-                ? $tugasAkhir->anggota
-                : ($tugasAkhir->mahasiswa ? collect([$tugasAkhir->mahasiswa]) : collect());
-              $countMhs = $members->count();
-            @endphp
-            @if ($countMhs > 0)
-              <div class="mt-3 pt-3 border-t border-[#F0F0EE]">
-                <div class="flex items-center gap-2 mb-1.5">
-                  <span class="text-xs font-semibold text-[#787774]">
-                    Kelompok TA · {{ $countMhs }} mahasiswa
-                  </span>
-                </div>
-                <div class="flex flex-wrap items-center gap-2 text-xs">
-                  @foreach ($members as $member)
-                    @php
-                      $isCurrentUser = auth()->check() && (auth()->id() === $member->user_id);
-                    @endphp
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md {{ $isCurrentUser ? 'bg-white border border-dark shadow-xs' : 'bg-[#F7F7F5] border border-[#E9E9E7]' }} text-[#37352F] text-xs">
-                      <i class="bi bi-person-fill text-[#787774] text-xs"></i>
-                      <span class="font-semibold">{{ $member->user->name ?? '-' }}</span>
-                      <span class="text-[11px] text-[#787774]">{{ $member->nim }}</span>
-                      @if ($isCurrentUser)
-                        <span class="badge bg-dark-subtle text-dark border border-dark-subtle text-[9px] px-1.5 py-0.5">(Anda)</span>
-                      @endif
+              @php
+                $members = $tugasAkhir->anggota && $tugasAkhir->anggota->isNotEmpty()
+                  ? $tugasAkhir->anggota
+                  : ($tugasAkhir->mahasiswa ? collect([$tugasAkhir->mahasiswa]) : collect());
+                $countMhs = $members->count();
+              @endphp
+              @if ($countMhs > 0)
+                <div class="pt-3 border-top">
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="small fw-semibold text-secondary">
+                      Kelompok Tugas Akhir · {{ $countMhs }} Mahasiswa
                     </span>
-                  @endforeach
+                  </div>
+                  <div class="d-flex flex-wrap align-items-center gap-2">
+                    @foreach ($members as $member)
+                      @php
+                        $isCurrentUser = auth()->check() && (auth()->id() === $member->user_id);
+                      @endphp
+                      <div class="badge {{ $isCurrentUser ? 'bg-primary-subtle text-primary border border-primary-subtle' : 'bg-light text-dark border' }} py-1.5 px-2.5 d-inline-flex align-items-center gap-1.5 fw-normal" style="font-size: 0.8125rem;">
+                        <i class="bi bi-person-fill text-secondary"></i>
+                        <span class="fw-semibold">{{ $member->user->name ?? '-' }}</span>
+                        <span class="text-secondary small">({{ $member->nim }})</span>
+                        @if ($isCurrentUser)
+                          <span class="badge bg-primary text-white ms-1" style="font-size: 0.65rem;">Anda</span>
+                        @endif
+                      </div>
+                    @endforeach
+                  </div>
                 </div>
-              </div>
-            @endif
-          </div>
+              @endif
+            </div>
 
-          <div class="flex items-center gap-2 shrink-0">
-            <a href="{{ route('bimbingan.index') }}" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center gap-1.5 text-xs">
-              <i class="bi bi-calendar-plus"></i> Ajukan bimbingan
-            </a>
-            <a href="{{ route('logbook.index') }}" class="btn btn-dark btn-sm d-inline-flex align-items-center gap-1.5 text-xs">
-              <i class="bi bi-pencil-square"></i> Isi logbook
-            </a>
+            <div class="d-flex align-items-center gap-2 shrink-0">
+              <a href="{{ route('bimbingan.index') }}" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center gap-1.5">
+                <i class="bi bi-calendar-check"></i> Ajukan Bimbingan
+              </a>
+              <a href="{{ route('logbook.index') }}" class="btn btn-dark btn-sm d-inline-flex align-items-center gap-1.5">
+                <i class="bi bi-journal-text"></i> Isi Logbook
+              </a>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Stepper Horizontal Pencapaian BAB TA ala Notion -->
-      <div class="border border-[#E9E9E7] rounded-xl p-4 md:p-5 bg-[#FFFFFF]">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 class="text-sm font-bold text-[#37352F]">Stepper Capaian Bab Tugas Akhir</h3>
-            <p class="text-xs text-[#787774]">Pelacakan progres tahapan naskah dari Proposal hingga Sidang Akhir</p>
+      <!-- Stepper Horizontal Pencapaian BAB TA -->
+      <div class="card shadow-sm border-light-subtle mb-4">
+        <div class="card-body p-3 p-md-4">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div>
+              <h3 class="h6 fw-bold text-dark mb-0">Tahapan Capaian Bab Tugas Akhir</h3>
+              <p class="text-secondary small mb-0">Pelacakan progres tahapan naskah dari Proposal hingga Sidang Akhir.</p>
+            </div>
+            <span class="badge bg-light text-dark border py-1.5 px-2.5">
+              Status: {{ strtoupper($tugasAkhir->status) }}
+            </span>
           </div>
-          <span class="text-xs font-semibold text-[#37352F] bg-[#F7F7F5] px-2.5 py-1 rounded border border-[#E9E9E7]">
-            Status: {{ strtoupper($tugasAkhir->status) }}
-          </span>
-        </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2.5 text-xs">
-          @php
-            $steps = [
-              [
-                'step' => 'Tahap 1',
-                'name' => 'Proposal',
-                'status' => in_array($tugasAkhir->status, ['sempro', 'seminar_ta', 'sidang_akhir', 'selesai']) ? 'approved' : ($tugasAkhir->status === 'proposal' ? 'in_progress' : 'empty'),
-                'label' => in_array($tugasAkhir->status, ['sempro', 'seminar_ta', 'sidang_akhir', 'selesai']) ? 'Lulus Sempro' : ($tugasAkhir->status === 'proposal' ? 'Pengajuan' : 'Belum Mulai'),
-              ],
-            ];
-
-            foreach (['BAB 1', 'BAB 2', 'BAB 3', 'BAB 4', 'BAB 5'] as $idx => $bName) {
-              $logsForBab = $logbooks->where('bab_progress', $bName);
-              if ($bName === 'BAB 5') {
-                $logsForBab = $logbooks->filter(fn($l) => in_array($l->bab_progress, ['BAB 5', 'Pengujian']));
-              }
-
-              $isApproved = $logsForBab->where('status_verifikasi', 'disetujui')->isNotEmpty();
-              $isRevisi = $logsForBab->where('status_verifikasi', 'revisi')->isNotEmpty();
-              $isPending = $logsForBab->where('status_verifikasi', 'pending')->isNotEmpty();
-
-              if ($isApproved) {
-                $sStatus = 'approved';
-                $sLabel = 'Disetujui';
-              } elseif ($isRevisi) {
-                $sStatus = 'revision';
-                $sLabel = 'Perlu revisi';
-              } elseif ($isPending) {
-                $sStatus = 'pending';
-                $sLabel = 'Menunggu review';
-              } else {
-                $sStatus = 'empty';
-                $sLabel = 'Belum Ada Entri';
-              }
-
-              $steps[] = [
-                'step' => 'Tahap ' . ($idx + 2),
-                'name' => $bName,
-                'status' => $sStatus,
-                'label' => $sLabel,
+          <div class="row g-2 text-center" style="font-size: 0.75rem;">
+            @php
+              $steps = [
+                [
+                  'step' => 'Tahap 1',
+                  'name' => 'Proposal',
+                  'status' => in_array($tugasAkhir->status, ['sempro', 'seminar_ta', 'sidang_akhir', 'selesai']) ? 'approved' : ($tugasAkhir->status === 'proposal' ? 'in_progress' : 'empty'),
+                  'label' => in_array($tugasAkhir->status, ['sempro', 'seminar_ta', 'sidang_akhir', 'selesai']) ? 'Lulus Sempro' : ($tugasAkhir->status === 'proposal' ? 'Pengajuan' : 'Belum Mulai'),
+                ],
               ];
-            }
 
-            // Final: Sidang Akhir
-            $sidangStatus = 'empty';
-            $sidangLabel = 'Terkunci';
-            if ($tugasAkhir->status === 'selesai') {
-              $sidangStatus = 'approved';
-              $sidangLabel = 'Lulus Sidang';
-            } elseif ($tugasAkhir->status === 'sidang_akhir') {
-              $sidangStatus = 'pending';
-              $sidangLabel = 'Terdaftar Sidang';
-            } elseif ($tugasAkhir->status === 'seminar_ta') {
-              $sidangStatus = 'in_progress';
-              $sidangLabel = 'Tahap Seminar TA';
-            }
-            $steps[] = [
-              'step' => 'Final',
-              'name' => 'Sidang Akhir',
-              'status' => $sidangStatus,
-              'label' => $sidangLabel,
-            ];
-          @endphp
+              foreach (['BAB 1', 'BAB 2', 'BAB 3', 'BAB 4', 'BAB 5'] as $idx => $bName) {
+                $logsForBab = $logbooks->where('bab_progress', $bName);
+                if ($bName === 'BAB 5') {
+                  $logsForBab = $logbooks->filter(fn($l) => in_array($l->bab_progress, ['BAB 5', 'Pengujian']));
+                }
 
-          @foreach ($steps as $st)
-            @if ($st['status'] === 'approved')
-              <div class="p-3 rounded-3 border border-success-subtle bg-success-subtle/40">
-                <span class="text-[10px] font-bold text-success block uppercase">{{ $st['step'] }}</span>
-                <p class="font-bold text-[#37352F] mt-1">{{ $st['name'] }}</p>
-                <p class="text-[10px] text-success font-medium"><i class="bi bi-check-circle-fill me-0.5"></i> {{ $st['label'] }}</p>
+                $isApproved = $logsForBab->where('status_verifikasi', 'disetujui')->isNotEmpty();
+                $isRevisi = $logsForBab->where('status_verifikasi', 'revisi')->isNotEmpty();
+                $isPending = $logsForBab->where('status_verifikasi', 'pending')->isNotEmpty();
+
+                if ($isApproved) {
+                  $sStatus = 'approved';
+                  $sLabel = 'Disetujui';
+                } elseif ($isRevisi) {
+                  $sStatus = 'revision';
+                  $sLabel = 'Perlu Revisi';
+                } elseif ($isPending) {
+                  $sStatus = 'pending';
+                  $sLabel = 'Menunggu Evaluasi';
+                } else {
+                  $sStatus = 'empty';
+                  $sLabel = 'Belum Ada Entri';
+                }
+
+                $steps[] = [
+                  'step' => 'Tahap ' . ($idx + 2),
+                  'name' => $bName,
+                  'status' => $sStatus,
+                  'label' => $sLabel,
+                ];
+              }
+
+              // Final: Sidang Akhir
+              $sidangStatus = 'empty';
+              $sidangLabel = 'Terkunci';
+              if ($tugasAkhir->status === 'selesai') {
+                $sidangStatus = 'approved';
+                $sidangLabel = 'Lulus Sidang';
+              } elseif ($tugasAkhir->status === 'sidang_akhir') {
+                $sidangStatus = 'pending';
+                $sidangLabel = 'Terdaftar Sidang';
+              } elseif ($tugasAkhir->status === 'seminar_ta') {
+                $sidangStatus = 'in_progress';
+                $sidangLabel = 'Tahap Seminar TA';
+              }
+              $steps[] = [
+                'step' => 'Final',
+                'name' => 'Sidang Akhir',
+                'status' => $sidangStatus,
+                'label' => $sidangLabel,
+              ];
+            @endphp
+
+            @foreach ($steps as $st)
+              <div class="col-6 col-sm-4 col-md">
+                @if ($st['status'] === 'approved')
+                  <div class="p-2.5 rounded-3 border border-success-subtle bg-success-subtle/40 h-100 d-flex flex-column justify-content-between">
+                    <span class="text-success fw-bold text-uppercase d-block" style="font-size: 0.65rem;">{{ $st['step'] }}</span>
+                    <p class="fw-bold text-dark my-1">{{ $st['name'] }}</p>
+                    <span class="text-success small fw-medium"><i class="bi bi-check-circle-fill me-0.5"></i> {{ $st['label'] }}</span>
+                  </div>
+                @elseif ($st['status'] === 'revision')
+                  <div class="p-2.5 rounded-3 border border-warning-subtle bg-warning-subtle/50 h-100 d-flex flex-column justify-content-between">
+                    <span class="text-warning-emphasis fw-bold text-uppercase d-block" style="font-size: 0.65rem;">{{ $st['step'] }}</span>
+                    <p class="fw-bold text-dark my-1">{{ $st['name'] }}</p>
+                    <span class="text-warning-emphasis small fw-medium"><i class="bi bi-exclamation-triangle-fill me-0.5"></i> {{ $st['label'] }}</span>
+                  </div>
+                @elseif ($st['status'] === 'pending' || $st['status'] === 'in_progress')
+                  <div class="p-2.5 rounded-3 border border-primary-subtle bg-primary-subtle/40 h-100 d-flex flex-column justify-content-between">
+                    <span class="text-primary fw-bold text-uppercase d-block" style="font-size: 0.65rem;">{{ $st['step'] }}</span>
+                    <p class="fw-bold text-dark my-1">{{ $st['name'] }}</p>
+                    <span class="text-primary small fw-medium"><i class="bi bi-clock-history me-0.5"></i> {{ $st['label'] }}</span>
+                  </div>
+                @else
+                  <div class="p-2.5 rounded-3 border border-light-subtle bg-light text-secondary h-100 d-flex flex-column justify-content-between opacity-75">
+                    <span class="text-secondary fw-medium text-uppercase d-block" style="font-size: 0.65rem;">{{ $st['step'] }}</span>
+                    <p class="fw-medium text-secondary my-1">{{ $st['name'] }}</p>
+                    <span class="text-secondary small"><i class="bi bi-dash-circle me-0.5"></i> {{ $st['label'] }}</span>
+                  </div>
+                @endif
               </div>
-            @elseif ($st['status'] === 'revision')
-              <div class="p-3 rounded-3 border border-warning-subtle bg-warning-subtle/50">
-                <span class="text-[10px] font-bold text-warning-emphasis block uppercase">{{ $st['step'] }}</span>
-                <p class="font-bold text-[#37352F] mt-1">{{ $st['name'] }}</p>
-                <p class="text-[10px] text-warning-emphasis font-medium"><i class="bi bi-exclamation-triangle-fill me-0.5"></i> {{ $st['label'] }}</p>
-              </div>
-            @elseif ($st['status'] === 'pending' || $st['status'] === 'in_progress')
-              <div class="p-3 rounded-3 border border-primary-subtle bg-primary-subtle/40">
-                <span class="text-[10px] font-bold text-primary block uppercase">{{ $st['step'] }}</span>
-                <p class="font-bold text-[#37352F] mt-1">{{ $st['name'] }}</p>
-                <p class="text-[10px] text-primary font-medium"><i class="bi bi-clock-history me-0.5"></i> {{ $st['label'] }}</p>
-              </div>
-            @else
-              <div class="p-3 rounded-3 border border-light-subtle bg-light text-muted opacity-75">
-                <span class="text-[10px] font-medium text-secondary block uppercase">{{ $st['step'] }}</span>
-                <p class="font-medium text-secondary mt-1">{{ $st['name'] }}</p>
-                <p class="text-[10px] text-secondary"><i class="bi bi-dash-circle me-0.5"></i> {{ $st['label'] }}</p>
-              </div>
-            @endif
-          @endforeach
+            @endforeach
+          </div>
         </div>
       </div>
 
       <!-- Ringkasan Logbook Terkini -->
-      <div class="border border-[#E9E9E7] rounded-xl overflow-hidden bg-[#FFFFFF]">
-        <div class="p-4 border-b border-[#E9E9E7] flex items-center justify-between">
+      <div class="card shadow-sm border-light-subtle mb-4">
+        <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
           <div>
-            <h3 class="text-sm font-bold text-[#37352F]">Catatan Logbook Progres Terakhir</h3>
-            <p class="text-xs text-[#787774]">Aktivitas riset dan catatan pembimbing</p>
+            <h3 class="h6 fw-bold text-dark mb-0">Catatan Logbook Terakhir</h3>
+            <p class="text-secondary small mb-0">Aktivitas riset dan catatan pembimbing</p>
           </div>
-          <a href="{{ route('logbook.index') }}" class="text-xs font-semibold text-[#37352F] underline hover:opacity-80">
-            Buka Halaman Logbook &rarr;
+          <a href="{{ route('logbook.index') }}" class="small fw-semibold text-primary text-decoration-none d-inline-flex align-items-center gap-1">
+            <span>Buka Halaman Logbook</span>
+            <i class="bi bi-arrow-right"></i>
           </a>
         </div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-[#F7F7F5] text-[#787774] uppercase text-[10px] tracking-wider border-b border-[#E9E9E7]">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0" style="font-size: 0.8125rem;">
+            <thead class="table-light">
               <tr>
-                <th class="py-2.5 px-4 font-semibold">Tanggal / Bab</th>
-                <th class="py-2.5 px-4 font-semibold">Aktivitas Pengerjaan</th>
-                <th class="py-2.5 px-4 font-semibold">Kendala Teknis</th>
-                <th class="py-2.5 px-4 font-semibold">Catatan Evaluasi Dosen</th>
-                <th class="py-2.5 px-4 font-semibold">Status</th>
+                <th class="py-2.5 px-3">Tanggal / Bab</th>
+                <th class="py-2.5 px-3">Aktivitas Pengerjaan</th>
+                <th class="py-2.5 px-3">Kendala Teknis</th>
+                <th class="py-2.5 px-3">Catatan Dosen</th>
+                <th class="py-2.5 px-3">Status</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-[#E9E9E7]">
+            <tbody>
               @forelse ($logbooks->take(3) as $log)
-                <tr class="hover:bg-[#F7F7F5] transition-colors">
-                  <td class="py-3 px-4 whitespace-nowrap">
-                    <span class="font-bold text-[#37352F] block">{{ $log->tanggal->format('d M Y') }}</span>
-                    <span class="notion-pill-gray text-[10px] mt-0.5">{{ $log->bab_progress }}</span>
+                <tr>
+                  <td class="px-3 py-3 text-nowrap">
+                    <span class="fw-bold text-dark d-block">{{ $log->tanggal->format('d M Y') }}</span>
+                    <span class="badge bg-light text-secondary border mt-0.5">{{ $log->bab_progress }}</span>
                   </td>
-                  <td class="py-3 px-4 max-w-xs">
-                    <p class="font-medium text-[#37352F] line-clamp-2">{{ $log->deskripsi_kegiatan }}</p>
+                  <td class="px-3 py-3" style="max-width: 280px;">
+                    <p class="fw-medium text-dark mb-0 line-clamp-2">{{ $log->deskripsi_kegiatan }}</p>
                   </td>
-                  <td class="py-3 px-4 max-w-xs text-[#787774]">
+                  <td class="px-3 py-3 text-secondary" style="max-width: 240px;">
                     {{ $log->kendala ?? 'Tidak ada kendala' }}
                   </td>
-                  <td class="py-3 px-4 max-w-xs italic text-[#37352F]">
+                  <td class="px-3 py-3 text-secondary" style="max-width: 240px;">
                     {{ $log->catatan_dosen ?? 'Belum ada catatan' }}
                   </td>
-                  <td class="py-3 px-4 whitespace-nowrap">
+                  <td class="px-3 py-3 text-nowrap">
                     @if ($log->status_verifikasi === 'disetujui')
-                      <span class="notion-pill-green">Disetujui</span>
+                      <span class="badge bg-success-subtle text-success border border-success-subtle">Disetujui</span>
                     @elseif ($log->status_verifikasi === 'revisi')
-                      <span class="notion-pill-red">Perlu Revisi</span>
+                      <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Perlu Revisi</span>
                     @else
-                      <span class="notion-pill-orange">Pending</span>
+                      <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">Menunggu Evaluasi</span>
                     @endif
                   </td>
                 </tr>
               @empty
                 <tr>
-                  <td colspan="5" class="py-6 text-center text-[#787774]">
-                    Belum ada catatan logbook yang terdata. Klik "Isi logbook" untuk memulai bimbingan.
+                  <td colspan="5" class="py-4 text-center text-secondary">
+                    Belum ada catatan logbook yang terdata. Klik "Isi Logbook" untuk memulai.
                   </td>
                 </tr>
               @endforelse
@@ -317,12 +337,11 @@
         </div>
       </div>
     @else
-      <div class="notion-callout">
-        <div class="text-xs">
-          <p class="font-bold text-[#37352F]">Tugas Akhir Belum Terdaftar</p>
-          <p class="text-[#787774] mt-1 leading-relaxed">
-            Akun Anda berstatus Mahasiswa Tugas Akhir aktif, namun data judul dan penunjukan dosen pembimbing belum ditetapkan oleh Koordinator TA. Silakan hubungi Koordinator TA program studi Anda.
-          </p>
+      <div class="alert alert-warning d-flex align-items-center gap-2 mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div>
+          <strong class="d-block">Tugas Akhir Belum Terdaftar</strong>
+          <span class="small">Akun Anda berstatus Mahasiswa Tugas Akhir aktif, namun data judul dan penunjukan dosen pembimbing belum ditetapkan oleh Koordinator TA.</span>
         </div>
       </div>
     @endif
@@ -334,82 +353,96 @@
   <!-- ================================================================= -->
   @if ($user->isDosen() || $user->isKaprodi())
     
-    <!-- Quick Stats Cards ala Notion / Bootstrap -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-      <div class="p-4 bg-[#F7F6F3] rounded-3 border border-[#E9E9E7] shadow-xs">
-        <div class="d-flex align-items-center justify-content-between text-muted mb-1">
-          <span class="text-xs">Mahasiswa Bimbingan</span>
-          <i class="bi bi-people text-secondary text-sm"></i>
+    <!-- Quick Stats Cards Dosen & Kaprodi -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3">
+        <div class="card shadow-sm border-light-subtle h-100 p-3 bg-white">
+          <div class="d-flex align-items-center justify-content-between text-secondary mb-1">
+            <span class="small">Mahasiswa Bimbingan</span>
+            <i class="bi bi-people text-secondary"></i>
+          </div>
+          <p class="h4 fw-bold text-dark mt-1 mb-0">{{ $mahasiswaBimbingan->count() }}</p>
+          <span class="text-secondary small">FITE IT Del</span>
         </div>
-        <p class="text-2xl font-bold text-[#37352F] mt-1">{{ $mahasiswaBimbingan->count() }}</p>
-        <p class="text-[10px] text-[#787774] mt-0.5">FITE IT Del</p>
       </div>
 
-      <div class="p-4 bg-warning-subtle/50 rounded-3 border border-warning-subtle shadow-xs">
-        <div class="d-flex align-items-center justify-content-between text-warning-emphasis mb-1">
-          <span class="text-xs">Menunggu Review</span>
-          <i class="bi bi-hourglass-split text-sm"></i>
+      <div class="col-6 col-md-3">
+        <div class="card shadow-sm border-warning-subtle h-100 p-3 bg-warning-subtle/30">
+          <div class="d-flex align-items-center justify-content-between text-warning-emphasis mb-1">
+            <span class="small">Menunggu Evaluasi</span>
+            <i class="bi bi-hourglass-split"></i>
+          </div>
+          <p class="h4 fw-bold text-warning-emphasis mt-1 mb-0">{{ $pendingReviewsCount }}</p>
+          <span class="text-warning-emphasis small">Entri logbook baru</span>
         </div>
-        <p class="text-2xl font-bold text-[#B86200] mt-1">{{ $pendingReviewsCount }}</p>
-        <p class="text-[10px] text-[#B86200] mt-0.5">Entri logbook baru</p>
       </div>
 
-      <div class="p-4 bg-success-subtle/50 rounded-3 border border-success-subtle shadow-xs">
-        <div class="d-flex align-items-center justify-content-between text-success-emphasis mb-1">
-          <span class="text-xs">Pertemuan Minggu Ini</span>
-          <i class="bi bi-calendar-check text-sm"></i>
+      <div class="col-6 col-md-3">
+        <div class="card shadow-sm border-success-subtle h-100 p-3 bg-success-subtle/30">
+          <div class="d-flex align-items-center justify-content-between text-success-emphasis mb-1">
+            <span class="small">Pertemuan Minggu Ini</span>
+            <i class="bi bi-calendar-check"></i>
+          </div>
+          <p class="h4 fw-bold text-success mt-1 mb-0">{{ $upcomingMeetingsCount }}</p>
+          <span class="text-success small">Asistensi terjadwal</span>
         </div>
-        <p class="text-2xl font-bold text-[#2A7E4B] mt-1">{{ $upcomingMeetingsCount }}</p>
-        <p class="text-[10px] text-[#2A7E4B] mt-0.5">Asistensi terjadwal</p>
       </div>
 
-      <div class="p-4 bg-[#F7F6F3] rounded-3 border border-[#E9E9E7] shadow-xs">
-        <div class="d-flex align-items-center justify-content-between text-muted mb-1">
-          <span class="text-xs">Total TA FITE Aktif</span>
-          <i class="bi bi-folder2-open text-secondary text-sm"></i>
+      <div class="col-6 col-md-3">
+        <div class="card shadow-sm border-light-subtle h-100 p-3 bg-white">
+          <div class="d-flex align-items-center justify-content-between text-secondary mb-1">
+            <span class="small">Total TA FITE Aktif</span>
+            <i class="bi bi-folder2-open text-secondary"></i>
+          </div>
+          <p class="h4 fw-bold text-dark mt-1 mb-0">{{ $totalTaAktif }}</p>
+          <span class="text-secondary small">3 Program Studi</span>
         </div>
-        <p class="text-2xl font-bold text-[#37352F] mt-1">{{ $totalTaAktif }}</p>
-        <p class="text-[10px] text-[#787774] mt-0.5">3 Program Studi</p>
       </div>
     </div>
 
     @if ($user->isKoordinator())
       <!-- Panel Ringkas Koordinator TA -->
-      <div class="border border-[#E9E9E7] rounded-xl p-4 bg-[#FAFAF9] shadow-xs">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#E9E9E7] gap-2 mb-4">
+      <div class="card shadow-sm border-light-subtle mb-4">
+        <div class="card-header bg-white py-3 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
           <div class="d-flex align-items-center gap-2">
-            <div class="w-8 h-8 rounded-3 bg-secondary-subtle d-flex align-items-center justify-center text-dark">
-              <i class="bi bi-sliders"></i>
+            <div class="w-8 h-8 rounded-circle bg-dark text-white d-flex align-items-center justify-content-center shrink-0">
+              <i class="bi bi-diagram-3"></i>
             </div>
             <div>
-              <h3 class="text-sm font-bold text-[#37352F]">Ringkasan Operasional Koordinator TA</h3>
-              <p class="text-xs text-[#787774]">Penetapan pembimbing dan penjadwalan ujian program studi FITE</p>
+              <h3 class="h6 fw-bold text-dark mb-0">Ringkasan Operasional Koordinator TA</h3>
+              <p class="text-secondary small mb-0">Penetapan pembimbing dan penjadwalan ujian program studi FITE</p>
             </div>
           </div>
-          <a href="{{ route('koordinator.index') }}" class="btn btn-outline-dark btn-sm text-xs">
-            Buka Panel Koordinator &rarr;
+          <a href="{{ route('koordinator.index') }}" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center gap-1">
+            <span>Buka Panel Koordinator</span>
+            <i class="bi bi-arrow-right"></i>
           </a>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          <div class="p-4 rounded-lg border border-[#E9E9E7] bg-[#FFFFFF] flex items-center justify-between">
-            <div>
-              <p class="text-[#787774] text-[11px] font-medium uppercase tracking-wider">Menunggu Penunjukan Pembimbing</p>
-              <p class="text-2xl font-bold text-[#37352F] mt-1">{{ $menungguAssignCount }} <span class="text-xs font-normal text-[#787774]">Mahasiswa</span></p>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-12 col-sm-6">
+              <div class="p-3 rounded border bg-light d-flex align-items-center justify-content-between">
+                <div>
+                  <span class="text-secondary small text-uppercase fw-semibold d-block">Menunggu Penunjukan Pembimbing</span>
+                  <p class="h4 fw-bold text-dark mt-1 mb-0">{{ $menungguAssignCount }} <span class="small fw-normal text-secondary">Mahasiswa</span></p>
+                </div>
+                <a href="{{ route('koordinator.index') }}" class="btn btn-dark btn-sm">Plot Pembimbing</a>
+              </div>
             </div>
-            <a href="{{ route('koordinator.index') }}" class="btn btn-dark btn-sm text-xs py-1.5 px-3">
-              Plot Pembimbing
-            </a>
-          </div>
 
-          <div class="p-4 rounded-lg border border-[#E9E9E7] bg-[#FFFFFF] flex items-center justify-between">
-            <div>
-              <p class="text-[#787774] text-[11px] font-medium uppercase tracking-wider">Ujian Siap Dijadwalkan (Berkas Lengkap)</p>
-              <p class="text-2xl font-bold text-[#2A7E4B] mt-1">{{ $unassignedExamsCount }} <span class="text-xs font-normal text-[#787774]">Pengajuan</span></p>
+            <div class="col-12 col-sm-6">
+              <div class="p-3 rounded border bg-light d-flex align-items-center justify-content-between">
+                <div>
+                  <span class="text-secondary small text-uppercase fw-semibold d-block">Ujian Siap Dijadwalkan (Berkas Lengkap)</span>
+                  <p class="h4 fw-bold text-success mt-1 mb-0">{{ $unassignedExamsCount }} <span class="small fw-normal text-secondary">Pengajuan</span></p>
+                </div>
+                <a href="{{ route('ujian.index') }}" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1">
+                  <span>Tetapkan Jadwal</span>
+                  <i class="bi bi-arrow-right"></i>
+                </a>
+              </div>
             </div>
-            <a href="{{ route('ujian.index') }}" class="btn btn-dark btn-sm text-xs py-1.5 px-3">
-              Tetapkan Jadwal &rarr;
-            </a>
           </div>
         </div>
       </div>
@@ -417,118 +450,125 @@
 
     @if ($user->isKaprodi())
       <!-- Panel Ringkas Kaprodi -->
-      <div class="border border-[#E9E9E7] rounded-xl p-4 bg-[#FAFAF9] shadow-xs">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#E9E9E7] gap-2 mb-4">
+      <div class="card shadow-sm border-light-subtle mb-4">
+        <div class="card-header bg-white py-3 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
           <div class="d-flex align-items-center gap-2">
-            <div class="w-8 h-8 rounded-3 bg-secondary-subtle d-flex align-items-center justify-center text-dark">
-              <i class="bi bi-graph-up-arrow"></i>
+            <div class="w-8 h-8 rounded-circle bg-dark text-white d-flex align-items-center justify-content-center shrink-0">
+              <i class="bi bi-bar-chart"></i>
             </div>
             <div>
-              <h3 class="text-sm font-bold text-[#37352F]">Ringkasan Mutu & Statistik Kaprodi</h3>
-              <p class="text-xs text-[#787774]">Pengawasan mutu kelulusan tugas akhir dan beban bimbingan dosen FITE</p>
+              <h3 class="h6 fw-bold text-dark mb-0">Ringkasan Mutu & Statistik Kaprodi</h3>
+              <p class="text-secondary small mb-0">Pengawasan mutu kelulusan tugas akhir dan beban bimbingan dosen FITE</p>
             </div>
           </div>
-          <a href="{{ route('kaprodi.index') }}" class="btn btn-outline-dark btn-sm text-xs">
-            Buka Panel Kaprodi &rarr;
+          <a href="{{ route('kaprodi.index') }}" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center gap-1">
+            <span>Buka Panel Kaprodi</span>
+            <i class="bi bi-arrow-right"></i>
           </a>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          <div class="p-4 rounded-lg border border-[#E9E9E7] bg-[#FFFFFF] flex items-center justify-between">
-            <div>
-              <p class="text-[#787774] text-[11px] font-medium uppercase tracking-wider">Total Tugas Akhir Berjalan</p>
-              <p class="text-2xl font-bold text-[#37352F] mt-1">{{ $totalTaAktif }} <span class="text-xs font-normal text-[#787774]">Mahasiswa</span></p>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-12 col-sm-6">
+              <div class="p-3 rounded border bg-light d-flex align-items-center justify-content-between">
+                <div>
+                  <span class="text-secondary small text-uppercase fw-semibold d-block">Total Tugas Akhir Berjalan</span>
+                  <p class="h4 fw-bold text-dark mt-1 mb-0">{{ $totalTaAktif }} <span class="small fw-normal text-secondary">Mahasiswa</span></p>
+                </div>
+                <a href="{{ route('kaprodi.index') }}" class="btn btn-dark btn-sm">Pantau Mutu TA</a>
+              </div>
             </div>
-            <a href="{{ route('kaprodi.index') }}" class="btn btn-dark btn-sm text-xs py-1.5 px-3">
-              Pantau Mutu TA
-            </a>
-          </div>
 
-          <div class="p-4 rounded-lg border border-[#E9E9E7] bg-[#FFFFFF] flex items-center justify-between">
-            <div>
-              <p class="text-[#787774] text-[11px] font-medium uppercase tracking-wider">Mahasiswa Siap Sidang</p>
-              <p class="text-2xl font-bold text-[#2A7E4B] mt-1">{{ $totalMhsSiapSidang }} <span class="text-xs font-normal text-[#787774]">Mahasiswa</span></p>
+            <div class="col-12 col-sm-6">
+              <div class="p-3 rounded border bg-light d-flex align-items-center justify-content-between">
+                <div>
+                  <span class="text-secondary small text-uppercase fw-semibold d-block">Mahasiswa Siap Sidang</span>
+                  <p class="h4 fw-bold text-success mt-1 mb-0">{{ $totalMhsSiapSidang }} <span class="small fw-normal text-secondary">Mahasiswa</span></p>
+                </div>
+                <a href="{{ route('kaprodi.index') }}" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1">
+                  <span>Lihat Statistik</span>
+                  <i class="bi bi-arrow-right"></i>
+                </a>
+              </div>
             </div>
-            <a href="{{ route('kaprodi.index') }}" class="btn btn-dark btn-sm text-xs py-1.5 px-3">
-              Lihat Statistik &rarr;
-            </a>
           </div>
         </div>
       </div>
     @endif
 
     <!-- Tabel Mahasiswa Bimbingan -->
-    <div class="border border-[#E9E9E7] rounded-xl overflow-hidden bg-[#FFFFFF]">
-      <div class="p-4 border-b border-[#E9E9E7] flex items-center justify-between">
+    <div class="card shadow-sm border-light-subtle mb-4">
+      <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
         <div>
-          <h3 class="text-sm font-bold text-[#37352F]">Daftar Mahasiswa Asistensi Bimbingan Anda</h3>
-          <p class="text-xs text-[#787774]">Kelola review draf naskah, revisi coretan, dan persetujuan bimbingan</p>
+          <h3 class="h6 fw-bold text-dark mb-0">Daftar Mahasiswa Bimbingan Anda</h3>
+          <p class="text-secondary small mb-0">Kelola evaluasi draf naskah, revisi coretan, dan persetujuan bimbingan.</p>
         </div>
-        <a href="{{ route('logbook.index') }}" class="notion-btn-secondary text-xs">
-          Tinjau Semua Logbook &rarr;
+        <a href="{{ route('logbook.index') }}" class="small fw-semibold text-primary text-decoration-none d-inline-flex align-items-center gap-1">
+          <span>Tinjau Semua Logbook</span>
+          <i class="bi bi-arrow-right"></i>
         </a>
       </div>
 
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-[#F7F7F5] text-[#787774] uppercase text-[10px] tracking-wider border-b border-[#E9E9E7]">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" style="font-size: 0.8125rem;">
+          <thead class="table-light">
             <tr>
-              <th class="py-2.5 px-4 font-semibold">Mahasiswa & NIM</th>
-              <th class="py-2.5 px-4 font-semibold">Judul Tugas Akhir</th>
-              <th class="py-2.5 px-4 font-semibold">Tahap Bab</th>
-              <th class="py-2.5 px-4 font-semibold">Logbook Terakhir</th>
-              <th class="py-2.5 px-4 text-right font-semibold">Aksi</th>
+              <th class="py-2.5 px-3">Mahasiswa & NIM</th>
+              <th class="py-2.5 px-3">Judul Tugas Akhir</th>
+              <th class="py-2.5 px-3">Tahap Bab</th>
+              <th class="py-2.5 px-3">Logbook Terakhir</th>
+              <th class="py-2.5 px-3 text-end">Aksi</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-[#E9E9E7]">
+          <tbody>
             @forelse ($mahasiswaBimbingan as $ta)
-              <tr class="hover:bg-[#F7F7F5] transition-colors">
-                <td class="py-3 px-4">
+              <tr>
+                <td class="px-3 py-3">
                   @php
                     $dosenMembers = $ta->anggota && $ta->anggota->isNotEmpty()
                       ? $ta->anggota
                       : ($ta->mahasiswa ? collect([$ta->mahasiswa]) : collect());
                   @endphp
                   @if ($dosenMembers->isNotEmpty())
-                    <div class="space-y-1">
-                      <div class="flex flex-wrap gap-1.5">
+                    <div class="d-flex flex-column gap-1">
+                      <div class="d-flex flex-wrap gap-1.5">
                         @foreach ($dosenMembers as $member)
-                          <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#F7F7F5] border border-[#E9E9E7] text-[#37352F] text-[11px]">
-                            <span class="font-semibold">{{ $member->user->name ?? '-' }}</span>
-                            <span class="text-[10px] text-[#787774]">({{ $member->nim }})</span>
+                          <span class="badge bg-light text-dark border">
+                            <span class="fw-semibold">{{ $member->user->name ?? '-' }}</span>
+                            <span class="text-secondary">({{ $member->nim }})</span>
                           </span>
                         @endforeach
                       </div>
-                      <p class="text-[10px] text-[#787774]">{{ $ta->prodi }} · {{ $dosenMembers->count() }} mahasiswa</p>
+                      <span class="text-secondary small">{{ $ta->prodi }} · {{ $dosenMembers->count() }} mahasiswa</span>
                     </div>
                   @else
-                    <p class="font-bold text-[#37352F]">-</p>
-                    <p class="text-[11px] text-[#787774]">{{ $ta->prodi }}</p>
+                    <span class="fw-bold text-dark">-</span>
+                    <span class="text-secondary small d-block">{{ $ta->prodi }}</span>
                   @endif
                 </td>
-                <td class="py-3 px-4 max-w-xs">
-                  <p class="font-medium text-[#37352F] line-clamp-2">{{ $ta->judul }}</p>
+                <td class="px-3 py-3" style="max-width: 300px;">
+                  <p class="fw-medium text-dark mb-0 line-clamp-2">{{ $ta->judul }}</p>
                 </td>
-                <td class="py-3 px-4">
-                  <span class="notion-pill-gray uppercase">{{ $ta->status }}</span>
+                <td class="px-3 py-3">
+                  <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle text-uppercase">{{ $ta->status }}</span>
                 </td>
-                <td class="py-3 px-4 text-[#787774]">
+                <td class="px-3 py-3 text-secondary">
                   @if ($ta->logbooks->isNotEmpty())
-                    <p class="font-medium text-[#37352F]">{{ $ta->logbooks->first()->tanggal->format('d M Y') }}</p>
-                    <span class="text-[10px]">{{ $ta->logbooks->first()->bab_progress }}</span>
+                    <span class="fw-medium text-dark d-block">{{ $ta->logbooks->first()->tanggal->format('d M Y') }}</span>
+                    <span class="small">{{ $ta->logbooks->first()->bab_progress }}</span>
                   @else
-                    Belum ada entri
+                    <span class="small">Belum ada entri</span>
                   @endif
                 </td>
-                <td class="py-3 px-4 text-right">
-                  <a href="{{ route('logbook.index') }}" class="notion-btn-primary text-xs py-1 px-2.5">
-                    Review Dokumen
+                <td class="px-3 py-3 text-end">
+                  <a href="{{ route('logbook.index') }}" class="btn btn-outline-primary btn-sm">
+                    Evaluasi Dokumen
                   </a>
                 </td>
               </tr>
             @empty
               <tr>
-                <td colspan="5" class="py-6 text-center text-[#787774]">
+                <td colspan="5" class="py-4 text-center text-secondary">
                   Belum ada mahasiswa yang dialokasikan ke bimbingan Anda.
                 </td>
               </tr>
@@ -544,40 +584,49 @@
   <!-- KONDISI 4: TEACHING ASSISTANT & BAAK -->
   <!-- ================================================================= -->
   @if ($user->isTA() || $user->isBaak())
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-      <div class="p-4 rounded-3 border border-light-subtle bg-light shadow-xs">
-        <div class="d-flex align-items-center justify-content-between text-muted">
-          <h4 class="text-xs font-bold uppercase tracking-wider mb-0">Antrean Verifikasi Berkas (TA)</h4>
-          <i class="bi bi-file-earmark-check text-secondary"></i>
-        </div>
-        <p class="text-3xl font-extrabold text-[#37352F] mt-2 mb-0">{{ $pendingUjianCount }}</p>
-        <p class="text-xs text-[#787774] mt-1">Berkas ujian mahasiswa menunggu validasi fisik/soft-copy</p>
-        <div class="mt-3">
-          <a href="{{ route('ujian.index') }}" class="btn btn-dark btn-sm text-xs">Periksa Berkas &rarr;</a>
-        </div>
-      </div>
-
-      <div class="p-4 rounded-3 border border-light-subtle bg-light shadow-xs">
-        <div class="d-flex align-items-center justify-content-between text-muted">
-          <h4 class="text-xs font-bold uppercase tracking-wider mb-0">Alokasi Ruangan Ujian (BAAK)</h4>
-          <i class="bi bi-building text-secondary"></i>
-        </div>
-        <p class="text-3xl font-extrabold text-[#37352F] mt-2 mb-0">{{ $unscheduledBaakCount }}</p>
-        <p class="text-xs text-[#787774] mt-1">Jadwal tanggal terbit menanti alokasi ruang GD & link Zoom</p>
-        <div class="mt-3">
-          <a href="{{ route('ujian.index') }}" class="btn btn-dark btn-sm text-xs">Kelola Fasilitas &rarr;</a>
+    <div class="row g-3">
+      <div class="col-12 col-md-4">
+        <div class="card shadow-sm border-light-subtle h-100 p-3 bg-white">
+          <div class="d-flex align-items-center justify-content-between text-secondary mb-2">
+            <span class="small fw-bold text-uppercase">Antrean Verifikasi Berkas (TA)</span>
+            <i class="bi bi-file-earmark-check fs-5"></i>
+          </div>
+          <p class="h3 fw-bold text-dark mb-1">{{ $pendingUjianCount }}</p>
+          <p class="text-secondary small mb-3">Berkas ujian mahasiswa menunggu validasi fisik/soft-copy</p>
+          <a href="{{ route('ujian.index') }}" class="btn btn-dark btn-sm d-inline-flex align-items-center gap-1 w-fit">
+            <span>Periksa Berkas</span>
+            <i class="bi bi-arrow-right"></i>
+          </a>
         </div>
       </div>
 
-      <div class="p-4 rounded-3 border border-light-subtle bg-light shadow-xs">
-        <div class="d-flex align-items-center justify-content-between text-muted">
-          <h4 class="text-xs font-bold uppercase tracking-wider mb-0">Total Arsip Digital Alumni</h4>
-          <i class="bi bi-archive text-secondary"></i>
+      <div class="col-12 col-md-4">
+        <div class="card shadow-sm border-light-subtle h-100 p-3 bg-white">
+          <div class="d-flex align-items-center justify-content-between text-secondary mb-2">
+            <span class="small fw-bold text-uppercase">Alokasi Ruangan Ujian (BAAK)</span>
+            <i class="bi bi-building fs-5"></i>
+          </div>
+          <p class="h3 fw-bold text-dark mb-1">{{ $unscheduledBaakCount }}</p>
+          <p class="text-secondary small mb-3">Jadwal tanggal terbit menanti alokasi ruang GD & link Zoom</p>
+          <a href="{{ route('ujian.index') }}" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1 w-fit">
+            <span>Kelola Fasilitas</span>
+            <i class="bi bi-arrow-right"></i>
+          </a>
         </div>
-        <p class="text-3xl font-extrabold text-[#37352F] mt-2 mb-0">{{ $totalArsipCount }}</p>
-        <p class="text-xs text-[#787774] mt-1">Karya naskah skripsi terunggah di repositori FITE</p>
-        <div class="mt-3">
-          <a href="{{ route('arsip.index') }}" class="btn btn-outline-dark btn-sm text-xs">Pustaka Naskah &rarr;</a>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <div class="card shadow-sm border-light-subtle h-100 p-3 bg-white">
+          <div class="d-flex align-items-center justify-content-between text-secondary mb-2">
+            <span class="small fw-bold text-uppercase">Total Arsip Digital Alumni</span>
+            <i class="bi bi-archive fs-5"></i>
+          </div>
+          <p class="h3 fw-bold text-dark mb-1">{{ $totalArsipCount }}</p>
+          <p class="text-secondary small mb-3">Karya naskah skripsi terunggah di repositori FITE</p>
+          <a href="{{ route('arsip.index') }}" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center gap-1 w-fit">
+            <span>Pustaka Naskah</span>
+            <i class="bi bi-arrow-right"></i>
+          </a>
         </div>
       </div>
     </div>

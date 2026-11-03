@@ -4,7 +4,7 @@
 @section('breadcrumb', 'Koordinator TA')
 
 @section('content')
-<div class="space-y-4 md:space-y-5" x-data="{ 
+<div class="d-flex flex-column gap-3" x-data="{ 
   assignModal: false, 
   kelompokModal: false, 
   selectedTa: null, 
@@ -18,71 +18,91 @@
   }
 }">
 
-  <!-- Header Notion -->
-  <div class="border-b border-[#E9E9E7] pb-3 mb-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <!-- Header Halaman Akademik -->
+  <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 pb-3 border-bottom">
     <div>
-      <div class="flex items-center gap-2 mb-1">
-        <h1 class="text-2xl font-bold tracking-tight text-[#37352F]">Panel Koordinator Tugas Akhir FITE</h1>
-      </div>
-      <p class="text-xs text-[#787774]">Penetapan Dosen Pembimbing 1 & 2 serta pengawasan rekapitulasi capaian bab tugas akhir mahasiswa.</p>
+      <h1 class="h4 fw-bold text-dark mb-1">Panel Koordinator Tugas Akhir FITE</h1>
+      <p class="text-secondary small mb-0">Penetapan Dosen Pembimbing 1 & 2 serta pengawasan rekapitulasi capaian bab tugas akhir mahasiswa.</p>
     </div>
 
-    <div class="flex items-center gap-2">
-      <a href="{{ route('ujian.index') }}" class="btn btn-outline-dark btn-sm text-xs d-inline-flex align-items-center gap-1.5">
-        <i class="bi bi-mortarboard"></i> Kelola Jadwal Ujian ({{ $siapJadwalCount }})
+    <div class="d-flex align-items-center gap-2 shrink-0">
+      <a href="{{ route('ujian.index') }}" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center gap-1.5">
+        <i class="bi bi-mortarboard"></i>
+        <span>Kelola Jadwal Ujian ({{ $siapJadwalCount }})</span>
       </a>
     </div>
   </div>
 
-  <!-- Metrik Ringkas Koordinator TA ala Notion -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-    <div class="p-4 bg-[#F7F6F3] rounded-lg border border-[#E9E9E7]">
-      <p class="text-xs text-[#787774]">Total Tugas Akhir</p>
-      <p class="text-2xl font-bold text-[#37352F] mt-1">{{ $totalTaAktif }}</p>
-      <p class="text-[10px] text-[#787774] mt-0.5">Mahasiswa aktif FITE</p>
+  <!-- Metrik Ringkas Koordinator TA -->
+  <div class="row g-3">
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-light-subtle h-100 p-3 bg-white">
+        <div class="d-flex align-items-center justify-content-between text-secondary mb-1">
+          <span class="small">Total Tugas Akhir</span>
+          <i class="bi bi-folder2-open"></i>
+        </div>
+        <p class="h3 fw-bold text-dark mt-1 mb-0">{{ $totalTaAktif }}</p>
+        <span class="text-secondary small">Mahasiswa aktif FITE</span>
+      </div>
     </div>
 
-    <div class="p-4 {{ $menungguAssignCount > 0 ? 'bg-[#FDF5E6] border-[#F3E0A2]' : 'bg-[#F7F6F3] border-[#E9E9E7]' }} rounded-lg border">
-      <p class="text-xs {{ $menungguAssignCount > 0 ? 'text-[#B86200]' : 'text-[#787774]' }}">Menunggu Pembimbing</p>
-      <p class="text-2xl font-bold {{ $menungguAssignCount > 0 ? 'text-[#B86200]' : 'text-[#37352F]' }} mt-1">{{ $menungguAssignCount }}</p>
-      <p class="text-[10px] {{ $menungguAssignCount > 0 ? 'text-[#B86200]' : 'text-[#787774]' }} mt-0.5">Perlu alokasi dospem</p>
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm {{ $menungguAssignCount > 0 ? 'border-warning-subtle bg-warning-subtle/30' : 'border-light-subtle bg-white' }} h-100 p-3">
+        <div class="d-flex align-items-center justify-content-between {{ $menungguAssignCount > 0 ? 'text-warning-emphasis' : 'text-secondary' }} mb-1">
+          <span class="small">Menunggu Pembimbing</span>
+          <i class="bi bi-person-exclamation"></i>
+        </div>
+        <p class="h3 fw-bold {{ $menungguAssignCount > 0 ? 'text-warning-emphasis' : 'text-dark' }} mt-1 mb-0">{{ $menungguAssignCount }}</p>
+        <span class="{{ $menungguAssignCount > 0 ? 'text-warning-emphasis' : 'text-secondary' }} small">Perlu alokasi dospem</span>
+      </div>
     </div>
 
-    <div class="p-4 bg-[#EBF5EE] rounded-lg border border-[#C4E5D1]">
-      <p class="text-xs text-[#2A7E4B]">Siap Dijadwalkan</p>
-      <p class="text-2xl font-bold text-[#2A7E4B] mt-1">{{ $siapJadwalCount }}</p>
-      <a href="{{ route('ujian.index') }}" class="text-[10px] font-semibold text-[#2A7E4B] underline mt-0.5 inline-block">Atur Tanggal Ujian &rarr;</a>
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-success-subtle h-100 p-3 bg-success-subtle/30">
+        <div class="d-flex align-items-center justify-content-between text-success-emphasis mb-1">
+          <span class="small">Siap Dijadwalkan</span>
+          <i class="bi bi-check-circle"></i>
+        </div>
+        <p class="h3 fw-bold text-success mt-1 mb-0">{{ $siapJadwalCount }}</p>
+        <a href="{{ route('ujian.index') }}" class="small fw-semibold text-success text-decoration-none d-inline-flex align-items-center gap-1 mt-1">
+          <span>Atur Tanggal Ujian</span>
+          <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
     </div>
 
-    <div class="p-4 bg-[#F7F6F3] rounded-lg border border-[#E9E9E7]">
-      <p class="text-xs text-[#787774]">Tahap Lanjut / Sidang</p>
-      <p class="text-2xl font-bold text-[#37352F] mt-1">{{ $totalSiapSidang }}</p>
-      <p class="text-[10px] text-[#787774] mt-0.5">Seminar TA & Sidang</p>
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-light-subtle h-100 p-3 bg-white">
+        <div class="d-flex align-items-center justify-content-between text-secondary mb-1">
+          <span class="small">Tahap Lanjut / Sidang</span>
+          <i class="bi bi-mortarboard"></i>
+        </div>
+        <p class="h3 fw-bold text-dark mt-1 mb-0">{{ $totalSiapSidang }}</p>
+        <span class="text-secondary small">Seminar TA & Sidang</span>
+      </div>
     </div>
   </div>
 
   @if ($unassignedMhs->isNotEmpty())
-    <div class="notion-callout">
-      <div class="text-xs">
-        <p class="font-bold text-[#37352F]">Informasi: Terdapat {{ $unassignedMhs->count() }} Mahasiswa TA yang belum dibuatkan entri Tugas Akhir</p>
-        <p class="text-[#787774] mt-0.5">
-          Mahasiswa berikut terdata sebagai peserta TA aktif:
-          <span class="font-semibold text-[#37352F]">{{ $unassignedMhs->pluck('user.name')->implode(', ') }}</span>
-        </p>
+    <div class="alert alert-info d-flex align-items-center gap-2 mb-0 shadow-sm" role="alert">
+      <i class="bi bi-info-circle-fill fs-5"></i>
+      <div class="small">
+        <strong class="d-block">Informasi: Terdapat {{ $unassignedMhs->count() }} Mahasiswa TA yang belum dibuatkan entri Tugas Akhir</strong>
+        <span>Mahasiswa berikut terdata sebagai peserta TA aktif: <strong>{{ $unassignedMhs->pluck('user.name')->implode(', ') }}</strong></span>
       </div>
     </div>
   @endif
 
   <!-- Tabel Rekapitulasi Mahasiswa TA & Penetapan Pembimbing -->
-  <div class="border border-[#E9E9E7] rounded-xl overflow-hidden bg-[#FFFFFF] shadow-xs">
-    <div class="p-4 border-b border-[#E9E9E7] flex flex-col md:flex-row md:items-center justify-between gap-3">
+  <div class="card shadow-sm border-light-subtle">
+    <div class="card-header bg-white py-3 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3">
       <div>
-        <h3 class="text-sm font-bold text-[#37352F]">Rekapitulasi Tugas Akhir & Penunjukan Pembimbing</h3>
-        <p class="text-xs text-[#787774]">Kelola dosen pembimbing utama dan pendamping sesuai keahlian riset</p>
+        <h2 class="h6 fw-bold text-dark mb-0">Rekapitulasi Tugas Akhir & Penunjukan Pembimbing</h2>
+        <p class="text-secondary small mb-0">Kelola dosen pembimbing utama dan pendamping sesuai keahlian riset.</p>
       </div>
 
-      <form method="GET" action="{{ route('koordinator.index') }}" class="flex items-center gap-2 text-xs">
-        <select name="prodi" onchange="this.form.submit()" class="px-2.5 py-1 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-xs text-[#37352F]">
+      <form method="GET" action="{{ route('koordinator.index') }}" class="d-flex align-items-center gap-2">
+        <select name="prodi" onchange="this.form.submit()" class="form-select form-select-sm" style="width: auto; font-size: 0.8125rem;">
           <option value="">Semua Program Studi</option>
           <option value="S1 Informatika" {{ request('prodi') === 'S1 Informatika' ? 'selected' : '' }}>S1 Informatika</option>
           <option value="S1 Sistem Informasi" {{ request('prodi') === 'S1 Sistem Informasi' ? 'selected' : '' }}>S1 Sistem Informasi</option>
@@ -91,65 +111,69 @@
       </form>
     </div>
 
-    <div class="overflow-x-auto">
-      <table class="w-full text-left text-xs">
-        <thead class="bg-[#F7F7F5] text-[#787774] uppercase text-[10px] tracking-wider border-b border-[#E9E9E7]">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0" style="font-size: 0.8125rem;">
+        <thead class="table-light">
           <tr>
-            <th class="py-2.5 px-4 font-semibold">Mahasiswa & NIM</th>
-            <th class="py-2.5 px-4 font-semibold">Judul Tugas Akhir</th>
-            <th class="py-2.5 px-4 font-semibold">Dosen Pembimbing 1</th>
-            <th class="py-2.5 px-4 font-semibold">Dosen Pembimbing 2</th>
-            <th class="py-2.5 px-4 font-semibold">Logbook</th>
-            <th class="py-2.5 px-4 font-semibold">Status Tahap</th>
-            <th class="py-2.5 px-4 text-right font-semibold">Aksi</th>
+            <th class="py-2.5 px-3">Mahasiswa & NIM</th>
+            <th class="py-2.5 px-3">Judul Tugas Akhir</th>
+            <th class="py-2.5 px-3">Dosen Pembimbing 1</th>
+            <th class="py-2.5 px-3">Dosen Pembimbing 2</th>
+            <th class="py-2.5 px-3">Logbook</th>
+            <th class="py-2.5 px-3">Status Tahap</th>
+            <th class="py-2.5 px-3 text-end">Aksi</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-[#E9E9E7]">
+        <tbody>
           @forelse ($tugasAkhirList as $ta)
-            <tr class="hover:bg-[#F7F7F5] transition-colors">
-              <td class="py-3 px-4">
+            <tr>
+              <td class="px-3 py-3">
                 @if ($ta->anggota && $ta->anggota->isNotEmpty())
-                  @foreach ($ta->anggota as $member)
-                    <p class="font-bold text-[#37352F] leading-tight">{{ $member->user->name ?? '-' }}</p>
-                    <p class="text-[10px] text-[#787774] mb-1">NIM: {{ $member->nim }}</p>
-                  @endforeach
-                  @if ($ta->jumlahAnggota() > 1)
-                    <span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#E3E2E0] text-[#37352F]">
-                      Kelompok ({{ $ta->jumlahAnggota() }} Mhs)
-                    </span>
-                  @endif
+                  <div class="d-flex flex-column gap-1">
+                    <div class="d-flex flex-wrap gap-1">
+                      @foreach ($ta->anggota as $member)
+                        <span class="badge bg-light text-dark border">
+                          <span class="fw-semibold">{{ $member->user->name ?? '-' }}</span>
+                          <span class="text-secondary">({{ $member->nim }})</span>
+                        </span>
+                      @endforeach
+                    </div>
+                    <span class="text-secondary small">{{ $ta->prodi }} · {{ $ta->jumlahAnggota() }} Mahasiswa</span>
+                  </div>
                 @else
-                  <p class="font-bold text-[#37352F]">{{ $ta->mahasiswa->user->name ?? '-' }}</p>
-                  <p class="text-[10px] text-[#787774]">{{ $ta->mahasiswa->nim ?? '-' }} • {{ $ta->prodi }}</p>
+                  <p class="fw-bold text-dark mb-0">{{ $ta->mahasiswa->user->name ?? '-' }}</p>
+                  <p class="text-secondary small mb-0">{{ $ta->mahasiswa->nim ?? '-' }} · {{ $ta->prodi }}</p>
                 @endif
               </td>
-              <td class="py-3 px-4 max-w-xs">
-                <p class="font-medium text-[#37352F] line-clamp-2 leading-relaxed">{{ $ta->judul }}</p>
+              <td class="px-3 py-3" style="max-width: 280px;">
+                <p class="fw-medium text-dark mb-0 line-clamp-2">{{ $ta->judul }}</p>
               </td>
-              <td class="py-3 px-4">
-                <span class="font-medium text-[#37352F]">{{ $ta->pembimbing1->user->name ?? 'Belum Ditetapkan' }}</span>
+              <td class="px-3 py-3 text-nowrap">
+                <span class="fw-medium text-dark">{{ $ta->pembimbing1->user->name ?? 'Belum Ditetapkan' }}</span>
               </td>
-              <td class="py-3 px-4">
-                <span class="text-[#787774]">{{ $ta->pembimbing2->user->name ?? '-' }}</span>
+              <td class="px-3 py-3 text-nowrap">
+                <span class="text-secondary">{{ $ta->pembimbing2->user->name ?? '-' }}</span>
               </td>
-              <td class="py-3 px-4 whitespace-nowrap">
-                <span class="notion-pill-green">{{ $ta->logbooks->count() }} Sesi</span>
+              <td class="px-3 py-3 text-nowrap">
+                <span class="badge bg-success-subtle text-success border border-success-subtle">{{ $ta->logbooks->count() }} Sesi</span>
               </td>
-              <td class="py-3 px-4 whitespace-nowrap">
-                <span class="notion-pill-gray uppercase text-[10px]">{{ str_replace('_', ' ', $ta->status) }}</span>
+              <td class="px-3 py-3 text-nowrap">
+                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle text-uppercase">{{ str_replace('_', ' ', $ta->status) }}</span>
               </td>
-              <td class="py-3 px-4 text-right whitespace-nowrap space-x-1.5">
-                <button @click="openKelompok({{ $ta->toJson() }})" class="notion-btn-secondary text-xs py-1 px-2.5">
-                  Kelola Anggota ({{ $ta->jumlahAnggota() }})
-                </button>
-                <button @click="openAssign({{ $ta->toJson() }})" class="notion-btn-primary text-xs py-1 px-2.5">
-                  Atur Pembimbing
-                </button>
+              <td class="px-3 py-3 text-end text-nowrap">
+                <div class="btn-group btn-group-sm">
+                  <button @click="openKelompok({{ $ta->toJson() }})" class="btn btn-outline-dark">
+                    Anggota ({{ $ta->jumlahAnggota() }})
+                  </button>
+                  <button @click="openAssign({{ $ta->toJson() }})" class="btn btn-dark">
+                    Atur Pembimbing
+                  </button>
+                </div>
               </td>
             </tr>
           @empty
             <tr>
-              <td colspan="7" class="py-8 text-center text-[#787774]">Tidak ada data mahasiswa TA.</td>
+              <td colspan="7" class="py-4 text-center text-secondary">Tidak ada data mahasiswa TA.</td>
             </tr>
           @endforelse
         </tbody>
@@ -157,55 +181,56 @@
     </div>
 
     @if ($tugasAkhirList->hasPages())
-      <div class="p-3 border-t border-[#E9E9E7] bg-[#F7F7F5]">
+      <div class="card-footer bg-light p-3">
         {{ $tugasAkhirList->links() }}
       </div>
     @endif
   </div>
 
   <!-- MODAL: TETAPKAN DOSEN PEMBIMBING -->
-  <div x-show="assignModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
-    <div class="fixed inset-0 bg-[#0A0A0B]/40 backdrop-blur-xs" @click="assignModal = false"></div>
-    <div class="flex min-h-full items-center justify-center p-4">
-      <div class="relative w-full max-w-md bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-4 md:p-5 z-10" @click.away="assignModal = false">
+  <div x-show="assignModal" x-cloak class="modal-backdrop-custom">
+    <div class="modal-dialog modal-dialog-centered w-100 mx-3" style="max-width: 480px;" @click.away="assignModal = false">
+      <div class="modal-content bg-white shadow-lg border-0 rounded-3">
         
-        <div class="flex items-center justify-between pb-3 border-b border-[#E9E9E7] mb-4">
-          <h3 class="text-sm font-bold text-[#37352F]">Tetapkan Dosen Pembimbing Mahasiswa</h3>
-          <button @click="assignModal = false" class="text-gray-400 hover:text-black">&times;</button>
+        <div class="modal-header border-bottom py-3 px-4">
+          <h5 class="modal-title fs-6 fw-bold text-dark mb-0">Tetapkan Dosen Pembimbing Mahasiswa</h5>
+          <button type="button" class="btn-close" @click="assignModal = false"></button>
         </div>
 
         <template x-if="selectedTa">
-          <form action="{{ route('koordinator.assign') }}" method="POST" class="space-y-4 text-xs">
+          <form action="{{ route('koordinator.assign') }}" method="POST">
             @csrf
             <input type="hidden" name="tugas_akhir_id" :value="selectedTa.id">
 
-            <div class="p-2.5 bg-[#F7F6F3] rounded border border-[#E9E9E7]">
-              <p class="font-bold text-[#37352F]" x-text="selectedTa.mahasiswa?.user?.name"></p>
-              <p class="text-[10px] text-[#787774]" x-text="selectedTa.judul"></p>
+            <div class="modal-body p-4 d-flex flex-column gap-3" style="font-size: 0.8125rem;">
+              <div class="p-2.5 bg-light rounded border">
+                <p class="fw-bold text-dark mb-0.5" x-text="selectedTa.mahasiswa?.user?.name"></p>
+                <p class="text-secondary small mb-0" x-text="selectedTa.judul"></p>
+              </div>
+
+              <div>
+                <label class="form-label fw-semibold text-secondary small mb-1">Dosen Pembimbing 1 (Utama)</label>
+                <select name="dosen_pembimbing_1_id" required class="form-select form-select-sm">
+                  @foreach ($dosenList as $d)
+                    <option value="{{ $d->id }}">{{ $d->user->name }} ({{ $d->kode_dosen }}) - {{ $d->prodi }}</option>
+                  @endforeach
+                </select>
+              </div>
+
+              <div>
+                <label class="form-label fw-semibold text-secondary small mb-1">Dosen Pembimbing 2 (Pendamping, Opsional)</label>
+                <select name="dosen_pembimbing_2_id" class="form-select form-select-sm">
+                  <option value="">-- Tanpa Pembimbing 2 --</option>
+                  @foreach ($dosenList as $d)
+                    <option value="{{ $d->id }}">{{ $d->user->name }} ({{ $d->kode_dosen }}) - {{ $d->prodi }}</option>
+                  @endforeach
+                </select>
+              </div>
             </div>
 
-            <div>
-              <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Dosen Pembimbing 1 (Utama)</label>
-              <select name="dosen_pembimbing_1_id" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
-                @foreach ($dosenList as $d)
-                  <option value="{{ $d->id }}">{{ $d->user->name }} ({{ $d->kode_dosen }}) - {{ $d->prodi }}</option>
-                @endforeach
-              </select>
-            </div>
-
-            <div>
-              <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Dosen Pembimbing 2 (Pendamping, Opsional)</label>
-              <select name="dosen_pembimbing_2_id" class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
-                <option value="">-- Tanpa Pembimbing 2 --</option>
-                @foreach ($dosenList as $d)
-                  <option value="{{ $d->id }}">{{ $d->user->name }} ({{ $d->kode_dosen }}) - {{ $d->prodi }}</option>
-                @endforeach
-              </select>
-            </div>
-
-            <div class="flex items-center justify-end gap-2 pt-3 border-t border-[#E9E9E7]">
-              <button type="button" @click="assignModal = false" class="notion-btn-secondary text-xs">Batal</button>
-              <button type="submit" class="notion-btn-primary text-xs">Simpan Penetapan</button>
+            <div class="modal-footer border-top py-2 px-4 d-flex justify-content-end gap-2">
+              <button type="button" @click="assignModal = false" class="btn btn-outline-secondary btn-sm">Batal</button>
+              <button type="submit" class="btn btn-dark btn-sm">Simpan Penetapan</button>
             </div>
           </form>
         </template>
@@ -215,47 +240,46 @@
   </div>
 
   <!-- MODAL: KELOLA ANGGOTA KELOMPOK TUGAS AKHIR -->
-  <div x-show="kelompokModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
-    <div class="fixed inset-0 bg-[#0A0A0B]/40 backdrop-blur-xs" @click="kelompokModal = false"></div>
-    <div class="flex min-h-full items-center justify-center p-4">
-      <div class="relative w-full max-w-lg bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-4 md:p-5 z-10" @click.away="kelompokModal = false">
+  <div x-show="kelompokModal" x-cloak class="modal-backdrop-custom">
+    <div class="modal-dialog modal-dialog-centered w-100 mx-3" style="max-width: 520px;" @click.away="kelompokModal = false">
+      <div class="modal-content bg-white shadow-lg border-0 rounded-3">
         
-        <div class="flex items-center justify-between pb-3 border-b border-[#E9E9E7] mb-4">
+        <div class="modal-header border-bottom py-3 px-4">
           <div>
-            <h3 class="text-sm font-bold text-[#37352F]">Kelola Anggota Kelompok Tugas Akhir</h3>
-            <p class="text-[11px] text-[#787774]">Setiap TA dapat memiliki 1 hingga maksimal 3 mahasiswa setara (tanpa ketua).</p>
+            <h5 class="modal-title fs-6 fw-bold text-dark mb-0">Kelola Anggota Kelompok Tugas Akhir</h5>
+            <p class="text-secondary small mb-0">Setiap TA dapat memiliki 1 hingga maksimal 3 mahasiswa setara (tanpa ketua).</p>
           </div>
-          <button @click="kelompokModal = false" class="text-gray-400 hover:text-black">&times;</button>
+          <button type="button" class="btn-close" @click="kelompokModal = false"></button>
         </div>
 
         <template x-if="selectedTa">
-          <div class="space-y-5 text-xs">
+          <div class="modal-body p-4 d-flex flex-column gap-3" style="font-size: 0.8125rem;">
             <!-- Info TA -->
-            <div class="p-3 bg-[#F7F6F3] rounded border border-[#E9E9E7]">
-              <div class="flex items-center gap-1.5 mb-1">
-                <span class="notion-pill-gray text-[10px]" x-text="selectedTa.prodi"></span>
-                <span class="text-[10px] text-[#787774]">TA ID: #<span x-text="selectedTa.id"></span></span>
+            <div class="p-2.5 bg-light rounded border">
+              <div class="d-flex align-items-center gap-1.5 mb-1">
+                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle" x-text="selectedTa.prodi"></span>
+                <span class="text-secondary small">TA ID: #<span x-text="selectedTa.id"></span></span>
               </div>
-              <p class="font-bold text-[#37352F] text-xs leading-snug" x-text="selectedTa.judul"></p>
+              <p class="fw-bold text-dark small mb-0 lh-sm" x-text="selectedTa.judul"></p>
             </div>
 
             <!-- Daftar Anggota Saat Ini -->
             <div>
-              <div class="flex items-center justify-between mb-2">
-                <span class="font-bold uppercase tracking-wider text-[#787774] text-[10px]">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="fw-bold text-secondary text-uppercase small" style="font-size: 0.75rem;">
                   Anggota Saat Ini (<span x-text="selectedTa.anggota?.length ?? 0"></span>/3 Mahasiswa)
                 </span>
-                <span class="text-[10px] text-[#787774]">Minimal 1, Maksimal 3</span>
+                <span class="text-secondary small">Minimal 1, Maksimal 3</span>
               </div>
 
-              <div class="divide-y divide-[#E9E9E7] border border-[#E9E9E7] rounded-lg overflow-hidden bg-white">
+              <div class="list-group border rounded">
                 <template x-for="(member, index) in (selectedTa.anggota || [])" :key="member.id">
-                  <div class="p-3 flex items-center justify-between hover:bg-[#F7F7F5] transition-colors">
-                    <div class="flex items-center gap-2.5">
-                      <div class="w-6 h-6 rounded-full bg-[#E3E2E0] flex items-center justify-center font-bold text-[10px] text-[#37352F]" x-text="index + 1"></div>
+                  <div class="list-group-item d-flex align-items-center justify-content-between py-2 px-3">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="badge bg-dark rounded-circle d-flex align-items-center justify-content-center" style="width: 22px; height: 22px; font-size: 10px;" x-text="index + 1"></div>
                       <div>
-                        <p class="font-bold text-[#37352F]" x-text="member.user?.name ?? '-'"></p>
-                        <p class="text-[10px] text-[#787774]">NIM: <span x-text="member.nim"></span> • <span x-text="member.user?.email"></span></p>
+                        <p class="fw-bold text-dark mb-0 small" x-text="member.user?.name ?? '-'"></p>
+                        <p class="text-secondary mb-0" style="font-size: 0.75rem;">NIM: <span x-text="member.nim"></span> • <span x-text="member.user?.email"></span></p>
                       </div>
                     </div>
 
@@ -265,14 +289,14 @@
                         <form :action="'{{ url('/koordinator/tugas-akhir') }}/' + selectedTa.id + '/anggota/' + member.id" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mengeluarkan mahasiswa ini dari kelompok TA?');">
                           @csrf
                           @method('DELETE')
-                          <button type="submit" class="px-2 py-1 text-[11px] font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded border border-rose-200 transition-colors">
+                          <button type="submit" class="btn btn-outline-danger btn-sm py-0.5 px-2" style="font-size: 0.75rem;">
                             Hapus
                           </button>
                         </form>
                       </template>
                       <template x-if="(selectedTa.anggota?.length || 0) <= 1">
-                        <span class="px-2 py-1 text-[10px] text-[#787774] bg-[#F7F7F5] rounded border border-[#E9E9E7]" title="Minimal 1 anggota tersisa">
-                          Terkunci (Min 1)
+                        <span class="badge bg-light text-secondary border" title="Minimal 1 anggota tersisa">
+                          Terkunci (Min. 1)
                         </span>
                       </template>
                     </div>
@@ -282,23 +306,23 @@
             </div>
 
             <!-- Form Tambah Anggota Baru -->
-            <div class="pt-3 border-t border-[#E9E9E7]">
+            <div class="pt-2 border-top">
               <!-- Jika sudah penuh 3 anggota -->
               <template x-if="(selectedTa.anggota?.length || 0) >= 3">
-                <div class="p-3 rounded bg-amber-50 border border-amber-200 text-amber-800 text-[11px]">
-                  <span>Kelompok ini sudah mencapai batas maksimal <strong>3 mahasiswa</strong>. Hapus anggota terlebih dahulu jika ingin mengganti.</span>
+                <div class="alert alert-warning py-2 px-3 small mb-0">
+                  Kelompok ini sudah mencapai batas maksimal <strong>3 mahasiswa</strong>. Hapus anggota terlebih dahulu jika ingin mengganti.
                 </div>
               </template>
 
               <!-- Jika masih bisa tambah (< 3) -->
               <template x-if="(selectedTa.anggota?.length || 0) < 3">
-                <form :action="'{{ url('/koordinator/tugas-akhir') }}/' + selectedTa.id + '/anggota'" method="POST" class="space-y-3">
+                <form :action="'{{ url('/koordinator/tugas-akhir') }}/' + selectedTa.id + '/anggota'" method="POST" class="d-flex flex-column gap-2">
                   @csrf
                   <div>
-                    <label class="block font-semibold uppercase tracking-wider text-[#787774] text-[10px] mb-1">
+                    <label class="form-label fw-semibold text-secondary small mb-1">
                       Tambah Mahasiswa ke Kelompok (Slot Tersedia: <span x-text="3 - (selectedTa.anggota?.length || 0)"></span>)
                     </label>
-                    <select name="mahasiswa_id" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F] text-xs">
+                    <select name="mahasiswa_id" required class="form-select form-select-sm">
                       <option value="">-- Pilih Mahasiswa Belum Berkelompok --</option>
                       @forelse ($eligibleMhsList as $emhs)
                         <option value="{{ $emhs->id }}" x-show="!selectedTa.anggota?.some(m => m.id === {{ $emhs->id }})">
@@ -308,11 +332,11 @@
                         <option disabled value="">Tidak ada mahasiswa yang eligible/belum berkelompok</option>
                       @endforelse
                     </select>
-                    <p class="text-[10px] text-[#787774] mt-1">Hanya menampilkan mahasiswa TA aktif yang belum terdaftar di kelompok manapun.</p>
+                    <span class="text-secondary small d-block mt-1">Hanya menampilkan mahasiswa TA aktif yang belum terdaftar di kelompok manapun.</span>
                   </div>
 
-                  <div class="flex items-center justify-end gap-2">
-                    <button type="submit" class="notion-btn-primary text-xs">
+                  <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-dark btn-sm">
                       Tambahkan ke Kelompok
                     </button>
                   </div>
@@ -320,8 +344,8 @@
               </template>
             </div>
 
-            <div class="flex justify-end pt-2 border-t border-[#E9E9E7]">
-              <button type="button" @click="kelompokModal = false" class="notion-btn-secondary text-xs">Tutup</button>
+            <div class="d-flex justify-content-end pt-2 border-top">
+              <button type="button" @click="kelompokModal = false" class="btn btn-outline-secondary btn-sm">Tutup</button>
             </div>
           </div>
         </template>

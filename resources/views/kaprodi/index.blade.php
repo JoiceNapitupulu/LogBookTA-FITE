@@ -4,145 +4,167 @@
 @section('breadcrumb', 'Eksekutif Kaprodi')
 
 @section('content')
-<div class="space-y-4 md:space-y-5">
+<div class="d-flex flex-column gap-3">
 
-  <!-- Header Notion -->
-  <div class="border-b border-[#E9E9E7] pb-3 mb-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <!-- Header Halaman Akademik -->
+  <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 pb-3 border-bottom">
     <div>
-      <div class="flex items-center gap-2 mb-1">
-        <h1 class="text-2xl font-bold tracking-tight text-[#37352F]">Panel Eksekutif & Statistik Kelulusan TA</h1>
-      </div>
-      <p class="text-xs text-[#787774]">Otoritas Ketua Program Studi FITE IT Del: Pengawasan mutu kelulusan dan penetapan Koordinator TA.</p>
+      <h1 class="h4 fw-bold text-dark mb-1">Panel Eksekutif & Statistik Kelulusan TA</h1>
+      <p class="text-secondary small mb-0">Otoritas Ketua Program Studi FITE IT Del: Pengawasan mutu kelulusan dan penetapan Koordinator TA.</p>
     </div>
   </div>
 
   <!-- Callout Otoritas Kaprodi & Status 1 Koor per Prodi -->
-  <div class="p-3.5 bg-light rounded-3 border border-[#E9E9E7] shadow-xs">
-    <div class="d-flex flex-column flex-md-row md:items-center justify-content-between gap-3 text-xs">
-      <div class="d-flex align-items-center gap-2.5">
-        <div class="w-8 h-8 rounded-circle bg-dark text-white d-flex align-items-center justify-center shrink-0 font-bold text-xs">
-          <i class="bi bi-shield-check"></i>
+  <div class="card shadow-sm border-light-subtle bg-white">
+    <div class="card-body p-3 p-md-4">
+      <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="w-10 h-10 rounded-circle bg-dark text-white d-flex align-items-center justify-content-center shrink-0">
+            <i class="bi bi-shield-check fs-5"></i>
+          </div>
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <span class="fw-bold text-dark">Otoritas Program Studi Anda:</span>
+              <span class="badge bg-dark text-white">{{ $kaprodiProdi }}</span>
+            </div>
+            <p class="text-secondary small mb-0">
+              Sesuai regulasi akademik FITE: Kaprodi hanya dapat menetapkan Koordinator TA di prodinya sendiri, dan setiap prodi hanya memiliki tepat 1 Koordinator TA.
+            </p>
+          </div>
         </div>
-        <div>
-          <p class="font-bold text-[#37352F] mb-0.5">
-            Otoritas Program Studi Anda: <span class="badge bg-dark text-white px-2 py-0.5">{{ $kaprodiProdi }}</span>
-          </p>
-          <p class="text-[#787774] mb-0">
-            Sesuai regulasi akademik FITE: Kaprodi hanya dapat menetapkan Koordinator TA di prodinya sendiri, dan setiap prodi hanya memiliki tepat 1 Koordinator TA.
-          </p>
+
+        <div class="p-2.5 rounded bg-light border shrink-0">
+          <span class="small text-secondary text-uppercase fw-semibold d-block" style="font-size: 0.7rem;">Koordinator TA Aktif {{ $kaprodiProdi }}</span>
+          @if ($koordinatorProdiIni)
+            <span class="fw-bold text-success d-inline-flex align-items-center gap-1 mt-0.5 small">
+              <i class="bi bi-person-check-fill"></i> {{ $koordinatorProdiIni->user->name ?? '-' }} ({{ $koordinatorProdiIni->kode_dosen }})
+            </span>
+          @else
+            <span class="text-secondary small fst-italic mt-0.5 d-block">Belum ada Koordinator TA yang ditetapkan</span>
+          @endif
         </div>
-      </div>
-      <div class="bg-white px-3 py-2 rounded-2 border border-[#E9E9E7] shrink-0">
-        <span class="text-[10px] text-[#787774] block uppercase tracking-wider font-semibold">Koordinator TA Aktif {{ $kaprodiProdi }}</span>
-        @if ($koordinatorProdiIni)
-          <span class="font-bold text-[#2A7E4B] d-inline-flex align-items-center gap-1 mt-0.5">
-            <i class="bi bi-person-check-fill"></i> {{ $koordinatorProdiIni->user->name ?? '-' }} ({{ $koordinatorProdiIni->kode_dosen }})
-          </span>
-        @else
-          <span class="text-secondary italic mt-0.5 block">Belum ada Koordinator TA yang ditetapkan</span>
-        @endif
       </div>
     </div>
   </div>
 
-  <!-- Notion Monochrome Metric Cards -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-    <div class="p-4 bg-[#F7F6F3] rounded-xl border border-[#E9E9E7]">
-      <p class="text-xs text-[#787774]">Total Mhs TA Aktif</p>
-      <p class="text-3xl font-extrabold text-[#37352F] mt-1">{{ $totalMhsAktif }}</p>
-      <p class="text-[10px] text-[#787774] mt-0.5">3 Program Studi FITE</p>
+  <!-- Metric Cards -->
+  <div class="row g-3">
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-light-subtle h-100 p-3 bg-white">
+        <div class="d-flex align-items-center justify-content-between text-secondary mb-1">
+          <span class="small">Total Mhs TA Aktif</span>
+          <i class="bi bi-people"></i>
+        </div>
+        <p class="h3 fw-bold text-dark mt-1 mb-0">{{ $totalMhsAktif }}</p>
+        <span class="text-secondary small">3 Program Studi FITE</span>
+      </div>
     </div>
 
-    <div class="p-4 bg-[#EBF5EE] rounded-xl border border-[#C4E5D1]">
-      <p class="text-xs text-[#2A7E4B]">Tahap Akhir & Sidang</p>
-      <p class="text-3xl font-extrabold text-[#2A7E4B] mt-1">{{ $siapSidang }}</p>
-      <p class="text-[10px] text-[#2A7E4B] mt-0.5">{{ $persentaseSiapLulus }}% dari total TA aktif</p>
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-success-subtle h-100 p-3 bg-success-subtle/30">
+        <div class="d-flex align-items-center justify-content-between text-success-emphasis mb-1">
+          <span class="small">Tahap Akhir & Sidang</span>
+          <i class="bi bi-mortarboard"></i>
+        </div>
+        <p class="h3 fw-bold text-success mt-1 mb-0">{{ $siapSidang }}</p>
+        <span class="text-success small">{{ $persentaseSiapLulus }}% dari total TA aktif</span>
+      </div>
     </div>
 
-    <div class="p-4 bg-[#F7F6F3] rounded-xl border border-[#E9E9E7]">
-      <p class="text-xs text-[#787774]">Rasio Beban Dosen</p>
-      <p class="text-3xl font-extrabold text-[#37352F] mt-1">1 : {{ $rasioDosen }}</p>
-      <p class="text-[10px] text-[#787774] mt-0.5">Mhs per Dosen Pembimbing</p>
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-light-subtle h-100 p-3 bg-white">
+        <div class="d-flex align-items-center justify-content-between text-secondary mb-1">
+          <span class="small">Rasio Beban Dosen</span>
+          <i class="bi bi-graph-up"></i>
+        </div>
+        <p class="h3 fw-bold text-dark mt-1 mb-0">1 : {{ $rasioDosen }}</p>
+        <span class="text-secondary small">Mhs per Dosen Pembimbing</span>
+      </div>
     </div>
 
-    <div class="p-4 bg-[#2C2C2F] text-white rounded-xl border border-[#2C2C2F]">
-      <p class="text-xs text-gray-300">Koordinator TA Ditugaskan</p>
-      <p class="text-3xl font-extrabold text-white mt-1">{{ $totalKoordinator }}</p>
-      <p class="text-[10px] text-gray-300 mt-0.5">Dari total {{ $totalDosen }} dosen FITE</p>
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-dark h-100 p-3 bg-dark text-white">
+        <div class="d-flex align-items-center justify-content-between text-white-50 mb-1">
+          <span class="small">Koordinator Ditugaskan</span>
+          <i class="bi bi-diagram-3"></i>
+        </div>
+        <p class="h3 fw-bold text-white mt-1 mb-0">{{ $totalKoordinator }}</p>
+        <span class="text-white-50 small">Dari total {{ $totalDosen }} dosen FITE</span>
+      </div>
     </div>
   </div>
 
   <!-- Tabel Manajemen Penetapan Koordinator TA (Khusus Kaprodi) -->
-  <div class="border border-[#E9E9E7] rounded-xl overflow-hidden bg-[#FFFFFF] shadow-xs">
-    <div class="p-4 border-b border-[#E9E9E7] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+  <div class="card shadow-sm border-light-subtle">
+    <div class="card-header bg-white py-3 d-flex flex-column sm:flex-row sm:align-items-center justify-content-between gap-2">
       <div>
-        <h3 class="text-sm font-bold text-[#37352F]">Penetapan & Penugasan Koordinator Tugas Akhir</h3>
-        <p class="text-xs text-[#787774]">
-          Dosen program studi Anda (<strong class="text-[#37352F]">{{ $kaprodiProdi }}</strong>) dapat Anda tetapkan sebagai Koordinator TA. Penetapan baru otomatis menggantikan koordinator lama.
+        <h2 class="h6 fw-bold text-dark mb-0">Penetapan & Penugasan Koordinator Tugas Akhir</h2>
+        <p class="text-secondary small mb-0">
+          Dosen program studi Anda (<strong class="text-dark">{{ $kaprodiProdi }}</strong>) dapat Anda tetapkan sebagai Koordinator TA. Penetapan baru otomatis menggantikan koordinator lama.
         </p>
       </div>
-      <span class="text-xs text-[#787774]">Total: {{ $totalDosen }} Dosen FITE</span>
+      <span class="badge bg-light text-secondary border">Total: {{ $totalDosen }} Dosen FITE</span>
     </div>
 
-    <div class="overflow-x-auto">
-      <table class="w-full text-left text-xs">
-        <thead class="bg-[#F7F7F5] text-[#787774] uppercase text-[10px] tracking-wider border-b border-[#E9E9E7]">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0" style="font-size: 0.8125rem;">
+        <thead class="table-light">
           <tr>
-            <th class="py-2.5 px-4 font-semibold">Nama Dosen & NIDN</th>
-            <th class="py-2.5 px-4 font-semibold">Kode & Prodi</th>
-            <th class="py-2.5 px-4 font-semibold">Beban Bimbingan (P1 / P2)</th>
-            <th class="py-2.5 px-4 font-semibold">Status Koordinator TA</th>
-            <th class="py-2.5 px-4 text-right font-semibold">Aksi Otoritas Kaprodi</th>
+            <th class="py-2.5 px-3">Nama Dosen & NIDN</th>
+            <th class="py-2.5 px-3">Kode & Prodi</th>
+            <th class="py-2.5 px-3">Beban Bimbingan (P1 / P2)</th>
+            <th class="py-2.5 px-3">Status Koordinator TA</th>
+            <th class="py-2.5 px-3 text-end">Aksi Otoritas Kaprodi</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-[#E9E9E7]">
+        <tbody>
           @forelse ($dosenList as $dosen)
             @php
               $isSameProdi = ($dosen->prodi === $kaprodiProdi);
             @endphp
-            <tr class="hover:bg-[#F7F7F5] transition-colors {{ $isSameProdi ? 'bg-primary-subtle/10' : '' }}">
-              <td class="py-3 px-4">
+            <tr class="{{ $isSameProdi ? 'table-primary-subtle' : '' }}">
+              <td class="px-3 py-3">
                 <div class="d-flex align-items-center gap-1.5">
-                  <p class="font-bold text-[#37352F] mb-0">{{ $dosen->user->name }}</p>
+                  <span class="fw-bold text-dark">{{ $dosen->user->name }}</span>
                   @if ($isSameProdi)
-                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle text-[9px] px-1.5 py-0.5">Prodi Anda</span>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle" style="font-size: 0.7rem;">Prodi Anda</span>
                   @endif
                 </div>
-                <p class="text-[10px] text-[#787774] mb-0">NIDN: {{ $dosen->nidn ?? '-' }}</p>
+                <span class="text-secondary small">NIDN: {{ $dosen->nidn ?? '-' }}</span>
               </td>
-              <td class="py-3 px-4">
-                <span class="notion-pill-gray text-[10px] block mb-0.5">{{ $dosen->kode_dosen }}</span>
-                <span class="text-[11px] {{ $isSameProdi ? 'font-semibold text-primary' : 'text-[#787774]' }}">{{ $dosen->prodi }}</span>
+              <td class="px-3 py-3 text-nowrap">
+                <span class="badge bg-light text-dark border d-block mb-1 text-center">{{ $dosen->kode_dosen }}</span>
+                <span class="small {{ $isSameProdi ? 'fw-semibold text-primary' : 'text-secondary' }}">{{ $dosen->prodi }}</span>
               </td>
-              <td class="py-3 px-4">
-                {{ $dosen->tugasAkhirPembimbing1->count() }} Utama / {{ $dosen->tugasAkhirPembimbing2->count() }} Pendamping
+              <td class="px-3 py-3 text-nowrap">
+                <span class="small text-secondary">{{ $dosen->tugasAkhirPembimbing1->count() }} Utama / {{ $dosen->tugasAkhirPembimbing2->count() }} Pendamping</span>
               </td>
-              <td class="py-3 px-4">
+              <td class="px-3 py-3 text-nowrap">
                 @if ($dosen->is_koordinator_ta)
-                  <span class="notion-pill-green">Koordinator Aktif</span>
+                  <span class="badge bg-success-subtle text-success border border-success-subtle">Koordinator Aktif</span>
                 @else
-                  <span class="notion-pill-gray">Dosen Pengajar</span>
+                  <span class="badge bg-light text-secondary border">Dosen Pengajar</span>
                 @endif
               </td>
-              <td class="py-3 px-4 text-right whitespace-nowrap">
+              <td class="px-3 py-3 text-end text-nowrap">
                 @if ($isSameProdi)
                   @if ($dosen->is_koordinator_ta)
                     <form action="{{ route('kaprodi.nonaktifkan-koordinator', $dosen->id) }}" method="POST" class="d-inline">
                       @csrf
-                      <button type="submit" class="btn btn-outline-danger btn-sm text-xs py-1 px-2.5" onclick="return confirm('Apakah Anda yakin ingin menonaktifkan status Koordinator TA dosen {{ $dosen->user->name }}?')">
+                      <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menonaktifkan status Koordinator TA dosen {{ $dosen->user->name }}?')">
                         <i class="bi bi-x-circle me-1"></i> Nonaktifkan
                       </button>
                     </form>
                   @else
                     <form action="{{ route('kaprodi.tetapkan-koordinator', $dosen->id) }}" method="POST" class="d-inline">
                       @csrf
-                      <button type="submit" class="btn btn-dark btn-sm text-xs py-1 px-2.5" onclick="return confirm('Tetapkan dosen {{ $dosen->user->name }} sebagai Koordinator TA {{ $kaprodiProdi }}? Jika ada koordinator aktif lain di prodi ini, posisinya akan digantikan otomatis.')">
+                      <button type="submit" class="btn btn-dark btn-sm" onclick="return confirm('Tetapkan dosen {{ $dosen->user->name }} sebagai Koordinator TA {{ $kaprodiProdi }}? Jika ada koordinator aktif lain di prodi ini, posisinya akan digantikan otomatis.')">
                         <i class="bi bi-check2-circle me-1"></i> Tetapkan Koordinator
                       </button>
                     </form>
                   @endif
                 @else
-                  <span class="badge bg-light text-secondary border border-light-subtle text-[11px] py-1 px-2 font-normal" title="Hanya Kaprodi {{ $dosen->prodi }} yang berwenang">
+                  <span class="badge bg-light text-secondary border" title="Hanya Kaprodi {{ $dosen->prodi }} yang berwenang">
                     <i class="bi bi-lock me-1"></i> Khusus Kaprodi {{ $dosen->prodi }}
                   </span>
                 @endif
@@ -150,7 +172,7 @@
             </tr>
           @empty
             <tr>
-              <td colspan="5" class="py-8 text-center text-[#787774]">Belum ada data dosen terdaftar.</td>
+              <td colspan="5" class="py-4 text-center text-secondary">Belum ada data dosen terdaftar.</td>
             </tr>
           @endforelse
         </tbody>
@@ -159,62 +181,76 @@
   </div>
 
   <!-- Grafik & Analitik Statistik Kelulusan TA -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="row g-3">
     
     <!-- Distribusi TA per Program Studi -->
-    <div class="border border-[#E9E9E7] rounded-xl p-4 bg-[#FFFFFF] shadow-xs">
-      <div class="flex items-center justify-between mb-4">
-        <div>
-          <h3 class="text-sm font-bold text-[#37352F]">Distribusi Tugas Akhir per Program Studi</h3>
-          <p class="text-xs text-[#787774]">Proporsi mahasiswa bimbingan pada fakultas FITE</p>
-        </div>
-        <span class="notion-pill-gray text-[10px]">Real-time Database</span>
-      </div>
-
-      <div class="space-y-3.5 text-xs">
-        @foreach ($sebaranProdi as $namaProdi => $jumlahMhs)
-          @php
-            $persenProdi = $totalMhsAktif > 0 ? round(($jumlahMhs / $totalMhsAktif) * 100, 1) : 0;
-          @endphp
+    <div class="col-12 col-md-6">
+      <div class="card shadow-sm border-light-subtle h-100">
+        <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
           <div>
-            <div class="flex justify-between font-semibold text-[#37352F] mb-1">
-              <span>{{ $namaProdi }}</span>
-              <span>{{ $jumlahMhs }} Mhs ({{ $persenProdi }}%)</span>
-            </div>
-            <div class="w-full bg-[#E9E9E7] h-2.5 rounded-full overflow-hidden">
-              <div class="bg-[#2C2C2F] h-2.5 rounded-full" style="width: {{ $persenProdi }}%"></div>
-            </div>
+            <h2 class="h6 fw-bold text-dark mb-0">Distribusi Tugas Akhir per Program Studi</h2>
+            <p class="text-secondary small mb-0">Proporsi mahasiswa bimbingan pada fakultas FITE</p>
           </div>
-        @endforeach
+          <span class="badge bg-light text-secondary border">Real-time</span>
+        </div>
+
+        <div class="card-body p-3 p-md-4 d-flex flex-column gap-3">
+          @foreach ($sebaranProdi as $namaProdi => $jumlahMhs)
+            @php
+              $persenProdi = $totalMhsAktif > 0 ? round(($jumlahMhs / $totalMhsAktif) * 100, 1) : 0;
+            @endphp
+            <div>
+              <div class="d-flex justify-content-between small fw-semibold text-dark mb-1">
+                <span>{{ $namaProdi }}</span>
+                <span>{{ $jumlahMhs }} Mhs ({{ $persenProdi }}%)</span>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-dark" role="progressbar" style="width: {{ $persenProdi }}%" aria-valuenow="{{ $persenProdi }}" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+          @endforeach
+        </div>
       </div>
     </div>
 
     <!-- Sebaran Progres Bab Mahasiswa TA -->
-    <div class="border border-[#E9E9E7] rounded-xl p-4 bg-[#FFFFFF] shadow-xs">
-      <div class="flex items-center justify-between mb-4">
-        <div>
-          <h3 class="text-sm font-bold text-[#37352F]">Rekapitulasi Sebaran Status Pengerjaan TA</h3>
-          <p class="text-xs text-[#787774]">Distribusi tahapan mahasiswa pada semester berjalan</p>
+    <div class="col-12 col-md-6">
+      <div class="card shadow-sm border-light-subtle h-100">
+        <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
+          <div>
+            <h2 class="h6 fw-bold text-dark mb-0">Rekapitulasi Sebaran Status Pengerjaan TA</h2>
+            <p class="text-secondary small mb-0">Distribusi tahapan mahasiswa pada semester berjalan</p>
+          </div>
+          <span class="badge bg-light text-secondary border">Data Terkini</span>
         </div>
-        <span class="notion-pill-gray text-[10px]">Data Terkini</span>
-      </div>
 
-      <div class="grid grid-cols-2 gap-2.5 text-xs">
-        <div class="p-3 bg-[#F7F6F3] rounded border border-[#E9E9E7]">
-          <span class="text-[#787774] block">Proposal & Pengerjaan</span>
-          <p class="text-xl font-bold text-[#37352F] mt-1">{{ ($sebaranBab['proposal'] ?? 0) + ($sebaranBab['pengerjaan'] ?? 0) }} Mhs</p>
-        </div>
-        <div class="p-3 bg-[#F7F6F3] rounded border border-[#E9E9E7]">
-          <span class="text-[#787774] block">Seminar Proposal (Sempro)</span>
-          <p class="text-xl font-bold text-[#37352F] mt-1">{{ $sebaranBab['sempro'] ?? 0 }} Mhs</p>
-        </div>
-        <div class="p-3 bg-[#F7F6F3] rounded border border-[#E9E9E7]">
-          <span class="text-[#787774] block">Seminar TA (Progres)</span>
-          <p class="text-xl font-bold text-[#37352F] mt-1">{{ $sebaranBab['seminar_ta'] ?? 0 }} Mhs</p>
-        </div>
-        <div class="p-3 bg-[#EBF5EE] rounded border border-[#C4E5D1]">
-          <span class="text-[#2A7E4B] font-semibold block">Siap Sidang & Selesai</span>
-          <p class="text-xl font-bold text-[#2A7E4B] mt-1">{{ ($sebaranBab['sidang_akhir'] ?? 0) + ($sebaranBab['selesai'] ?? 0) }} Mhs</p>
+        <div class="card-body p-3 p-md-4">
+          <div class="row g-2">
+            <div class="col-6">
+              <div class="p-3 bg-light rounded border h-100">
+                <span class="text-secondary small d-block">Proposal & Pengerjaan</span>
+                <p class="h4 fw-bold text-dark mt-1 mb-0">{{ ($sebaranBab['proposal'] ?? 0) + ($sebaranBab['pengerjaan'] ?? 0) }} <span class="small fw-normal text-secondary">Mhs</span></p>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="p-3 bg-light rounded border h-100">
+                <span class="text-secondary small d-block">Seminar Proposal</span>
+                <p class="h4 fw-bold text-dark mt-1 mb-0">{{ $sebaranBab['sempro'] ?? 0 }} <span class="small fw-normal text-secondary">Mhs</span></p>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="p-3 bg-light rounded border h-100">
+                <span class="text-secondary small d-block">Seminar TA (Progres)</span>
+                <p class="h4 fw-bold text-dark mt-1 mb-0">{{ $sebaranBab['seminar_ta'] ?? 0 }} <span class="small fw-normal text-secondary">Mhs</span></p>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="p-3 bg-success-subtle/40 rounded border border-success-subtle h-100">
+                <span class="text-success fw-semibold small d-block">Siap Sidang & Selesai</span>
+                <p class="h4 fw-bold text-success mt-1 mb-0">{{ ($sebaranBab['sidang_akhir'] ?? 0) + ($sebaranBab['selesai'] ?? 0) }} <span class="small fw-normal text-success">Mhs</span></p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
