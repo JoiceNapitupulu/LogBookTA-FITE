@@ -302,6 +302,21 @@ class DatabaseSeeder extends Seeder
                 'lokasi_atau_link' => 'https://zoom.us/j/itdel-fite-dosen2',
                 'status' => 'disetujui',
                 'alasan_penolakan' => null,
+                'catatan_hasil' => null,
+            ]
+        );
+
+        JanjiBimbingan::updateOrCreate(
+            ['tugas_akhir_id' => $tugasAkhir->id, 'topik_pembahasan' => 'Diskusi Perancangan Diagram Metodologi dan Dataset PCAP Bab 3'],
+            [
+                'dosen_id' => $dosen1Profile->id,
+                'inisiator' => 'mahasiswa',
+                'tanggal_waktu' => now()->subDays(18)->setTime(13, 30),
+                'metode' => 'offline',
+                'lokasi_atau_link' => 'Ruang Dosen Gedung 5 Lantai 1 (GD 512)',
+                'status' => 'selesai',
+                'alasan_penolakan' => null,
+                'catatan_hasil' => 'Mahasiswa telah memaparkan alur diagram metodologi. Disetujui menggunakan pipeline PCAP capture. Action item: lengkapi skema data preprocessing sebelum implementasi coding model.',
             ]
         );
 

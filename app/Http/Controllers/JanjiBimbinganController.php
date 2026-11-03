@@ -117,21 +117,43 @@ class JanjiBimbinganController extends Controller
             abort(403, 'Akses ditolak: Anda tidak memiliki wewenang untuk mengubah status janji bimbingan dosen lain.');
         }
 
-        $request->validate([
+        $validated = $request->validate([
             'status' => ['required', 'in:disetujui,ditolak,selesai'],
+            'catatan_hasil' => [
+                'nullable',
+                'required_if:status,selesai',
+                'string',
+                'min:10',
+                'max:2000',
+            ],
             'alasan_penolakan' => ['nullable', 'string', 'max:500'],
+        ], [
+            'status.required' => 'Status janji bimbingan wajib dipilih.',
+            'status.in' => 'Status janji bimbingan tidak valid.',
+            'catatan_hasil.required_if' => 'Catatan hasil bimbingan wajib diisi ketika menandai sesi bimbingan telah selesai.',
+            'catatan_hasil.min' => 'Catatan hasil bimbingan minimal berisi 10 karakter.',
+            'catatan_hasil.max' => 'Catatan hasil bimbingan maksimal berisi 2000 karakter.',
         ]);
 
-        DB::transaction(function () use ($request, $janjiBimbingan) {
-            $janjiBimbingan->update([
-                'status' => $request->status,
-                'alasan_penolakan' => $request->alasan_penolakan,
-            ]);
+        DB::transaction(function () use ($validated, $janjiBimbingan) {
+            $data = [
+                'status' => $validated['status'],
+            ];
+
+            if ($validated['status'] === 'selesai') {
+                $data['catatan_hasil'] = $validated['catatan_hasil'];
+            } elseif ($validated['status'] === 'ditolak') {
+                $data['alasan_penolakan'] = $validated['alasan_penolakan'] ?? null;
+            }
+
+            $janjiBimbingan->update($data);
         });
 
-        $message = $request->status === 'disetujui'
-            ? 'Janji bimbingan telah disetujui!'
-            : ($request->status === 'ditolak' ? 'Janji bimbingan telah ditolak.' : 'Sesi bimbingan ditandai telah selesai.');
+        $message = match ($validated['status']) {
+            'disetujui' => 'Janji bimbingan berhasil disetujui!',
+            'ditolak' => 'Janji bimbingan telah ditolak.',
+            'selesai' => 'Sesi bimbingan berhasil ditandai selesai beserta catatan hasil bimbingan!',
+        };
 
         return redirect()->back()->with('success', $message);
     }

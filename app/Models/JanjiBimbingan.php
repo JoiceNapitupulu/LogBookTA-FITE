@@ -22,6 +22,7 @@ class JanjiBimbingan extends Model
         'lokasi_atau_link',
         'status',
         'alasan_penolakan',
+        'catatan_hasil',
     ];
 
     protected function casts(): array
