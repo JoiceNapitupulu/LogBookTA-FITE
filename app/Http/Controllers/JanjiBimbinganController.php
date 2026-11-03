@@ -55,11 +55,10 @@ class JanjiBimbinganController extends Controller
         $bimbinganTaList = collect();
         if ($user->isMahasiswa()) {
             $myTugasAkhir = $user->tugasAkhir();
-        } elseif ($user->isDosen() && $user->dosenProfile) {
-            $bimbinganTaList = TugasAkhir::where(function ($q) use ($user) {
-                $q->where('dosen_pembimbing_1_id', $user->dosenProfile->id)
-                  ->orWhere('dosen_pembimbing_2_id', $user->dosenProfile->id);
-            })->with('mahasiswa.user')->get();
+        } elseif (($user->isDosen() || $user->isKaprodi()) && $user->dosenProfile) {
+            $bimbinganTaList = $user->dosenProfile->tugasAkhirBimbingan()
+                ->with('mahasiswa.user')
+                ->get();
         }
 
         return view('bimbingan.index', compact('janjiList', 'dosenList', 'myTugasAkhir', 'bimbinganTaList'));

@@ -64,7 +64,7 @@
 
         <div class="p-3 rounded bg-[#F7F6F3] border border-[#E9E9E7] flex flex-col justify-between">
           <div>
-            <span class="notion-pill-gray text-[10px] mb-1">S1 Teknik Komputer • 2024</span>
+            <span class="notion-pill-gray text-[10px] mb-1">S1 Teknik Elektro • 2024</span>
             <p class="font-semibold text-xs text-[#37352F] line-clamp-2">Node Sensor Nirkabel LoRaWAN Deteksi Longsor Sigumpar</p>
             <p class="text-[11px] text-[#787774] mt-1">Penulis: Tulus Simanjuntak</p>
           </div>
@@ -130,55 +130,97 @@
           </span>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-7 gap-2.5 text-xs">
-          <!-- Step 1: Proposal -->
-          <div class="p-3 rounded border border-[#C4E5D1] bg-[#EBF5EE]">
-            <span class="text-[10px] font-bold text-[#2A7E4B] block uppercase">Tahap 1</span>
-            <p class="font-bold text-[#37352F] mt-1">Proposal</p>
-            <p class="text-[10px] text-[#2A7E4B]">Lulus Sempro ✓</p>
-          </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2.5 text-xs">
+          @php
+            $steps = [
+              [
+                'step' => 'Tahap 1',
+                'name' => 'Proposal',
+                'status' => in_array($tugasAkhir->status, ['sempro', 'seminar_ta', 'sidang_akhir', 'selesai']) ? 'approved' : ($tugasAkhir->status === 'proposal' ? 'in_progress' : 'empty'),
+                'label' => in_array($tugasAkhir->status, ['sempro', 'seminar_ta', 'sidang_akhir', 'selesai']) ? 'Lulus Sempro ✓' : ($tugasAkhir->status === 'proposal' ? 'Pengajuan' : 'Belum Mulai'),
+              ],
+            ];
 
-          <!-- Step 2: BAB 1 -->
-          <div class="p-3 rounded border border-[#C4E5D1] bg-[#EBF5EE]">
-            <span class="text-[10px] font-bold text-[#2A7E4B] block uppercase">Tahap 2</span>
-            <p class="font-bold text-[#37352F] mt-1">BAB 1</p>
-            <p class="text-[10px] text-[#2A7E4B]">Disetujui ✓</p>
-          </div>
+            foreach (['BAB 1', 'BAB 2', 'BAB 3', 'BAB 4', 'BAB 5'] as $idx => $bName) {
+              $logsForBab = $logbooks->where('bab_progress', $bName);
+              if ($bName === 'BAB 5') {
+                $logsForBab = $logbooks->filter(fn($l) => in_array($l->bab_progress, ['BAB 5', 'Pengujian']));
+              }
 
-          <!-- Step 3: BAB 2 -->
-          <div class="p-3 rounded border border-[#C4E5D1] bg-[#EBF5EE]">
-            <span class="text-[10px] font-bold text-[#2A7E4B] block uppercase">Tahap 3</span>
-            <p class="font-bold text-[#37352F] mt-1">BAB 2</p>
-            <p class="text-[10px] text-[#2A7E4B]">Disetujui ✓</p>
-          </div>
+              $isApproved = $logsForBab->where('status_verifikasi', 'disetujui')->isNotEmpty();
+              $isRevisi = $logsForBab->where('status_verifikasi', 'revisi')->isNotEmpty();
+              $isPending = $logsForBab->where('status_verifikasi', 'pending')->isNotEmpty();
 
-          <!-- Step 4: BAB 3 -->
-          <div class="p-3 rounded border border-[#C4E5D1] bg-[#EBF5EE]">
-            <span class="text-[10px] font-bold text-[#2A7E4B] block uppercase">Tahap 4</span>
-            <p class="font-bold text-[#37352F] mt-1">BAB 3</p>
-            <p class="text-[10px] text-[#2A7E4B]">Disetujui ✓</p>
-          </div>
+              if ($isApproved) {
+                $sStatus = 'approved';
+                $sLabel = 'Disetujui ✓';
+              } elseif ($isRevisi) {
+                $sStatus = 'revision';
+                $sLabel = 'Perlu Revisi ⚠️';
+              } elseif ($isPending) {
+                $sStatus = 'pending';
+                $sLabel = 'Pending Review ⏳';
+              } else {
+                $sStatus = 'empty';
+                $sLabel = 'Belum Ada Entri';
+              }
 
-          <!-- Step 5: BAB 4 (In Progress/Revisi) -->
-          <div class="p-3 rounded border-2 border-[#2C2C2F] bg-[#FFFFFF] shadow-xs">
-            <span class="text-[10px] font-bold text-[#37352F] block uppercase">Tahap 5</span>
-            <p class="font-bold text-[#37352F] mt-1">BAB 4</p>
-            <p class="text-[10px] text-amber-700 font-semibold">Perlu Revisi ⚠️</p>
-          </div>
+              $steps[] = [
+                'step' => 'Tahap ' . ($idx + 2),
+                'name' => $bName,
+                'status' => $sStatus,
+                'label' => $sLabel,
+              ];
+            }
 
-          <!-- Step 6: BAB 5 -->
-          <div class="p-3 rounded border border-[#E9E9E7] bg-[#F7F7F5] opacity-75">
-            <span class="text-[10px] font-medium text-[#787774] block uppercase">Tahap 6</span>
-            <p class="font-medium text-[#787774] mt-1">BAB 5</p>
-            <p class="text-[10px] text-[#787774]">Menunggu</p>
-          </div>
+            // Final: Sidang Akhir
+            $sidangStatus = 'empty';
+            $sidangLabel = 'Terkunci';
+            if ($tugasAkhir->status === 'selesai') {
+              $sidangStatus = 'approved';
+              $sidangLabel = 'Lulus Sidang ✓';
+            } elseif ($tugasAkhir->status === 'sidang_akhir') {
+              $sidangStatus = 'pending';
+              $sidangLabel = 'Terdaftar Sidang';
+            } elseif ($tugasAkhir->status === 'seminar_ta') {
+              $sidangStatus = 'in_progress';
+              $sidangLabel = 'Tahap Seminar TA';
+            }
+            $steps[] = [
+              'step' => 'Final',
+              'name' => 'Sidang Akhir',
+              'status' => $sidangStatus,
+              'label' => $sidangLabel,
+            ];
+          @endphp
 
-          <!-- Step 7: Sidang Akhir -->
-          <div class="p-3 rounded border border-[#E9E9E7] bg-[#F7F7F5] opacity-60">
-            <span class="text-[10px] font-medium text-[#787774] block uppercase">Final</span>
-            <p class="font-medium text-[#787774] mt-1">Sidang Akhir</p>
-            <p class="text-[10px] text-[#787774]">Terkunci</p>
-          </div>
+          @foreach ($steps as $st)
+            @if ($st['status'] === 'approved')
+              <div class="p-3 rounded border border-[#C4E5D1] bg-[#EBF5EE]">
+                <span class="text-[10px] font-bold text-[#2A7E4B] block uppercase">{{ $st['step'] }}</span>
+                <p class="font-bold text-[#37352F] mt-1">{{ $st['name'] }}</p>
+                <p class="text-[10px] text-[#2A7E4B]">{{ $st['label'] }}</p>
+              </div>
+            @elseif ($st['status'] === 'revision')
+              <div class="p-3 rounded border border-amber-300 bg-amber-50">
+                <span class="text-[10px] font-bold text-amber-800 block uppercase">{{ $st['step'] }}</span>
+                <p class="font-bold text-[#37352F] mt-1">{{ $st['name'] }}</p>
+                <p class="text-[10px] text-amber-800 font-semibold">{{ $st['label'] }}</p>
+              </div>
+            @elseif ($st['status'] === 'pending' || $st['status'] === 'in_progress')
+              <div class="p-3 rounded border border-blue-200 bg-blue-50">
+                <span class="text-[10px] font-bold text-blue-700 block uppercase">{{ $st['step'] }}</span>
+                <p class="font-bold text-[#37352F] mt-1">{{ $st['name'] }}</p>
+                <p class="text-[10px] text-blue-700">{{ $st['label'] }}</p>
+              </div>
+            @else
+              <div class="p-3 rounded border border-[#E9E9E7] bg-[#F7F7F5] opacity-60">
+                <span class="text-[10px] font-medium text-[#787774] block uppercase">{{ $st['step'] }}</span>
+                <p class="font-medium text-[#787774] mt-1">{{ $st['name'] }}</p>
+                <p class="text-[10px] text-[#787774]">{{ $st['label'] }}</p>
+              </div>
+            @endif
+          @endforeach
         </div>
       </div>
 
@@ -240,6 +282,16 @@
               @endforelse
             </tbody>
           </table>
+        </div>
+      </div>
+    @else
+      <div class="notion-callout">
+        <span class="text-xl">⚠️</span>
+        <div class="text-xs">
+          <p class="font-bold text-[#37352F]">Tugas Akhir Belum Terdaftar</p>
+          <p class="text-[#787774] mt-1 leading-relaxed">
+            Akun Anda berstatus Mahasiswa Tugas Akhir aktif, namun data judul dan penunjukan dosen pembimbing belum ditetapkan oleh Koordinator TA. Silakan hubungi Koordinator TA program studi Anda.
+          </p>
         </div>
       </div>
     @endif

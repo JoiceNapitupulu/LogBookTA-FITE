@@ -70,6 +70,6 @@ class TugasAkhir extends Model
             return $query->where('prodi', $prodi);
         }
 
-        return $query->whereIn('prodi', ['S1 Informatika', 'S1 Sistem Informasi', 'S1 Teknik Komputer']);
+        return $query->whereIn('prodi', ['S1 Informatika', 'S1 Sistem Informasi', 'S1 Teknik Elektro']);
     }
 }

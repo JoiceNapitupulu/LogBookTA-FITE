@@ -183,29 +183,20 @@
 
           @if (auth()->user()->isMahasiswa() && $myTugasAkhir)
             <input type="hidden" name="tugas_akhir_id" value="{{ $myTugasAkhir->id }}">
-          @elseif (auth()->user()->isDosen())
+          @elseif (auth()->user()->isDosen() || auth()->user()->isKaprodi())
             <div>
               <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Pilih Mahasiswa Bimbingan</label>
               <select name="tugas_akhir_id" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
                 @forelse (($bimbinganTaList ?? []) as $ta)
-                  <option value="{{ $ta->id }}">{{ $ta->mahasiswa->user->name }} ({{ $ta->mahasiswa->nim }}) - {{ Str::limit($ta->judul, 40) }}</option>
+                  <option value="{{ $ta->id }}">{{ $ta->mahasiswa->user->name ?? 'Mahasiswa' }} (NIM: {{ $ta->mahasiswa->nim ?? '-' }}) — {{ Str::limit($ta->judul, 50) }}</option>
                 @empty
                   <option disabled value="">Belum ada mahasiswa bimbingan aktif</option>
                 @endforelse
               </select>
             </div>
-          @else
-            <div>
-              <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Pilih Mahasiswa / Tugas Akhir</label>
-              <select name="tugas_akhir_id" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
-                @foreach (\App\Models\TugasAkhir::with('mahasiswa.user')->get() as $ta)
-                  <option value="{{ $ta->id }}">{{ $ta->mahasiswa->user->name }} ({{ $ta->mahasiswa->nim }}) - {{ Str::limit($ta->judul, 40) }}</option>
-                @endforeach
-              </select>
-            </div>
           @endif
 
-          @if (auth()->user()->isDosen() && auth()->user()->dosenProfile)
+          @if ((auth()->user()->isDosen() || auth()->user()->isKaprodi()) && auth()->user()->dosenProfile)
             <input type="hidden" name="dosen_id" value="{{ auth()->user()->dosenProfile->id }}">
           @else
             <div>

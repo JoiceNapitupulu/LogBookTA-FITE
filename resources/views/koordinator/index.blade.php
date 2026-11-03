@@ -76,7 +76,7 @@
           <option value="">Semua Program Studi</option>
           <option value="S1 Informatika" {{ request('prodi') === 'S1 Informatika' ? 'selected' : '' }}>S1 Informatika</option>
           <option value="S1 Sistem Informasi" {{ request('prodi') === 'S1 Sistem Informasi' ? 'selected' : '' }}>S1 Sistem Informasi</option>
-          <option value="S1 Teknik Komputer" {{ request('prodi') === 'S1 Teknik Komputer' ? 'selected' : '' }}>S1 Teknik Komputer</option>
+          <option value="S1 Teknik Elektro" {{ request('prodi') === 'S1 Teknik Elektro' ? 'selected' : '' }}>S1 Teknik Elektro</option>
         </select>
       </form>
     </div>

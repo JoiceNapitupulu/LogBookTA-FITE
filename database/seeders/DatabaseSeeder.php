@@ -131,7 +131,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 7. Mahasiswa TA Aktif
+        // 7. Mahasiswa TA Aktif 1: Samuel Siahaan (S1 Informatika)
         $userMhsTa = User::updateOrCreate(
             ['email' => 'mhs.ta@students.del.ac.id'],
             [
@@ -166,7 +166,73 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 3 Riwayat Logbook
+        // 8. Mahasiswa TA Aktif 2: Ruth Simanjuntak (S1 Sistem Informasi)
+        $userMhsTa2 = User::updateOrCreate(
+            ['email' => 'mhs.ta2@students.del.ac.id'],
+            [
+                'name' => 'Ruth Simanjuntak',
+                'password' => $defaultPassword,
+                'role' => 'mahasiswa',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $mhsTaProfile2 = MahasiswaProfile::updateOrCreate(
+            ['user_id' => $userMhsTa2->id],
+            [
+                'nim' => '12S21020',
+                'prodi' => 'S1 Sistem Informasi',
+                'angkatan' => 2021,
+                'is_ta' => true,
+            ]
+        );
+
+        // Tugas Akhir Ruth Simanjuntak (Pembimbing 1: Marlina, Pembimbing 2: Johannes)
+        $tugasAkhir2 = TugasAkhir::updateOrCreate(
+            ['mahasiswa_id' => $mhsTaProfile2->id],
+            [
+                'dosen_pembimbing_1_id' => $dosen2Profile->id,
+                'dosen_pembimbing_2_id' => $dosen1Profile->id,
+                'judul' => 'Perancangan Tata Kelola dan Evaluasi Kematangan Keamanan Siber Berdasarkan Kerangka Kerja NIST CSF',
+                'abstrak' => 'Evaluasi tingkat maturitas sistem informasi akademik menggunakan framework NIST CSF untuk mengidentifikasi celah keamanan data pribadi mahasiswa.',
+                'prodi' => 'S1 Sistem Informasi',
+                'tahun_ajaran' => '2025/2026',
+                'status' => 'pengerjaan',
+            ]
+        );
+
+        // Logbook Ruth Simanjuntak
+        Logbook::updateOrCreate(
+            ['tugas_akhir_id' => $tugasAkhir2->id, 'bab_progress' => 'BAB 1'],
+            [
+                'tanggal' => now()->subDays(20),
+                'deskripsi_kegiatan' => 'Penyusunan latar belakang masalah, identifikasi risiko privasi data, dan perumusan pertanyaan penelitian Bab 1.',
+                'kendala' => 'Menyelaraskan regulasi PDP UU No. 27/2022 dengan kontrol spesifik NIST CSF.',
+                'rencana_berikutnya' => 'Melakukan pemetaan domain Protect dan Detect pada infrastruktur kampus.',
+                'file_dokumen_mhs' => 'uploads/logbooks/Draf_Bab1_Ruth.pdf',
+                'catatan_dosen' => 'Latar belakang sudah fokus dan relevan. Lanjutkan studi literatur Bab 2.',
+                'file_revisi_dosen' => null,
+                'status_verifikasi' => 'disetujui',
+                'verified_by_dosen_id' => $dosen2Profile->id,
+            ]
+        );
+
+        Logbook::updateOrCreate(
+            ['tugas_akhir_id' => $tugasAkhir2->id, 'bab_progress' => 'BAB 2'],
+            [
+                'tanggal' => now()->subDays(3),
+                'deskripsi_kegiatan' => 'Analisis komparatif standar ISO 27001 vs NIST CSF v2.0 untuk institusi pendidikan tinggi.',
+                'kendala' => 'Dokumentasi acuan maturity model NIST terbaru masih sangat minim berbahasa Indonesia.',
+                'rencana_berikutnya' => 'Menyelesaikan sintesis matriks perbandingan kontrol keamanan.',
+                'file_dokumen_mhs' => 'uploads/logbooks/Draf_Bab2_Ruth_v1.pdf',
+                'catatan_dosen' => null,
+                'file_revisi_dosen' => null,
+                'status_verifikasi' => 'pending',
+                'verified_by_dosen_id' => null,
+            ]
+        );
+
+        // 3 Riwayat Logbook (Samuel Siahaan)
         Logbook::updateOrCreate(
             ['tugas_akhir_id' => $tugasAkhir->id, 'bab_progress' => 'BAB 2'],
             [
@@ -297,7 +363,7 @@ class DatabaseSeeder extends Seeder
                 'tugas_akhir_id' => null,
                 'judul' => 'Rancang Bangun Node Sensor Nirkabel Berdaya Rendah untuk Deteksi Tanah Longsor di Kawasan Sigumpar',
                 'penulis' => 'Tulus Simanjuntak',
-                'prodi' => 'S1 Teknik Komputer',
+                'prodi' => 'S1 Teknik Elektro',
                 'tahun_lulus' => 2024,
                 'nama_dospem_1' => 'Dr. Arnaldo Marulitua Sinaga, S.T., M.InfoTech.',
                 'nama_dospem_2' => 'Dr. Johannes Harungguan, S.T., M.T.',

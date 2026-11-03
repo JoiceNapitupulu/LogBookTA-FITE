@@ -54,19 +54,16 @@ class DashboardController extends Controller
         $upcomingMeetingsCount = 0;
 
         if ($user->isDosen() || $user->isKaprodi()) {
-            $dosenProfile = DosenProfile::where('user_id', $user->id)->first();
+            $dosenProfile = $user->dosenProfile ?? DosenProfile::where('user_id', $user->id)->first();
             if ($dosenProfile) {
-                $mahasiswaBimbingan = TugasAkhir::where(function ($q) use ($dosenProfile) {
-                    $q->where('dosen_pembimbing_1_id', $dosenProfile->id)
-                        ->orWhere('dosen_pembimbing_2_id', $dosenProfile->id);
-                })
-                ->with([
-                    'mahasiswa.user',
-                    'logbooks' => fn ($q) => $q->latest('tanggal')->limit(1),
-                    'pembimbing1.user',
-                    'pembimbing2.user',
-                ])
-                ->get();
+                $mahasiswaBimbingan = $dosenProfile->tugasAkhirBimbingan()
+                    ->with([
+                        'mahasiswa.user',
+                        'logbooks' => fn ($q) => $q->latest('tanggal')->limit(1),
+                        'pembimbing1.user',
+                        'pembimbing2.user',
+                    ])
+                    ->get();
 
                 $tugasAkhirIds = $mahasiswaBimbingan->pluck('id');
                 $pendingReviewsCount = Logbook::whereIn('tugas_akhir_id', $tugasAkhirIds)

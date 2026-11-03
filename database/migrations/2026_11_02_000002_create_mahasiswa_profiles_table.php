@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->unique()->constrained('users')->cascadeOnDelete();
             $table->string('nim', 20)->unique();
-            $table->enum('prodi', ['S1 Informatika', 'S1 Sistem Informasi', 'S1 Teknik Komputer']);
+            $table->enum('prodi', ['S1 Informatika', 'S1 Sistem Informasi', 'S1 Teknik Elektro']);
             $table->year('angkatan');
             $table->boolean('is_ta')->default(false);
             $table->timestamps();

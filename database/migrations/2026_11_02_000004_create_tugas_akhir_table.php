@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tugas_akhir', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('mahasiswa_id')->constrained('mahasiswa_profiles')->cascadeOnDelete();
+            $table->foreignId('mahasiswa_id')->unique()->constrained('mahasiswa_profiles')->cascadeOnDelete();
             $table->foreignId('dosen_pembimbing_1_id')->nullable()->constrained('dosen_profiles')->nullOnDelete();
             $table->foreignId('dosen_pembimbing_2_id')->nullable()->constrained('dosen_profiles')->nullOnDelete();
             $table->string('judul', 255);

@@ -59,9 +59,9 @@
              class="px-2.5 py-1 rounded-full border border-[#E9E9E7] transition-colors {{ request('prodi') === 'S1 Sistem Informasi' ? 'bg-[#2C2C2F] text-white' : 'bg-[#F7F7F5] text-[#37352F] hover:bg-[#EBEBE9]' }}">
             S1 Sistem Informasi
           </a>
-          <a href="{{ route('arsip.index', array_merge(request()->query(), ['prodi' => 'S1 Teknik Komputer'])) }}"
-             class="px-2.5 py-1 rounded-full border border-[#E9E9E7] transition-colors {{ request('prodi') === 'S1 Teknik Komputer' ? 'bg-[#2C2C2F] text-white' : 'bg-[#F7F7F5] text-[#37352F] hover:bg-[#EBEBE9]' }}">
-            S1 Teknik Komputer
+          <a href="{{ route('arsip.index', array_merge(request()->query(), ['prodi' => 'S1 Teknik Elektro'])) }}"
+             class="px-2.5 py-1 rounded-full border border-[#E9E9E7] transition-colors {{ request('prodi') === 'S1 Teknik Elektro' ? 'bg-[#2C2C2F] text-white' : 'bg-[#F7F7F5] text-[#37352F] hover:bg-[#EBEBE9]' }}">
+            S1 Teknik Elektro
           </a>
         </div>
 
@@ -186,7 +186,7 @@
               <select name="prodi" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
                 <option value="S1 Informatika">S1 Informatika</option>
                 <option value="S1 Sistem Informasi">S1 Sistem Informasi</option>
-                <option value="S1 Teknik Komputer">S1 Teknik Komputer</option>
+                <option value="S1 Teknik Elektro">S1 Teknik Elektro</option>
               </select>
             </div>
             <div>

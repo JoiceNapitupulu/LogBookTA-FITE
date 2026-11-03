@@ -5,7 +5,7 @@
        koordinatorList: [
          { id: 1, name: 'Marlina Valentina, S.Kom., M.Sc.', nidn: '0124088701', prodi: 'S1 Informatika', isActive: true, mhsCount: 48 },
          { id: 2, name: 'Samuel P. Pandiangan, M.Kom.', nidn: '0115028902', prodi: 'S1 Sistem Informasi', isActive: true, mhsCount: 42 },
-         { id: 3, name: 'Dr. Arnaldo Marulitua Sinaga', nidn: '0102067801', prodi: 'S1 Teknik Komputer', isActive: false, mhsCount: 36 },
+         { id: 3, name: 'Dr. Arnaldo Marulitua Sinaga', nidn: '0102067801', prodi: 'S1 Teknik Elektro', isActive: false, mhsCount: 36 },
          { id: 4, name: 'Dr. Johannes Harungguan', nidn: '0118048201', prodi: 'S1 Informatika', isActive: false, mhsCount: 45 }
        ]
      }"

@@ -45,7 +45,7 @@ class KaprodiController extends Controller
         $sebaranProdi = [
             'S1 Informatika' => TugasAkhir::where('prodi', 'S1 Informatika')->count(),
             'S1 Sistem Informasi' => TugasAkhir::where('prodi', 'S1 Sistem Informasi')->count(),
-            'S1 Teknik Komputer' => TugasAkhir::where('prodi', 'S1 Teknik Komputer')->count(),
+            'S1 Teknik Elektro' => TugasAkhir::where('prodi', 'S1 Teknik Elektro')->count(),
         ];
 
         return view('kaprodi.index', compact(

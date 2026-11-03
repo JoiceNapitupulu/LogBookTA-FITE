@@ -488,7 +488,7 @@
             <select class="w-full text-xs px-3 py-2 bg-[#FFFFFF] border border-[#E0E0E0] rounded-md text-[#0A0A0B]">
               <option>S1 Informatika</option>
               <option>S1 Sistem Informasi</option>
-              <option>S1 Teknik Komputer</option>
+              <option>S1 Teknik Elektro</option>
             </select>
           </div>
         </div>
@@ -542,7 +542,7 @@
           <select class="w-full text-xs px-3 py-2 bg-[#FFFFFF] border border-[#E0E0E0] rounded-md text-[#0A0A0B]">
             <option>Samuel Siahaan (11S21004) - S1 Informatika</option>
             <option>Yohana Sinaga (11S21033) - S1 Informatika</option>
-            <option>Rian Marpaung (14S21002) - S1 Teknik Komputer</option>
+            <option>Rian Marpaung (14S21002) - S1 Teknik Elektro</option>
           </select>
         </div>
 
@@ -605,7 +605,7 @@
           <select class="w-full text-xs px-3 py-2 bg-[#FFFFFF] border border-[#E0E0E0] rounded-md text-[#0A0A0B]">
             <option>S1 Informatika</option>
             <option>S1 Sistem Informasi</option>
-            <option>S1 Teknik Komputer</option>
+            <option>S1 Teknik Elektro</option>
           </select>
         </div>
 

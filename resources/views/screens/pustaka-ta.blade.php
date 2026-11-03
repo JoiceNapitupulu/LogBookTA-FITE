@@ -69,7 +69,7 @@
           S1 Sistem Informasi
         </button>
         <button @click="selectedProdi = 'TE'" :class="selectedProdi === 'TE' ? 'bg-[#0A0A0B] text-white' : 'bg-[#F5F5F5] text-[#3D3D3F] hover:bg-[#EBEBEB]'" class="px-2.5 py-1 rounded-full border border-[#E0E0E0] transition-colors">
-          S1 Teknik Komputer
+          S1 Teknik Elektro
         </button>
       </div>
 
@@ -226,7 +226,7 @@
               <p class="text-[#5D5D5F]">14S20005</p>
             </td>
             <td class="py-3.5 px-4 whitespace-nowrap text-xs">
-              <span class="inline-block px-2 py-0.5 rounded bg-[#F5F5F5] font-semibold text-[#0A0A0B] border border-[#E0E0E0]">S1 Teknik Komputer</span>
+              <span class="inline-block px-2 py-0.5 rounded bg-[#F5F5F5] font-semibold text-[#0A0A0B] border border-[#E0E0E0]">S1 Teknik Elektro</span>
               <p class="text-[11px] text-[#5D5D5F] mt-0.5">Lulus: 2024</p>
             </td>
             <td class="py-3.5 px-4 text-xs text-[#3D3D3F]">
@@ -288,7 +288,7 @@
     <div class="bg-[#FFFFFF] border border-[#E0E0E0] rounded-xl p-5 shadow-sm hover:border-[#0A0A0B] transition-all flex flex-col justify-between">
       <div>
         <div class="flex items-center justify-between text-xs text-[#5D5D5F] mb-2">
-          <span>S1 Teknik Komputer • 2024</span>
+          <span>S1 Teknik Elektro • 2024</span>
           <span class="pill-approved text-[10px]">Lulus</span>
         </div>
         <h3 class="font-bold text-[#0A0A0B] text-sm leading-snug">Rancang Bangun Node Sensor Nirkabel LoRaWAN Deteksi Tanah Longsor</h3>

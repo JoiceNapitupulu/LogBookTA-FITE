@@ -32,13 +32,13 @@ class LogbookController extends Controller
             } else {
                 $query->whereRaw('1 = 0');
             }
-        } elseif ($user->isDosen()) {
-            $dosenProfile = $user->dosenProfile;
+        } elseif ($user->isDosen() || $user->isKaprodi()) {
+            $dosenProfile = $user->dosenProfile ?? DosenProfile::where('user_id', $user->id)->first();
             if ($dosenProfile) {
-                $query->whereHas('tugasAkhir', function ($q) use ($dosenProfile) {
-                    $q->where('dosen_pembimbing_1_id', $dosenProfile->id)
-                      ->orWhere('dosen_pembimbing_2_id', $dosenProfile->id);
-                });
+                $bimbinganTaIds = $dosenProfile->tugasAkhirBimbingan()->pluck('id');
+                $query->whereIn('tugas_akhir_id', $bimbinganTaIds);
+            } else {
+                $query->whereRaw('1 = 0');
             }
         }
 

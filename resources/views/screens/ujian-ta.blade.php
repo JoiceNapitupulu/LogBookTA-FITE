@@ -199,7 +199,7 @@
             <tr class="hover-item transition-colors">
               <td class="py-3.5 px-4">
                 <p class="font-semibold text-[#0A0A0B]">Rian Marpaung</p>
-                <p class="text-xs text-[#5D5D5F]">14S21002 • S1 Teknik Komputer</p>
+                <p class="text-xs text-[#5D5D5F]">14S21002 • S1 Teknik Elektro</p>
               </td>
               <td class="py-3.5 px-4">
                 <span class="inline-block px-2.5 py-1 text-xs font-semibold rounded bg-[#F5F5F5] border border-[#E0E0E0] text-[#0A0A0B]">
