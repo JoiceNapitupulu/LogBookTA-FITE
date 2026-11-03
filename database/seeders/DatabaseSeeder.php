@@ -314,6 +314,8 @@ class DatabaseSeeder extends Seeder
                 'verified_by_ta_id' => $userTA->id,
                 'catatan_verifikasi_ta' => 'Semua berkas fisik dan digital telah diperiksa lengkap & valid.',
                 'tanggal_ujian' => now()->addDays(8)->toDateString(),
+                'dosen_penguji_1_id' => $kaprodiProfile->id,
+                'dosen_penguji_2_id' => $dosen2Profile->id,
                 'jam_mulai' => '09:00:00',
                 'jam_selesai' => '11:00:00',
                 'ruangan' => 'Ruang Sidang FITE GD 514',

@@ -20,6 +20,8 @@ class UjianTa extends Model
         'verified_by_ta_id',
         'catatan_verifikasi_ta',
         'tanggal_ujian',
+        'dosen_penguji_1_id',
+        'dosen_penguji_2_id',
         'jam_mulai',
         'jam_selesai',
         'ruangan',
@@ -31,6 +33,8 @@ class UjianTa extends Model
     {
         return [
             'tanggal_ujian' => 'date',
+            'dosen_penguji_1_id' => 'integer',
+            'dosen_penguji_2_id' => 'integer',
         ];
     }
 
@@ -42,6 +46,26 @@ class UjianTa extends Model
     public function verifiedByTa(): BelongsTo
     {
         return $this->belongsTo(User::class, 'verified_by_ta_id');
+    }
+
+    public function penguji1(): BelongsTo
+    {
+        return $this->belongsTo(DosenProfile::class, 'dosen_penguji_1_id');
+    }
+
+    public function penguji2(): BelongsTo
+    {
+        return $this->belongsTo(DosenProfile::class, 'dosen_penguji_2_id');
+    }
+
+    public function dosenPenguji1(): BelongsTo
+    {
+        return $this->penguji1();
+    }
+
+    public function dosenPenguji2(): BelongsTo
+    {
+        return $this->penguji2();
     }
 
     /**

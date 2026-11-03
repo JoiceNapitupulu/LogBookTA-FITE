@@ -88,6 +88,12 @@
             <p class="text-[10px] {{ $myUjian->tanggal_ujian ? 'text-[#2A7E4B]' : 'text-[#787774]' }}">
               {{ $myUjian->tanggal_ujian ? $myUjian->tanggal_ujian->format('d M Y') . ' ✓' : 'Menunggu Koordinator' }}
             </p>
+            @if ($myUjian->penguji1 || $myUjian->penguji2)
+              <div class="mt-2 pt-2 border-t border-[#C4E5D1] text-[10px] text-[#2A7E4B] space-y-0.5">
+                <p><span class="font-semibold">P1:</span> {{ $myUjian->penguji1->user->name ?? '-' }}</p>
+                <p><span class="font-semibold">P2:</span> {{ $myUjian->penguji2->user->name ?? '-' }}</p>
+              </div>
+            @endif
           </div>
 
           <!-- Step 4 -->
@@ -97,6 +103,14 @@
             <p class="text-[10px] {{ $myUjian->ruangan ? 'text-[#2A7E4B]' : 'text-[#787774]' }}">
               {{ $myUjian->ruangan ?? 'Menunggu BAAK' }}
             </p>
+            @if ($myUjian->jam_mulai && $myUjian->jam_selesai)
+              <p class="text-[10px] text-[#2A7E4B] mt-1">{{ substr($myUjian->jam_mulai, 0, 5) }} - {{ substr($myUjian->jam_selesai, 0, 5) }} WIB</p>
+            @endif
+            @if ($myUjian->link_zoom)
+              <div class="mt-1">
+                <a href="{{ $myUjian->link_zoom }}" target="_blank" class="text-[10px] text-blue-600 underline font-semibold">Tautan Zoom</a>
+              </div>
+            @endif
           </div>
         </div>
       </div>
@@ -172,9 +186,14 @@
           </thead>
           <tbody class="divide-y divide-[#E9E9E7]">
             @forelse ($allUjian as $item)
-              <tr class="hover:bg-[#F7F7F5] transition-colors">
+              <tr class="hover:bg-[#F7F7F5] transition-colors {{ $item->status_dokumen === 'menunggu_verifikasi' ? 'bg-amber-50/40' : '' }}">
                 <td class="py-3 px-4">
-                  <p class="font-bold text-[#37352F]">{{ $item->tugasAkhir->mahasiswa->user->name ?? '-' }}</p>
+                  <div class="flex items-center gap-1.5">
+                    @if ($item->status_dokumen === 'menunggu_verifikasi')
+                      <span class="inline-block w-2 h-2 rounded-full bg-amber-500 shrink-0" title="Menunggu verifikasi artefak"></span>
+                    @endif
+                    <p class="font-bold text-[#37352F]">{{ $item->tugasAkhir->mahasiswa->user->name ?? '-' }}</p>
+                  </div>
                   <p class="text-[10px] text-[#787774]">{{ $item->tugasAkhir->mahasiswa->nim ?? '-' }} • {{ $item->tugasAkhir->prodi ?? '-' }}</p>
                 </td>
                 <td class="py-3 px-4">
@@ -223,7 +242,7 @@
       <div class="p-4 border-b border-[#E9E9E7] flex items-center justify-between">
         <div>
           <h3 class="text-sm font-bold text-[#37352F]">Penetapan Tanggal Ujian & Penguji (Koordinator TA)</h3>
-          <p class="text-xs text-[#787774]">Tetapkan tanggal pelaksanaan ujian untuk berkas yang telah diverifikasi lengkap oleh TA</p>
+          <p class="text-xs text-[#787774]">Tetapkan tanggal pelaksanaan ujian dan tunjuk 2 Dosen Penguji untuk berkas yang telah diverifikasi lengkap</p>
         </div>
       </div>
 
@@ -233,6 +252,7 @@
             <tr>
               <th class="py-2.5 px-4 font-semibold">Mahasiswa & Judul</th>
               <th class="py-2.5 px-4 font-semibold">Jenis Ujian</th>
+              <th class="py-2.5 px-4 font-semibold">Dosen Penguji 1 & 2</th>
               <th class="py-2.5 px-4 font-semibold">Tanggal Pelaksanaan</th>
               <th class="py-2.5 px-4 font-semibold">Status Ujian</th>
               <th class="py-2.5 px-4 text-right font-semibold">Aksi Koordinator</th>
@@ -240,24 +260,50 @@
           </thead>
           <tbody class="divide-y divide-[#E9E9E7]">
             @forelse ($allUjian->where('status_dokumen', 'berkas_lengkap') as $item)
-              <tr class="hover:bg-[#F7F7F5] transition-colors">
+              @php
+                $needsSchedule = ! $item->tanggal_ujian || ! $item->dosen_penguji_1_id || ! $item->dosen_penguji_2_id;
+              @endphp
+              <tr class="hover:bg-[#F7F7F5] transition-colors {{ $needsSchedule ? 'bg-amber-50/40' : '' }}">
                 <td class="py-3 px-4 max-w-xs">
-                  <p class="font-bold text-[#37352F]">{{ $item->tugasAkhir->mahasiswa->user->name ?? '-' }}</p>
+                  <div class="flex items-center gap-1.5">
+                    @if ($needsSchedule)
+                      <span class="inline-block w-2 h-2 rounded-full bg-amber-500 shrink-0" title="Menunggu tanggal & penguji"></span>
+                    @endif
+                    <p class="font-bold text-[#37352F]">{{ $item->tugasAkhir->mahasiswa->user->name ?? '-' }}</p>
+                  </div>
                   <p class="text-[10px] text-[#787774] truncate">{{ $item->tugasAkhir->judul ?? '-' }}</p>
                 </td>
                 <td class="py-3 px-4">
                   <span class="notion-pill-gray uppercase text-[10px]">{{ str_replace('_', ' ', $item->jenis_ujian) }}</span>
                 </td>
                 <td class="py-3 px-4">
-                  <span class="font-semibold text-[#37352F]">{{ $item->tanggal_ujian ? $item->tanggal_ujian->format('d M Y') : 'Belum Ditetapkan' }}</span>
+                  @if ($item->penguji1 && $item->penguji2)
+                    <div class="text-[11px] text-[#37352F] space-y-0.5">
+                      <p><span class="font-semibold text-[#787774]">P1:</span> {{ $item->penguji1->user->name }}</p>
+                      <p><span class="font-semibold text-[#787774]">P2:</span> {{ $item->penguji2->user->name }}</p>
+                    </div>
+                  @else
+                    <span class="notion-pill-orange text-[10px]">Wajib 2 Penguji ⚠️</span>
+                  @endif
                 </td>
                 <td class="py-3 px-4">
-                  <span class="notion-pill-green">{{ ucfirst($item->status_ujian) }}</span>
+                  @if ($item->tanggal_ujian)
+                    <span class="font-semibold text-[#37352F]">{{ $item->tanggal_ujian->format('d M Y') }}</span>
+                  @else
+                    <span class="notion-pill-orange text-[10px]">Belum Ditetapkan</span>
+                  @endif
+                </td>
+                <td class="py-3 px-4">
+                  @if ($needsSchedule)
+                    <span class="notion-pill-orange font-semibold">Siap Dijadwalkan ⚠️</span>
+                  @else
+                    <span class="notion-pill-green">{{ ucfirst($item->status_ujian) }}</span>
+                  @endif
                 </td>
                 <td class="py-3 px-4 text-right">
                   @if (auth()->user()->isKoordinator())
                     <button @click="openSchedule({{ $item->toJson() }})" class="notion-btn-primary text-xs py-1 px-2.5">
-                      Atur Tanggal & Penguji
+                      {{ $needsSchedule ? 'Tetapkan Tanggal & Penguji' : 'Ubah Jadwal & Penguji' }}
                     </button>
                   @else
                     <span class="text-[11px] text-[#787774] italic">Khusus Koordinator</span>
@@ -266,7 +312,7 @@
               </tr>
             @empty
               <tr>
-                <td colspan="5" class="py-8 text-center text-[#787774]">Tidak ada berkas yang menunggu tanggal ujian dari Koordinator.</td>
+                <td colspan="6" class="py-8 text-center text-[#787774]">Tidak ada berkas yang menunggu tanggal ujian dari Koordinator.</td>
               </tr>
             @endforelse
           </tbody>
@@ -283,7 +329,7 @@
       <div class="p-4 border-b border-[#E9E9E7] flex items-center justify-between">
         <div>
           <h3 class="text-sm font-bold text-[#37352F]">Alokasi Fasilitas Ruangan, Jam & Zoom (BAAK IT Del)</h3>
-          <p class="text-xs text-[#787774]">Plotting ruang sidang, jam pelaksanaan, dan tautan online meeting</p>
+          <p class="text-xs text-[#787774]">Plotting ruang sidang, jam pelaksanaan ujian, dan tautan online meeting hybrid</p>
         </div>
       </div>
 
@@ -292,24 +338,43 @@
           <thead class="bg-[#F7F7F5] text-[#787774] uppercase text-[10px] tracking-wider border-b border-[#E9E9E7]">
             <tr>
               <th class="py-2.5 px-4 font-semibold">Tgl Ujian</th>
-              <th class="py-2.5 px-4 font-semibold">Mahasiswa</th>
+              <th class="py-2.5 px-4 font-semibold">Mahasiswa & Jenis Ujian</th>
+              <th class="py-2.5 px-4 font-semibold">Tim Dosen Penguji</th>
               <th class="py-2.5 px-4 font-semibold">Ruangan</th>
-              <th class="py-2.5 px-4 font-semibold">Jam Mulai - Selesai</th>
+              <th class="py-2.5 px-4 font-semibold">Jam Pelaksanaan</th>
               <th class="py-2.5 px-4 font-semibold">Link Zoom</th>
               <th class="py-2.5 px-4 text-right font-semibold">Aksi BAAK</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-[#E9E9E7]">
             @forelse ($allUjian->whereNotNull('tanggal_ujian') as $item)
-              <tr class="hover:bg-[#F7F7F5] transition-colors">
+              @php
+                $isReadyForBaak = $item->tanggal_ujian && $item->dosen_penguji_1_id && $item->dosen_penguji_2_id && ! $item->ruangan;
+              @endphp
+              <tr class="hover:bg-[#F7F7F5] transition-colors {{ $isReadyForBaak ? 'bg-amber-50/40' : '' }}">
                 <td class="py-3 px-4 font-bold text-[#37352F]">
                   {{ $item->tanggal_ujian->format('d M Y') }}
                 </td>
                 <td class="py-3 px-4">
-                  {{ $item->tugasAkhir->mahasiswa->user->name ?? '-' }}
+                  <p class="font-bold text-[#37352F]">{{ $item->tugasAkhir->mahasiswa->user->name ?? '-' }}</p>
+                  <span class="notion-pill-gray uppercase text-[9px] mt-0.5 inline-block">{{ str_replace('_', ' ', $item->jenis_ujian) }}</span>
                 </td>
                 <td class="py-3 px-4">
-                  <span class="notion-pill-gray">{{ $item->ruangan ?? 'Belum Diatur' }}</span>
+                  @if ($item->penguji1 && $item->penguji2)
+                    <div class="text-[11px] text-[#37352F] space-y-0.5">
+                      <p><span class="font-semibold text-[#787774]">P1:</span> {{ $item->penguji1->user->name }}</p>
+                      <p><span class="font-semibold text-[#787774]">P2:</span> {{ $item->penguji2->user->name }}</p>
+                    </div>
+                  @else
+                    <span class="notion-pill-orange text-[10px]">Penguji Belum Lengkap</span>
+                  @endif
+                </td>
+                <td class="py-3 px-4">
+                  @if ($item->ruangan)
+                    <span class="notion-pill-green">{{ $item->ruangan }}</span>
+                  @else
+                    <span class="notion-pill-orange font-bold">Siap Alokasi Fasilitas ⚠️</span>
+                  @endif
                 </td>
                 <td class="py-3 px-4">
                   {{ $item->jam_mulai ? substr($item->jam_mulai, 0, 5) . ' - ' . substr($item->jam_selesai, 0, 5) . ' WIB' : '-' }}
@@ -323,9 +388,13 @@
                 </td>
                 <td class="py-3 px-4 text-right">
                   @if (auth()->user()->isBaak())
-                    <button @click="openFacility({{ $item->toJson() }})" class="notion-btn-primary text-xs py-1 px-2.5">
-                      Plot Ruangan & Jam
-                    </button>
+                    @if (! $item->dosen_penguji_1_id || ! $item->dosen_penguji_2_id)
+                      <span class="text-[11px] text-amber-700 italic">Menunggu Penguji Koordinator</span>
+                    @else
+                      <button @click="openFacility({{ $item->toJson() }})" class="notion-btn-primary text-xs py-1 px-2.5">
+                        {{ $item->ruangan ? 'Ubah Fasilitas' : 'Alokasi Fasilitas Ujian/Sidang' }}
+                      </button>
+                    @endif
                   @else
                     <span class="text-[11px] text-[#787774] italic">Khusus BAAK</span>
                   @endif
@@ -333,7 +402,7 @@
               </tr>
             @empty
               <tr>
-                <td colspan="6" class="py-8 text-center text-[#787774]">Belum ada jadwal ujian dengan tanggal yang ditetapkan Koordinator.</td>
+                <td colspan="7" class="py-8 text-center text-[#787774]">Belum ada jadwal ujian dengan tanggal yang ditetapkan Koordinator.</td>
               </tr>
             @endforelse
           </tbody>
@@ -399,7 +468,10 @@
       <div class="relative w-full max-w-md bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-6 z-10" @click.away="scheduleModalOpen = false">
         
         <div class="flex items-center justify-between pb-3 border-b border-[#E9E9E7] mb-4">
-          <h3 class="text-sm font-bold text-[#37352F]">Penetapan Tanggal & Penguji Ujian</h3>
+          <div>
+            <h3 class="text-sm font-bold text-[#37352F]">Penetapan Tanggal & 2 Dosen Penguji Ujian</h3>
+            <p class="text-[11px] text-[#787774] mt-0.5">Koordinator TA wajib menentukan tanggal dan 2 penguji berbeda</p>
+          </div>
           <button @click="scheduleModalOpen = false" class="text-gray-400 hover:text-black">&times;</button>
         </div>
 
@@ -409,24 +481,26 @@
             @method('PATCH')
 
             <div>
-              <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Tanggal Pelaksanaan Ujian</label>
-              <input type="date" name="tanggal_ujian" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
+              <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Tanggal Pelaksanaan Ujian <span class="text-red-500">*</span></label>
+              <input type="date" name="tanggal_ujian" :value="selectedUjian?.tanggal_ujian ? selectedUjian.tanggal_ujian.substring(0, 10) : ''" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
             </div>
 
             <div>
-              <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Dosen Penguji 1</label>
-              <select name="dosen_penguji_1" class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
+              <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Dosen Penguji 1 <span class="text-red-500">*</span></label>
+              <select name="dosen_penguji_1_id" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
+                <option value="" disabled :selected="!selectedUjian?.dosen_penguji_1_id">-- Pilih Dosen Penguji 1 --</option>
                 @foreach (($dosenList ?? []) as $d)
-                  <option value="{{ $d->user->name }}">{{ $d->user->name }}</option>
+                  <option value="{{ $d->id }}" :selected="selectedUjian?.dosen_penguji_1_id == {{ $d->id }}">{{ $d->user->name }} ({{ $d->kode_dosen ?? $d->nidn }})</option>
                 @endforeach
               </select>
             </div>
 
             <div>
-              <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Dosen Penguji 2</label>
-              <select name="dosen_penguji_2" class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
+              <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Dosen Penguji 2 <span class="text-red-500">* (Harus Berbeda)</span></label>
+              <select name="dosen_penguji_2_id" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
+                <option value="" disabled :selected="!selectedUjian?.dosen_penguji_2_id">-- Pilih Dosen Penguji 2 --</option>
                 @foreach (($dosenList ?? []) as $d)
-                  <option value="{{ $d->user->name }}">{{ $d->user->name }}</option>
+                  <option value="{{ $d->id }}" :selected="selectedUjian?.dosen_penguji_2_id == {{ $d->id }}">{{ $d->user->name }} ({{ $d->kode_dosen ?? $d->nidn }})</option>
                 @endforeach
               </select>
             </div>
@@ -451,7 +525,10 @@
       <div class="relative w-full max-w-md bg-[#FFFFFF] border border-[#E9E9E7] rounded-xl shadow-xl p-6 z-10" @click.away="facilityModalOpen = false">
         
         <div class="flex items-center justify-between pb-3 border-b border-[#E9E9E7] mb-4">
-          <h3 class="text-sm font-bold text-[#37352F]">Plotting Fasilitas Ujian (BAAK)</h3>
+          <div>
+            <h3 class="text-sm font-bold text-[#37352F]">Alokasi Fasilitas Ruangan & Jam Ujian/Sidang (BAAK)</h3>
+            <p class="text-[11px] text-[#787774] mt-0.5">Penetapan ruang sidang fisik, jam pelaksanaan ujian, dan tautan online meeting</p>
+          </div>
           <button @click="facilityModalOpen = false" class="text-gray-400 hover:text-black">&times;</button>
         </div>
 
@@ -461,33 +538,33 @@
             @method('PATCH')
 
             <div>
-              <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Ruangan Ujian FITE</label>
+              <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Ruangan Ujian / Sidang FITE <span class="text-red-500">*</span></label>
               <select name="ruangan" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
-                <option value="Ruang Sidang FITE GD 514">Ruang Sidang FITE GD 514</option>
-                <option value="Lab Komputer GD 512">Lab Komputer GD 512</option>
-                <option value="Ruang Rapat FITE GD 510">Ruang Rapat FITE GD 510</option>
+                <option value="Ruang Sidang FITE GD 514" :selected="selectedUjian?.ruangan === 'Ruang Sidang FITE GD 514'">Ruang Sidang FITE GD 514</option>
+                <option value="Lab Komputer GD 512" :selected="selectedUjian?.ruangan === 'Lab Komputer GD 512'">Lab Komputer GD 512</option>
+                <option value="Ruang Rapat FITE GD 510" :selected="selectedUjian?.ruangan === 'Ruang Rapat FITE GD 510'">Ruang Rapat FITE GD 510</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Jam Mulai</label>
-                <input type="time" name="jam_mulai" value="09:00" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
+                <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Jam Mulai <span class="text-red-500">*</span></label>
+                <input type="time" name="jam_mulai" :value="selectedUjian?.jam_mulai ? selectedUjian.jam_mulai.substring(0, 5) : '09:00'" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
               </div>
               <div>
-                <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Jam Selesai</label>
-                <input type="time" name="jam_selesai" value="11:00" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
+                <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Jam Selesai <span class="text-red-500">*</span></label>
+                <input type="time" name="jam_selesai" :value="selectedUjian?.jam_selesai ? selectedUjian.jam_selesai.substring(0, 5) : '11:00'" required class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
               </div>
             </div>
 
             <div>
               <label class="block font-semibold uppercase tracking-wider text-[#787774] mb-1">Link Zoom Meeting (Daring / Hybrid)</label>
-              <input type="url" name="link_zoom" value="https://zoom.us/j/itdel-sidang-fite1" class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
+              <input type="url" name="link_zoom" :value="selectedUjian?.link_zoom ?? 'https://zoom.us/j/itdel-sidang-fite1'" class="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E9E9E7] rounded text-[#37352F]">
             </div>
 
             <div class="flex items-center justify-end gap-2 pt-3 border-t border-[#E9E9E7]">
               <button type="button" @click="facilityModalOpen = false" class="notion-btn-secondary text-xs">Batal</button>
-              <button type="submit" class="notion-btn-primary text-xs">Terbitkan Fasilitas</button>
+              <button type="submit" class="notion-btn-primary text-xs">Terbitkan Fasilitas Ujian/Sidang</button>
             </div>
           </form>
         </template>
