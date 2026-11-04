@@ -59,7 +59,15 @@
               <h2 class="h6 fw-bold text-dark mb-0">Status Pendaftaran Ujian Terkini</h2>
               <p class="text-secondary small mb-0">Jenis Ujian: <strong class="text-dark">{{ $myUjian->jenis_ujian_label }}</strong></p>
             </div>
-            <span class="badge bg-light text-dark border">TA Aktif</span>
+            <div>
+              @if ($myUjian->status_dokumen === 'berkas_lengkap')
+                <span class="badge bg-success-subtle text-success border border-success-subtle">Berkas Lengkap & Valid</span>
+              @elseif ($myUjian->status_dokumen === 'berkas_kurang')
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Berkas Kurang / Perlu Perbaikan</span>
+              @else
+                <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">Menunggu Verifikasi</span>
+              @endif
+            </div>
           </div>
 
           <div class="row g-2 text-center" style="font-size: 0.75rem;">
@@ -74,14 +82,20 @@
 
             <!-- Step 2 -->
             <div class="col-12 col-sm-6 col-md-3">
-              <div class="p-3 rounded border {{ $myUjian->status_dokumen === 'berkas_lengkap' ? 'border-success-subtle bg-success-subtle/40' : 'border-warning-subtle bg-warning-subtle/40' }} h-100 text-start">
-                <span class="{{ $myUjian->status_dokumen === 'berkas_lengkap' ? 'text-success' : 'text-warning-emphasis' }} fw-bold text-uppercase d-block" style="font-size: 0.65rem;">Langkah 2</span>
+              @php
+                $isLengkap = ($myUjian->status_dokumen === 'berkas_lengkap');
+                $isKurang = ($myUjian->status_dokumen === 'berkas_kurang');
+              @endphp
+              <div class="p-3 rounded border {{ $isLengkap ? 'border-success-subtle bg-success-subtle/40' : ($isKurang ? 'border-danger-subtle bg-danger-subtle/40' : 'border-warning-subtle bg-warning-subtle/40') }} h-100 text-start">
+                <span class="{{ $isLengkap ? 'text-success' : ($isKurang ? 'text-danger' : 'text-warning-emphasis') }} fw-bold text-uppercase d-block" style="font-size: 0.65rem;">Langkah 2</span>
                 <p class="fw-bold text-dark mb-1">Verifikasi Berkas</p>
-                <span class="{{ $myUjian->status_dokumen === 'berkas_lengkap' ? 'text-success' : 'text-warning-emphasis' }} small fw-medium">
-                  @if ($myUjian->status_dokumen === 'berkas_lengkap')
-                    <i class="bi bi-check-circle-fill me-0.5"></i> Lengkap & Valid
+                <span class="{{ $isLengkap ? 'text-success' : ($isKurang ? 'text-danger' : 'text-warning-emphasis') }} small fw-medium">
+                  @if ($isLengkap)
+                    <i class="bi bi-check-circle-fill me-0.5"></i> Berkas Lengkap & Valid
+                  @elseif ($isKurang)
+                    <i class="bi bi-x-circle-fill me-0.5"></i> Berkas Kurang / Perlu Perbaikan
                   @else
-                    <i class="bi bi-clock-history me-0.5"></i> Menunggu Koordinator TA
+                    <i class="bi bi-clock-history me-0.5"></i> Menunggu Verifikasi Koordinator TA
                   @endif
                 </span>
               </div>
@@ -125,16 +139,98 @@
               </div>
             </div>
           </div>
+
+          <!-- Callout Catatan Verifikasi Koordinator TA -->
+          @if ($myUjian->catatan_verifikasi_ta)
+            <div class="mt-3">
+              @if ($myUjian->status_dokumen === 'berkas_kurang')
+                <div class="alert alert-danger d-flex align-items-start gap-2.5 mb-0 shadow-xs border-danger-subtle" role="alert">
+                  <i class="bi bi-exclamation-triangle-fill fs-5 text-danger shrink-0 mt-0.5"></i>
+                  <div class="w-100">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-1">
+                      <strong class="text-danger small">Catatan Verifikasi Koordinator TA</strong>
+                      @if ($myUjian->verifiedByTa)
+                        <span class="text-secondary small">
+                          Diverifikasi oleh: <strong class="text-dark">{{ $myUjian->verifiedByTa->name }}</strong>
+                        </span>
+                      @endif
+                    </div>
+                    <p class="small text-dark mb-2 lh-base" style="white-space: pre-line;">{{ $myUjian->catatan_verifikasi_ta }}</p>
+                    <div class="small text-danger-emphasis fst-italic border-top border-danger-subtle pt-1.5" style="font-size: 0.75rem;">
+                      <i class="bi bi-info-circle me-1"></i> Silakan lengkapi / perbaiki berkas persyaratan sesuai catatan di atas, kemudian kirim ulang pendaftaran melalui formulir di bawah.
+                    </div>
+                  </div>
+                </div>
+              @elseif ($myUjian->status_dokumen === 'berkas_lengkap')
+                <div class="alert alert-success d-flex align-items-start gap-2.5 mb-0 shadow-xs border-success-subtle" role="alert">
+                  <i class="bi bi-check-circle-fill fs-5 text-success shrink-0 mt-0.5"></i>
+                  <div class="w-100">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-1">
+                      <strong class="text-success small">Catatan Verifikasi Koordinator TA</strong>
+                      @if ($myUjian->verifiedByTa)
+                        <span class="text-secondary small">
+                          Diverifikasi oleh: <strong class="text-dark">{{ $myUjian->verifiedByTa->name }}</strong>
+                        </span>
+                      @endif
+                    </div>
+                    <p class="small text-dark mb-0 lh-base" style="white-space: pre-line;">{{ $myUjian->catatan_verifikasi_ta }}</p>
+                  </div>
+                </div>
+              @else
+                <div class="alert alert-info d-flex align-items-start gap-2.5 mb-0 shadow-xs border-info-subtle" role="alert">
+                  <i class="bi bi-info-circle-fill fs-5 text-primary shrink-0 mt-0.5"></i>
+                  <div class="w-100">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-1">
+                      <strong class="text-primary small">Catatan Koordinator TA</strong>
+                      @if ($myUjian->verifiedByTa)
+                        <span class="text-secondary small">
+                          Oleh: <strong class="text-dark">{{ $myUjian->verifiedByTa->name }}</strong>
+                        </span>
+                      @endif
+                    </div>
+                    <p class="small text-dark mb-0 lh-base" style="white-space: pre-line;">{{ $myUjian->catatan_verifikasi_ta }}</p>
+                  </div>
+                </div>
+              @endif
+            </div>
+          @elseif ($myUjian->status_dokumen === 'berkas_kurang')
+            <div class="mt-3">
+              <div class="alert alert-danger d-flex align-items-start gap-2.5 mb-0 shadow-xs border-danger-subtle" role="alert">
+                <i class="bi bi-exclamation-triangle-fill fs-5 text-danger shrink-0 mt-0.5"></i>
+                <div class="w-100">
+                  <strong class="text-danger small d-block mb-1">Berkas Dinyatakan Kurang / Perlu Perbaikan</strong>
+                  <p class="small text-dark mb-2">Koordinator TA menyatakan berkas persyaratan belum lengkap atau perlu perbaikan. Silakan periksa kembali kelengkapan naskah dan dokumen, lalu kirim ulang melalui formulir pendaftaran di bawah.</p>
+                  @if ($myUjian->verifiedByTa)
+                    <span class="text-secondary small">
+                      Diverifikasi oleh: <strong class="text-dark">{{ $myUjian->verifiedByTa->name }}</strong>
+                    </span>
+                  @endif
+                </div>
+              </div>
+            </div>
+          @endif
         </div>
       </div>
     @endif
 
-    <!-- Formulir Pendaftaran Ujian Baru -->
+    <!-- Formulir Pendaftaran Ujian Baru / Kirim Ulang -->
     @if ($myTugasAkhir)
       <div class="card shadow-sm border-light-subtle">
         <div class="card-header bg-white py-3">
-          <h2 class="h6 fw-bold text-dark mb-0">Formulir Pendaftaran Ujian Tugas Akhir FITE</h2>
-          <p class="text-secondary small mb-0">Pilih tahapan ujian resmi dan unggah bundel naskah serta berkas persyaratan.</p>
+          <h2 class="h6 fw-bold text-dark mb-0">
+            @if ($myUjian && $myUjian->status_dokumen === 'berkas_kurang')
+              Formulir Pendaftaran Ulang / Revisi Berkas Ujian TA
+            @else
+              Formulir Pendaftaran Ujian Tugas Akhir FITE
+            @endif
+          </h2>
+          <p class="text-secondary small mb-0">
+            @if ($myUjian && $myUjian->status_dokumen === 'berkas_kurang')
+              Unggah berkas bundel yang telah diperbaiki sesuai catatan evaluasi Koordinator TA.
+            @else
+              Pilih tahapan ujian resmi dan unggah bundel naskah serta berkas persyaratan.
+            @endif
+          </p>
         </div>
 
         <div class="card-body p-3 p-md-4">
@@ -146,10 +242,10 @@
               <div class="col-12 col-md-6">
                 <label class="form-label fw-semibold text-secondary small mb-1">Pilih Tahap Ujian Resmi</label>
                 <select name="jenis_ujian" required class="form-select form-select-sm">
-                  <option value="seminar_proposal">1. Seminar Proposal (BAB 1–3)</option>
-                  <option value="seminar_ta_1" selected>2. Seminar TA 1</option>
-                  <option value="seminar_hasil">3. Seminar Hasil</option>
-                  <option value="seminar_skripsi">4. Seminar Tugas Akhir / Skripsi</option>
+                  <option value="seminar_proposal" {{ ($myUjian && $myUjian->jenis_ujian === 'seminar_proposal') ? 'selected' : '' }}>1. Seminar Proposal (BAB 1–3)</option>
+                  <option value="seminar_ta_1" {{ (!$myUjian || $myUjian->jenis_ujian === 'seminar_ta_1') ? 'selected' : '' }}>2. Seminar TA 1</option>
+                  <option value="seminar_hasil" {{ ($myUjian && $myUjian->jenis_ujian === 'seminar_hasil') ? 'selected' : '' }}>3. Seminar Hasil</option>
+                  <option value="seminar_skripsi" {{ ($myUjian && $myUjian->jenis_ujian === 'seminar_skripsi') ? 'selected' : '' }}>4. Seminar Tugas Akhir / Skripsi</option>
                 </select>
               </div>
 
@@ -172,7 +268,7 @@
             <div class="d-flex justify-content-end pt-2">
               <button type="submit" class="btn btn-dark btn-sm d-inline-flex align-items-center gap-1.5">
                 <i class="bi bi-send"></i>
-                <span>Kirim Pendaftaran Ujian ke Koordinator TA</span>
+                <span>{{ $myUjian && $myUjian->status_dokumen === 'berkas_kurang' ? 'Kirim Ulang Pendaftaran Ujian' : 'Kirim Pendaftaran Ujian ke Koordinator TA' }}</span>
               </button>
             </div>
           </form>
@@ -241,6 +337,12 @@
                     <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Kurang Lengkap</span>
                   @else
                     <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">Menunggu Verifikasi</span>
+                  @endif
+
+                  @if ($item->catatan_verifikasi_ta)
+                    <div class="text-secondary small mt-1 text-truncate" style="max-width: 200px;" title="{{ $item->catatan_verifikasi_ta }}">
+                      <i class="bi bi-chat-left-text me-1"></i>{{ $item->catatan_verifikasi_ta }}
+                    </div>
                   @endif
                 </td>
                 <td class="px-3 py-3 text-end text-nowrap">
@@ -420,6 +522,12 @@
                   @else
                     <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">Menunggu Verifikasi</span>
                   @endif
+
+                  @if ($item->catatan_verifikasi_ta)
+                    <div class="text-secondary small mt-1 text-truncate" style="max-width: 200px;" title="{{ $item->catatan_verifikasi_ta }}">
+                      <i class="bi bi-chat-left-text me-1"></i>{{ $item->catatan_verifikasi_ta }}
+                    </div>
+                  @endif
                 </td>
                 <td class="px-3 py-3 text-nowrap">
                   {{ $item->tanggal_ujian ? $item->tanggal_ujian->format('d M Y') : '-' }}
@@ -467,11 +575,11 @@
                 <label class="form-label fw-semibold text-secondary small mb-2">Keputusan Kelengkapan Berkas</label>
                 <div class="d-flex gap-2">
                   <label class="btn btn-outline-success btn-sm flex-fill d-flex align-items-center justify-content-center gap-2 py-2 cursor-pointer">
-                    <input type="radio" name="status_dokumen" value="berkas_lengkap" checked class="form-check-input mt-0">
+                    <input type="radio" name="status_dokumen" value="berkas_lengkap" :checked="selectedUjian?.status_dokumen !== 'berkas_kurang'" class="form-check-input mt-0">
                     <span class="fw-semibold">Lengkap & Valid</span>
                   </label>
                   <label class="btn btn-outline-danger btn-sm flex-fill d-flex align-items-center justify-content-center gap-2 py-2 cursor-pointer">
-                    <input type="radio" name="status_dokumen" value="berkas_kurang" class="form-check-input mt-0">
+                    <input type="radio" name="status_dokumen" value="berkas_kurang" :checked="selectedUjian?.status_dokumen === 'berkas_kurang'" class="form-check-input mt-0">
                     <span class="fw-semibold">Kurang Lengkap</span>
                   </label>
                 </div>
@@ -479,7 +587,7 @@
 
               <div>
                 <label class="form-label fw-semibold text-secondary small mb-1">Catatan Tambahan Koordinator TA</label>
-                <textarea name="catatan_verifikasi_ta" rows="3" placeholder="Semua berkas fisik dan digital telah diperiksa lengkap & valid..." class="form-control form-control-sm"></textarea>
+                <textarea name="catatan_verifikasi_ta" rows="3" placeholder="Tuliskan catatan evaluasi atau kekurangan berkas untuk mahasiswa..." class="form-control form-control-sm" :value="selectedUjian?.catatan_verifikasi_ta ?? ''"></textarea>
               </div>
             </div>
 
