@@ -4,7 +4,6 @@ use App\Http\Controllers\ArsipController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\JanjiBimbinganController;
-use App\Http\Controllers\KaprodiController;
 use App\Http\Controllers\KoordinatorController;
 use App\Http\Controllers\LogbookController;
 use App\Http\Controllers\UjianController;
@@ -59,13 +58,5 @@ Route::middleware('auth')->group(function () {
         Route::post('/koordinator/assign-pembimbing', [KoordinatorController::class, 'assignPembimbing'])->name('koordinator.assign');
         Route::post('/koordinator/tugas-akhir/{tugasAkhir}/anggota', [KoordinatorController::class, 'addAnggota'])->name('koordinator.anggota.store');
         Route::delete('/koordinator/tugas-akhir/{tugasAkhir}/anggota/{mahasiswa}', [KoordinatorController::class, 'removeAnggota'])->name('koordinator.anggota.destroy');
-    });
-
-    // Panel Eksekutif Kaprodi (Hanya Kaprodi, Mahasiswa dilarang keras)
-    Route::middleware(['ensure.staff', 'role:kaprodi'])->group(function () {
-        Route::get('/kaprodi', [KaprodiController::class, 'index'])->name('kaprodi.index');
-        Route::patch('/kaprodi/dosen/{dosen}/toggle-koordinator', [KaprodiController::class, 'toggleKoordinator'])->name('kaprodi.toggle-koordinator');
-        Route::post('/kaprodi/dosen/{dosen}/tetapkan-koordinator', [KaprodiController::class, 'tetapkanKoordinator'])->name('kaprodi.tetapkan-koordinator');
-        Route::post('/kaprodi/dosen/{dosen}/nonaktifkan-koordinator', [KaprodiController::class, 'nonaktifkanKoordinator'])->name('kaprodi.nonaktifkan-koordinator');
     });
 });

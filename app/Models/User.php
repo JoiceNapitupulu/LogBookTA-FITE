@@ -122,7 +122,7 @@ class User extends Authenticatable
 
     public function isKaprodi(): bool
     {
-        return $this->role === 'kaprodi' || ($this->role === 'dosen' && ($this->dosenProfile?->is_kaprodi ?? false));
+        return false;
     }
 
     public function isTA(): bool
@@ -156,10 +156,6 @@ class User extends Authenticatable
      */
     public function kaprodiProdi(): ?string
     {
-        if (! $this->isKaprodi()) {
-            return null;
-        }
-
-        return $this->dosenProfile?->prodi;
+        return null;
     }
 }

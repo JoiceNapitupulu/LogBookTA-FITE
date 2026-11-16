@@ -51,15 +51,15 @@ class ViewRenderingTest extends TestCase
         $this->actingAs($dosen->user)->get('/koordinator')->assertStatus(200);
     }
 
-    public function test_kaprodi_can_view_kaprodi_panel(): void
+    public function test_kaprodi_panel_is_not_found(): void
     {
-        $kaprodi = User::where('role', 'kaprodi')->first() 
-            ?? User::where('role', 'dosen')->whereHas('dosenProfile', fn($q) => $q->where('is_kaprodi', true))->first();
-        if (!$kaprodi) {
-            $this->markTestSkipped('No kaprodi found.');
+        $user = User::where('role', 'kaprodi')->first() 
+            ?? User::where('role', 'dosen')->first();
+        if (!$user) {
+            $this->markTestSkipped('No user found.');
         }
 
-        $this->actingAs($kaprodi)->get('/kaprodi')->assertStatus(200);
+        $this->actingAs($user)->get('/kaprodi')->assertStatus(404);
     }
 
     public function test_ta_and_baak_can_view_ujian_and_arsip(): void

@@ -36,7 +36,7 @@ class JanjiBimbinganController extends Controller
             } else {
                 $query->whereRaw('1 = 0');
             }
-        } elseif ($user->isDosen() || $user->isKaprodi()) {
+        } elseif ($user->isDosen()) {
             $dosenProfile = $user->dosenProfile;
             if ($dosenProfile) {
                 $query->where('dosen_id', $dosenProfile->id);
@@ -60,7 +60,7 @@ class JanjiBimbinganController extends Controller
             if ($myTugasAkhir) {
                 $myTugasAkhir->loadMissing('anggota.user');
             }
-        } elseif (($user->isDosen() || $user->isKaprodi()) && $user->dosenProfile) {
+        } elseif ($user->isDosen() && $user->dosenProfile) {
             $bimbinganTaList = $user->dosenProfile->tugasAkhirBimbingan()
                 ->with(['mahasiswa.user', 'anggota.user'])
                 ->get();

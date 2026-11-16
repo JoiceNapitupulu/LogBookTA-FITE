@@ -38,7 +38,7 @@ class LogbookController extends Controller
             } else {
                 $query->whereRaw('1 = 0');
             }
-        } elseif ($user->isDosen() || $user->isKaprodi()) {
+        } elseif ($user->isDosen()) {
             $dosenProfile = $user->dosenProfile ?? DosenProfile::where('user_id', $user->id)->first();
             if ($dosenProfile) {
                 $bimbinganTaIds = $dosenProfile->tugasAkhirBimbingan()->pluck('id');

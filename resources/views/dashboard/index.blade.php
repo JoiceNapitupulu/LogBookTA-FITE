@@ -349,11 +349,11 @@
   @endif
 
   <!-- ================================================================= -->
-  <!-- KONDISI 3: DOSEN PEMBIMBING & KAPRODI -->
+  <!-- KONDISI 3: DOSEN PEMBIMBING -->
   <!-- ================================================================= -->
-  @if ($user->isDosen() || $user->isKaprodi())
+  @if ($user->isDosen())
     
-    <!-- Quick Stats Cards Dosen & Kaprodi -->
+    <!-- Quick Stats Cards Dosen -->
     <div class="row g-3 mb-4">
       <div class="col-6 col-md-3">
         <div class="card shadow-sm border-light-subtle h-100 p-3 bg-white">
@@ -450,67 +450,6 @@
                   <div class="mt-auto pt-3">
                     <a href="{{ route('ujian.index') }}" class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center gap-1.5 w-100">
                       <span>Tetapkan Jadwal</span>
-                      <i class="bi bi-arrow-right"></i>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    @endif
-
-    @if ($user->isKaprodi())
-      <!-- Panel Ringkas Kaprodi -->
-      <div class="card shadow-sm border-light-subtle mb-4">
-        <div class="card-header bg-white py-3 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
-          <div class="d-flex align-items-center gap-2">
-            <div class="w-8 h-8 rounded-circle bg-dark text-white d-flex align-items-center justify-content-center shrink-0">
-              <i class="bi bi-bar-chart"></i>
-            </div>
-            <div>
-              <h3 class="h6 fw-bold text-dark mb-0">Ringkasan Mutu & Statistik Kaprodi</h3>
-              <p class="text-secondary small mb-0">Pengawasan mutu kelulusan tugas akhir dan beban bimbingan dosen FITE</p>
-            </div>
-          </div>
-          <a href="{{ route('kaprodi.index') }}" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center gap-1">
-            <span>Buka Panel Kaprodi</span>
-            <i class="bi bi-arrow-right"></i>
-          </a>
-        </div>
-
-        <div class="card-body p-3 p-md-4">
-          <div class="row g-3">
-            <div class="col-12 col-md-6">
-              <div class="card h-100 border border-light-subtle bg-light shadow-xs d-flex flex-column">
-                <div class="card-body d-flex flex-column flex-grow-1 p-3">
-                  <span class="text-uppercase text-muted small fw-semibold d-block mb-1">Total Tugas Akhir Berjalan</span>
-                  <div class="d-flex align-items-baseline gap-1 mb-2">
-                    <span class="h3 fw-bold text-dark mb-0">{{ $totalTaAktif }}</span>
-                    <span class="text-muted small">Mahasiswa</span>
-                  </div>
-                  <div class="mt-auto pt-3">
-                    <a href="{{ route('kaprodi.index') }}" class="btn btn-dark btn-sm d-inline-flex align-items-center justify-content-center gap-1.5 w-100">
-                      <span>Pantau Mutu TA</span>
-                      <i class="bi bi-arrow-right"></i>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-12 col-md-6">
-              <div class="card h-100 border border-light-subtle bg-light shadow-xs d-flex flex-column">
-                <div class="card-body d-flex flex-column flex-grow-1 p-3">
-                  <span class="text-uppercase text-muted small fw-semibold d-block mb-1">Mahasiswa Siap Sidang</span>
-                  <div class="d-flex align-items-baseline gap-1 mb-2">
-                    <span class="h3 fw-bold text-success mb-0">{{ $totalMhsSiapSidang }}</span>
-                    <span class="text-muted small">Mahasiswa</span>
-                  </div>
-                  <div class="mt-auto pt-3">
-                    <a href="{{ route('kaprodi.index') }}" class="btn btn-primary btn-sm d-inline-flex align-items-center justify-content-center gap-1.5 w-100">
-                      <span>Lihat Statistik</span>
                       <i class="bi bi-arrow-right"></i>
                     </a>
                   </div>

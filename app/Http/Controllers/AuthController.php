@@ -76,15 +76,15 @@ class AuthController extends Controller
             'dosen' => 'dosen1@del.ac.id',
             'dosen2' => 'dosen2@del.ac.id',
             'dosen3' => 'dosen3@del.ac.id',
-            'kaprodi' => 'kaprodi@del.ac.id',
-            'kaprodi_si' => 'kaprodi@del.ac.id',
-            'kaprodi_if' => 'kaprodi.if@del.ac.id',
-            'kaprodi_te' => 'kaprodi.te@del.ac.id',
             'ta' => 'ta@del.ac.id',
             'baak' => 'baak@del.ac.id',
         ];
 
-        $email = $emailMap[$role] ?? 'mhs.ta@students.del.ac.id';
+        if (! isset($emailMap[$role])) {
+            return redirect()->route('login')->withErrors(['username' => 'Demo role tidak tersedia.']);
+        }
+
+        $email = $emailMap[$role];
         $user = User::where('email', $email)->first();
 
         if ($user) {

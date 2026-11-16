@@ -347,30 +347,19 @@
             </div>
           </div>
 
-          <!-- Otoritas Program Studi (Koordinator & Kaprodi) -->
-          @if (auth()->check() && (auth()->user()->isKoordinator() || auth()->user()->isKaprodi()))
+          <!-- Otoritas Program Studi (Koordinator TA) -->
+          @if (auth()->check() && auth()->user()->isKoordinator())
           <div>
             <div x-show="sidebarOpen" class="px-2 mb-1 text-secondary text-uppercase fw-bold" style="font-size: 10px; letter-spacing: 0.5px;">
               Program Studi
             </div>
             <div class="d-flex flex-column gap-1">
-              @if (auth()->user()->isKoordinator())
               <a href="{{ route('koordinator.index') }}" 
                  class="nav-link-academic {{ request()->routeIs('koordinator.*') ? 'active' : '' }}"
                  title="Panel Koordinator TA">
                 <i class="bi bi-diagram-3 text-center" style="width: 18px;"></i>
                 <span x-show="sidebarOpen" class="text-truncate">Koordinator TA</span>
               </a>
-              @endif
-
-              @if (auth()->user()->isKaprodi())
-              <a href="{{ route('kaprodi.index') }}" 
-                 class="nav-link-academic {{ request()->routeIs('kaprodi.*') ? 'active' : '' }}"
-                 title="Panel Kaprodi">
-                <i class="bi bi-bar-chart text-center" style="width: 18px;"></i>
-                <span x-show="sidebarOpen" class="text-truncate">Panel Kaprodi</span>
-              </a>
-              @endif
             </div>
           </div>
           @endif
