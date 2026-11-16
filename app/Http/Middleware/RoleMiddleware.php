@@ -28,13 +28,6 @@ class RoleMiddleware
             }
         }
 
-        // Support check for kaprodi (role = kaprodi or dosen with is_kaprodi)
-        if (in_array('kaprodi', $roles)) {
-            if ($request->user()->isKaprodi()) {
-                return $next($request);
-            }
-        }
-
         if (in_array($userRole, $roles)) {
             return $next($request);
         }

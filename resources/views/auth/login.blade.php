@@ -86,7 +86,7 @@
           <button @click="openDemo = !openDemo" type="button" class="w-full flex items-center justify-between text-[11px] font-mono-code text-gray-500 hover:text-black py-1">
             <span class="flex items-center gap-1.5 font-bold">
               <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              Quick Demo Login (7 Roles FITE)
+              Quick Demo Login (6 Roles FITE)
             </span>
             <span x-text="openDemo ? '▲ Hide' : '▼ Show'"></span>
           </button>
@@ -108,16 +108,13 @@
               <span class="font-bold text-black block">4. Dosen 2</span>
               <span class="text-gray-500 text-[10px] truncate block">Marlina V., M.Sc.</span>
             </a>
-            <a href="{{ route('demo.login', 'kaprodi') }}" class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors">
-              <span class="font-bold text-black block">5. Kaprodi</span>
-              <span class="text-gray-500 text-[10px] truncate block">Dr. Arnaldo Sinaga</span>
-            </a>
             <a href="{{ route('demo.login', 'ta') }}" class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors">
-              <span class="font-bold text-black block">6. Teaching Asst</span>
+              <span class="font-bold text-black block">5. Teaching Asst</span>
               <span class="text-gray-500 text-[10px] truncate block">Grace Panjaitan</span>
             </a>
-            <a href="{{ route('demo.login', 'baak') }}" class="col-span-2 p-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors text-center">
-              <span class="font-bold text-black">7. BAAK Institut Teknologi Del</span>
+            <a href="{{ route('demo.login', 'baak') }}" class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors">
+              <span class="font-bold text-black block">6. BAAK IT Del</span>
+              <span class="text-gray-500 text-[10px] truncate block">Staf BAAK</span>
             </a>
           </div>
         </div>

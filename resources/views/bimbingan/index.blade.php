@@ -241,7 +241,7 @@
             
             @if (auth()->user()->isMahasiswa() && $myTugasAkhir)
               <input type="hidden" name="tugas_akhir_id" value="{{ $myTugasAkhir->id }}">
-            @elseif (auth()->user()->isDosen() || auth()->user()->isKaprodi())
+            @elseif (auth()->user()->isDosen())
               <div class="mb-3">
                 <label class="form-label small fw-semibold text-dark">Pilih Mahasiswa Bimbingan</label>
                 <select name="tugas_akhir_id" required class="form-select form-select-sm">
@@ -259,7 +259,7 @@
               </div>
             @endif
 
-            @if ((auth()->user()->isDosen() || auth()->user()->isKaprodi()) && auth()->user()->dosenProfile)
+            @if (auth()->user()->isDosen() && auth()->user()->dosenProfile)
               <input type="hidden" name="dosen_id" value="{{ auth()->user()->dosenProfile->id }}">
             @else
               <div class="mb-3">

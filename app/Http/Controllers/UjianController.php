@@ -54,8 +54,8 @@ class UjianController extends Controller
             'verifiedByTa',
         ]);
 
-        // Dosen Pembimbing biasa (bukan Koordinator/Kaprodi/TA/BAAK) hanya boleh melihat ujian mahasiswa bimbingannya
-        if ($user->isDosen() && ! $user->isKoordinator() && ! $user->isKaprodi()) {
+        // Dosen Pembimbing biasa (bukan Koordinator/TA/BAAK) hanya boleh melihat ujian mahasiswa bimbingannya
+        if ($user->isDosen() && ! $user->isKoordinator()) {
             $dosenProfile = $user->dosenProfile;
             if ($dosenProfile) {
                 $query->whereHas('tugasAkhir', function ($q) use ($dosenProfile) {
@@ -78,8 +78,8 @@ class UjianController extends Controller
 
         $allUjian = $query->latest()->paginate(20);
 
-        // Active lecturers for examiner selection (BAAK, Koordinator, Kaprodi)
-        $dosenList = ($user->isBaak() || $user->isKoordinator() || $user->isKaprodi())
+        // Active lecturers for examiner selection (BAAK, Koordinator)
+        $dosenList = ($user->isBaak() || $user->isKoordinator())
             ? DosenProfile::with('user')->get()
             : collect();
 

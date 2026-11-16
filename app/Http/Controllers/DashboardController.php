@@ -51,7 +51,7 @@ class DashboardController extends Controller
         $pendingReviewsCount = 0;
         $upcomingMeetingsCount = 0;
 
-        if ($user->isDosen() || $user->isKaprodi()) {
+        if ($user->isDosen()) {
             $dosenProfile = $user->dosenProfile ?? DosenProfile::where('user_id', $user->id)->first();
             if ($dosenProfile) {
                 $mahasiswaBimbingan = $dosenProfile->tugasAkhirBimbingan()
@@ -76,7 +76,7 @@ class DashboardController extends Controller
             }
         }
 
-        // 3. Context metrics for Executive / Kaprodi / Koordinator / TA / BAAK
+        // 3. Context metrics for Koordinator / TA / BAAK
         $totalTaAktif = TugasAkhir::count();
         $totalMhsSiapSidang = TugasAkhir::whereIn('status', ['seminar_ta', 'sidang_akhir'])->count();
         $totalArsipCount = ArsipTugasAkhir::count();
