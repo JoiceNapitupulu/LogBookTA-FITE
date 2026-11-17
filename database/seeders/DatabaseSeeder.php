@@ -8,6 +8,8 @@ use App\Models\DosenProfile;
 use App\Models\JanjiBimbingan;
 use App\Models\Logbook;
 use App\Models\MahasiswaProfile;
+use App\Models\ProposalTa;
+use App\Models\TopikTa;
 use App\Models\TugasAkhir;
 use App\Models\UjianTa;
 use App\Models\User;
@@ -579,6 +581,88 @@ class DatabaseSeeder extends Seeder
                 'abstrak' => 'Implementasi sensor getaran dan inklinasi lereng tanah dengan transmisi data nirkabel jarak jauh LoRaWAN hemat daya baterai surya.',
                 'file_dokumen' => 'uploads/arsip/Naskah_TA_14S20005_Tulus.pdf',
                 'uploaded_by_user_id' => $userTA->id,
+            ]
+        );
+
+        // =========================================================
+        // 9. Topik TA & Proposal Mahasiswa (Alur Topik + Proposal)
+        // =========================================================
+
+        // Topik 1 (Dosen Marlina - S1 SI: Dipublikasikan, Tahap 1 Belum)
+        $topik1 = TopikTa::updateOrCreate(
+            ['judul_topik' => 'Analisis Kematangan Tata Kelola TI Menggunakan Kerangka Kerja COBIT 2019 pada UMKM Kawasan Toba'],
+            [
+                'dosen_id' => $dosen2Profile->id,
+                'deskripsi' => 'Penelitian ini berfokus pada penilaian maturity level proses bisnis dan tata kelola teknologi informasi UMKM lokal sekitar kawasan Danau Toba untuk akselerasi transformasi digital.',
+                'bidang' => 'Tata Kelola TI & Enterprise Architecture',
+                'prodi' => 'S1 Sistem Informasi',
+                'kuota' => 2,
+                'status' => 'dipublikasikan',
+                'tahap1_selesai' => false,
+            ]
+        );
+
+        // Topik 2 (Dosen Marlina - S1 SI: Dipublikasikan, Tahap 1 Selesai - Siap Review)
+        $topik2 = TopikTa::updateOrCreate(
+            ['judul_topik' => 'Rancang Bangun Sistem Enterprise Resource Planning (ERP) Modul Pengadaan Berbasis Odoo untuk Koperasi Kopi Toba'],
+            [
+                'dosen_id' => $dosen2Profile->id,
+                'deskripsi' => 'Mengembangkan modul custom rantai pasok dan pengadaan bahan baku green beans kopi arabika & robusta Toba terintegrasi akuntansi.',
+                'bidang' => 'Enterprise Systems',
+                'prodi' => 'S1 Sistem Informasi',
+                'kuota' => 1,
+                'status' => 'dipublikasikan',
+                'tahap1_selesai' => true,
+            ]
+        );
+
+        // Topik 3 (Dosen Johannes - S1 IF: Dipublikasikan, Tahap 1 Selesai)
+        $topik3 = TopikTa::updateOrCreate(
+            ['judul_topik' => 'Deteksi Serangan Denial of Service (DDoS) Menggunakan Ensemble Learning Berbasis Flow Jaringan Kampus'],
+            [
+                'dosen_id' => $dosen1Profile->id,
+                'deskripsi' => 'Menganalisis traffic jaringan PCAP dan mengklasifikasikan pola serangan SYN Flood / UDP Flood menggunakan ensemble learning (Random Forest & XGBoost).',
+                'bidang' => 'Keamanan Jaringan & AI',
+                'prodi' => 'S1 Informatika',
+                'kuota' => 2,
+                'status' => 'dipublikasikan',
+                'tahap1_selesai' => true,
+            ]
+        );
+
+        // Topik 4 (Dosen Samuel - S1 IF: Draft Dosen)
+        $topik4 = TopikTa::updateOrCreate(
+            ['judul_topik' => 'Optimasi Indexing dan Query Basis Data Terdistribusi pada Sistem Rekomendasi E-Commerce'],
+            [
+                'dosen_id' => $dosen4Profile->id,
+                'deskripsi' => 'Eksperimen komparatif sharding dan indexing PostgreSQL vs MongoDB untuk menangani beban transaksi tinggi secara reliabel.',
+                'bidang' => 'Data Engineering',
+                'prodi' => 'S1 Informatika',
+                'kuota' => 1,
+                'status' => 'draft',
+                'tahap1_selesai' => false,
+            ]
+        );
+
+        // Proposal 1: Mahasiswa Joy Christine mengajukan Topik 1 (Status: diajukan)
+        ProposalTa::updateOrCreate(
+            ['topik_ta_id' => $topik1->id, 'mahasiswa_id' => $mhsTaProfile4->id],
+            [
+                'judul_proposal' => 'Penerapan Domain EDM dan APO COBIT 2019 pada Digitalisasi UMKM Produk Olahan Kopi',
+                'link_ecourse' => 'https://ecourse.del.ac.id/mod/assign/view.php?id=1204',
+                'ringkasan' => 'Proposal telah disiapkan dengan instrumen kuesioner awal.',
+                'status' => 'diajukan',
+            ]
+        );
+
+        // Proposal 2: Mahasiswa Daniel Siregar mengajukan Topik 3 (Status: diajukan, tahap 1 sudah selesai jadi dosen bisa memutuskan lolos/tidak)
+        ProposalTa::updateOrCreate(
+            ['topik_ta_id' => $topik3->id, 'mahasiswa_id' => $mhsTaProfile3->id],
+            [
+                'judul_proposal' => 'Implementasi LightGBM dan Seleksi Fitur Information Gain untuk Deteksi DDoS Real-Time',
+                'link_ecourse' => 'https://ecourse.del.ac.id/mod/assign/view.php?id=1205',
+                'ringkasan' => 'Menggunakan dataset benchmark CIC-DDoS2019 dan capture traffic internal IT Del.',
+                'status' => 'diajukan',
             ]
         );
     }
