@@ -3,7 +3,7 @@ import Alpine from 'alpinejs';
 window.Alpine = Alpine;
 
 Alpine.store('app', {
-  currentRole: 'mahasiswa_ta', // mahasiswa_non_ta, mahasiswa_ta, dosen, koordinator, kaprodi, ta, baak
+  currentRole: 'mahasiswa_ta', // mahasiswa_non_ta, mahasiswa_ta, dosen, koordinator, ta, baak
   currentScreen: 'mahasiswa_dashboard', // login, mahasiswa_dashboard, dosen_workspace, janji_bimbingan, ujian_ta, pustaka_ta, panel_eksekutif
   sidebarCollapsed: false,
   notificationOpen: false,
@@ -42,9 +42,6 @@ Alpine.store('app', {
     } else if (role === 'koordinator') {
       this.currentScreen = 'ujian_ta';
       this.showToast('Beralih ke Role: Koordinator TA (Penetapan Pembimbing & Ujian)');
-    } else if (role === 'kaprodi') {
-      this.currentScreen = 'panel_eksekutif';
-      this.showToast('Beralih ke Role: Kaprodi (Statistik & Penetapan Koordinator)');
     } else if (role === 'ta') {
       this.currentScreen = 'ujian_ta';
       this.showToast('Beralih ke Role: Teaching Assistant (Verifikator Dokumen & Arsip)');
@@ -61,7 +58,6 @@ Alpine.store('app', {
       mahasiswa_ta: 'Mahasiswa TA',
       dosen: 'Dosen Pembimbing',
       koordinator: 'Koordinator TA',
-      kaprodi: 'Ketua Program Studi (Kaprodi)',
       ta: 'Teaching Assistant (TA)',
       baak: 'Biro Administrasi Akademik (BAAK)'
     };
@@ -74,7 +70,6 @@ Alpine.store('app', {
       mahasiswa_ta: 'Samuel Siahaan (11S21004)',
       dosen: 'Dr. Johannes Harungguan, S.T., M.T.',
       koordinator: 'Marlina Valentina, S.Kom., M.Sc.',
-      kaprodi: 'Dr. Arnaldo Marulitua Sinaga, S.T., M.InfoTech.',
       ta: 'Grace Panjaitan, S.Kom. (TA FITE)',
       baak: 'Staf Layanan Akademik FITE - BAAK'
     };

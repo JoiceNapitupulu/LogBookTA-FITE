@@ -8,7 +8,7 @@ class UpdateLogbookReviewRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && (auth()->user()->isDosen() || auth()->user()->isKaprodi());
+        return auth()->check() && auth()->user()->isDosen();
     }
 
     public function rules(): array

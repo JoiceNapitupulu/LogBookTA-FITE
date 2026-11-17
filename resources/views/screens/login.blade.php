@@ -86,16 +86,12 @@
             <p class="text-xs font-semibold text-[#0A0A0B]">4. Koordinator TA</p>
             <p class="text-[10px] text-[#5D5D5F] truncate">Marlina Valentina, M.Sc.</p>
           </button>
-          <button @click="$store.app.setRole('kaprodi')" class="p-2 rounded border border-[#E0E0E0] hover:bg-[#F5F5F5] transition-colors text-left">
-            <p class="text-xs font-semibold text-[#0A0A0B]">5. Kaprodi FITE</p>
-            <p class="text-[10px] text-[#5D5D5F] truncate">Dr. Arnaldo Sinaga</p>
-          </button>
           <button @click="$store.app.setRole('ta')" class="p-2 rounded border border-[#E0E0E0] hover:bg-[#F5F5F5] transition-colors text-left">
-            <p class="text-xs font-semibold text-[#0A0A0B]">6. Teaching Assistant</p>
+            <p class="text-xs font-semibold text-[#0A0A0B]">5. Teaching Assistant</p>
             <p class="text-[10px] text-[#5D5D5F] truncate">Grace Panjaitan, S.Kom.</p>
           </button>
           <button @click="$store.app.setRole('baak')" class="col-span-2 p-2 rounded border border-[#E0E0E0] hover:bg-[#F5F5F5] transition-colors text-left">
-            <p class="text-xs font-semibold text-[#0A0A0B]">7. BAAK Institut Teknologi Del</p>
+            <p class="text-xs font-semibold text-[#0A0A0B]">6. BAAK Institut Teknologi Del</p>
             <p class="text-[10px] text-[#5D5D5F] truncate">Pengaturan Ruang Ujian, Jam & Tautan Zoom Meeting</p>
           </button>
         </div>
