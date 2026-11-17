@@ -36,6 +36,11 @@ class MahasiswaProfile extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function proposals(): HasMany
+    {
+        return $this->hasMany(ProposalTa::class, 'mahasiswa_id');
+    }
+
     /**
      * Relasi ke keanggotaan kelompok Tugas Akhir (pivot)
      */

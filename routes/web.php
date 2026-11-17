@@ -6,6 +6,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\JanjiBimbinganController;
 use App\Http\Controllers\KoordinatorController;
 use App\Http\Controllers\LogbookController;
+use App\Http\Controllers\ProposalTaController;
+use App\Http\Controllers\TopikTaController;
 use App\Http\Controllers\UjianController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +46,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/bimbingan', [JanjiBimbinganController::class, 'store'])->name('bimbingan.store');
         Route::patch('/bimbingan/{janjiBimbingan}/status', [JanjiBimbinganController::class, 'updateStatus'])->name('bimbingan.status');
 
+        // Modul Topik & Proposal Tugas Akhir
+        Route::get('/topik', [TopikTaController::class, 'index'])->name('topik.index');
+        Route::post('/topik/{topik}/proposal', [ProposalTaController::class, 'store'])->name('proposal.store');
+
+        // Aksi Pengelolaan Topik & Keputusan Proposal oleh Dosen
+        Route::post('/topik', [TopikTaController::class, 'store'])->name('topik.store');
+        Route::put('/topik/{topik}', [TopikTaController::class, 'update'])->name('topik.update');
+        Route::delete('/topik/{topik}', [TopikTaController::class, 'destroy'])->name('topik.destroy');
+        Route::patch('/proposal/{proposal}/keputusan', [ProposalTaController::class, 'keputusan'])->name('proposal.keputusan');
+
         // Alur Pendaftaran & Manajemen Ujian TA
         Route::get('/ujian', [UjianController::class, 'index'])->name('ujian.index');
         Route::post('/ujian', [UjianController::class, 'store'])->name('ujian.store');
@@ -58,5 +70,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/koordinator/assign-pembimbing', [KoordinatorController::class, 'assignPembimbing'])->name('koordinator.assign');
         Route::post('/koordinator/tugas-akhir/{tugasAkhir}/anggota', [KoordinatorController::class, 'addAnggota'])->name('koordinator.anggota.store');
         Route::delete('/koordinator/tugas-akhir/{tugasAkhir}/anggota/{mahasiswa}', [KoordinatorController::class, 'removeAnggota'])->name('koordinator.anggota.destroy');
+
+        // Pengelolaan Publikasi Topik & Rekapitulasi Proposal Lolos
+        Route::patch('/topik/{topik}/publikasi', [TopikTaController::class, 'togglePublikasi'])->name('topik.publikasi');
+        Route::patch('/topik/{topik}/tahap1', [TopikTaController::class, 'tandaiTahap1'])->name('topik.tahap1');
+        Route::get('/koordinator/rekap-proposal', [TopikTaController::class, 'rekapProposalLolos'])->name('koordinator.rekap-proposal');
     });
 });

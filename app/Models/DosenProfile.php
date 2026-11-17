@@ -50,6 +50,11 @@ class DosenProfile extends Model
         return $this->hasMany(JanjiBimbingan::class, 'dosen_id');
     }
 
+    public function topikTa(): HasMany
+    {
+        return $this->hasMany(TopikTa::class, 'dosen_id');
+    }
+
     public function logbooksVerified(): HasMany
     {
         return $this->hasMany(Logbook::class, 'verified_by_dosen_id');

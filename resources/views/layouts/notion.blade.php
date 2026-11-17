@@ -302,6 +302,14 @@
               </a>
 
               @if (auth()->check() && (auth()->user()->isMahasiswaTa() || auth()->user()->isDosen()))
+              <!-- Topik & Proposal TA -->
+              <a href="{{ route('topik.index') }}" 
+                 class="nav-link-academic {{ request()->routeIs('topik.*') ? 'active' : '' }}"
+                 title="Topik & Proposal TA">
+                <i class="bi bi-lightbulb text-center" style="width: 18px;"></i>
+                <span x-show="sidebarOpen" class="text-truncate">Topik & Proposal TA</span>
+              </a>
+
               <!-- Logbook Aktivitas -->
               <a href="{{ route('logbook.index') }}" 
                  class="nav-link-academic {{ request()->routeIs('logbook.*') ? 'active' : '' }}"
@@ -355,10 +363,22 @@
             </div>
             <div class="d-flex flex-column gap-1">
               <a href="{{ route('koordinator.index') }}" 
-                 class="nav-link-academic {{ request()->routeIs('koordinator.*') ? 'active' : '' }}"
+                 class="nav-link-academic {{ request()->routeIs('koordinator.index') || request()->routeIs('koordinator.assign*') ? 'active' : '' }}"
                  title="Panel Koordinator TA">
                 <i class="bi bi-diagram-3 text-center" style="width: 18px;"></i>
                 <span x-show="sidebarOpen" class="text-truncate">Koordinator TA</span>
+              </a>
+              <a href="{{ route('topik.index') }}" 
+                 class="nav-link-academic {{ request()->routeIs('topik.*') && !request()->routeIs('koordinator.rekap*') ? 'active' : '' }}"
+                 title="Kelola Topik TA">
+                <i class="bi bi-lightbulb text-center" style="width: 18px;"></i>
+                <span x-show="sidebarOpen" class="text-truncate">Kelola Topik TA</span>
+              </a>
+              <a href="{{ route('koordinator.rekap-proposal') }}" 
+                 class="nav-link-academic {{ request()->routeIs('koordinator.rekap-proposal') ? 'active' : '' }}"
+                 title="Rekap Proposal Lolos">
+                <i class="bi bi-file-earmark-check text-center" style="width: 18px;"></i>
+                <span x-show="sidebarOpen" class="text-truncate">Rekap Proposal Lolos</span>
               </a>
             </div>
           </div>
