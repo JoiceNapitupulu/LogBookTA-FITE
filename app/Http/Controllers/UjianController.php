@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUjianTaRequest;
 use App\Models\DosenProfile;
-use App\Models\TugasAkhir;
 use App\Models\UjianTa;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -60,7 +59,7 @@ class UjianController extends Controller
             if ($dosenProfile) {
                 $query->whereHas('tugasAkhir', function ($q) use ($dosenProfile) {
                     $q->where('dosen_pembimbing_1_id', $dosenProfile->id)
-                      ->orWhere('dosen_pembimbing_2_id', $dosenProfile->id);
+                        ->orWhere('dosen_pembimbing_2_id', $dosenProfile->id);
                 });
             } else {
                 $query->whereRaw('1 = 0');
@@ -73,6 +72,8 @@ class UjianController extends Controller
         if ($user->isKoordinator()) {
             $query->orderByRaw("CASE WHEN status_dokumen = 'menunggu_verifikasi' THEN 0 ELSE 1 END");
         } elseif ($user->isBaak()) {
+            $query->where('status_dokumen', 'berkas_lengkap')
+                ->where('status_persetujuan_pembimbing', 'diizinkan');
             $query->orderByRaw("CASE WHEN status_dokumen = 'berkas_lengkap' AND (tanggal_ujian IS NULL OR dosen_penguji_1_id IS NULL OR dosen_penguji_2_id IS NULL OR ruangan IS NULL) THEN 0 ELSE 1 END");
         }
 
@@ -107,7 +108,26 @@ class UjianController extends Controller
         }
 
         $validated = $request->validated();
+        unset($validated['konfirmasi_persetujuan_pembimbing']);
         $jenisUjian = $validated['jenis_ujian'];
+        $pengajuanTerakhir = UjianTa::where('tugas_akhir_id', $tugasAkhir->id)
+            ->where('jenis_ujian', $jenisUjian)
+            ->orderByDesc('id')
+            ->first();
+
+        if ($pengajuanTerakhir?->status_persetujuan_pembimbing === 'tidak_diizinkan') {
+            if ($pengajuanTerakhir->pengajuan_ulang_setelah?->isFuture()) {
+                return redirect()->back()->with(
+                    'error',
+                    'Pengajuan ulang belum dapat dikirim. Silakan tindak lanjuti feedback pembimbing dan ajukan kembali setelah '
+                        .$pengajuanTerakhir->pengajuan_ulang_setelah->format('d M Y H:i').'.'
+                );
+            }
+        } elseif ($pengajuanTerakhir
+            && $pengajuanTerakhir->status_dokumen !== 'berkas_kurang'
+            && $pengajuanTerakhir->status_persetujuan_pembimbing !== 'tidak_diizinkan') {
+            return redirect()->back()->with('error', 'Pengajuan untuk tahap ujian ini masih diproses atau sudah disetujui.');
+        }
 
         // Cek syarat akademik dasar pendaftaran ujian (4 jenis resmi FITE)
         $approvedBabsCount = $tugasAkhir->logbooks()
@@ -141,6 +161,9 @@ class UjianController extends Controller
         }
 
         $validated['tugas_akhir_id'] = $tugasAkhir->id;
+        $validated['status_persetujuan_pembimbing'] = 'menunggu_verifikasi';
+        $validated['batch_pengajuan'] = ($pengajuanTerakhir?->batch_pengajuan ?? 0)
+            + ($pengajuanTerakhir?->status_persetujuan_pembimbing === 'tidak_diizinkan' ? 1 : ($pengajuanTerakhir ? 0 : 1));
 
         if ($request->hasFile('file_persyaratan')) {
             $path = $request->file('file_persyaratan')->store('uploads/persyaratan', 'public');
@@ -167,20 +190,29 @@ class UjianController extends Controller
 
         $request->validate([
             'status_dokumen' => ['required', 'in:berkas_lengkap,berkas_kurang'],
+            'status_persetujuan_pembimbing' => ['required', 'in:diizinkan,tidak_diizinkan'],
+            'catatan_persetujuan_pembimbing' => ['nullable', 'required_if:status_persetujuan_pembimbing,tidak_diizinkan', 'string'],
             'catatan_verifikasi_ta' => ['nullable', 'string'],
         ]);
 
         DB::transaction(function () use ($request, $ujian) {
             $ujian->update([
                 'status_dokumen' => $request->status_dokumen,
+                'status_persetujuan_pembimbing' => $request->status_persetujuan_pembimbing,
+                'catatan_persetujuan_pembimbing' => $request->catatan_persetujuan_pembimbing,
+                'pengajuan_ulang_setelah' => $request->status_persetujuan_pembimbing === 'tidak_diizinkan'
+                    ? now()->addWeek()
+                    : null,
                 'catatan_verifikasi_ta' => $request->catatan_verifikasi_ta,
                 'verified_by_ta_id' => Auth::id(),
             ]);
         });
 
-        $msg = $request->status_dokumen === 'berkas_lengkap'
-            ? 'Dokumen dinyatakan LENGKAP & VALID oleh Koordinator TA! Disposisi diteruskan ke BAAK untuk penetapan jadwal, tim penguji, dan fasilitas ruangan.'
-            : 'Dokumen ditandai KURANG LENGKAP. Catatan revisi telah diteruskan ke mahasiswa.';
+        $msg = $request->status_persetujuan_pembimbing === 'tidak_diizinkan'
+            ? 'Form siap maju belum diizinkan. Mahasiswa dapat mengajukan ulang setelah jeda 1 minggu sesuai feedback pembimbing.'
+            : ($request->status_dokumen === 'berkas_lengkap'
+                ? 'Dokumen dinyatakan LENGKAP & VALID oleh Koordinator TA! Disposisi diteruskan ke BAAK untuk penetapan jadwal, tim penguji, dan fasilitas ruangan.'
+                : 'Dokumen ditandai KURANG LENGKAP. Catatan revisi telah diteruskan ke mahasiswa.');
 
         return redirect()->back()->with('success', $msg);
     }
@@ -194,6 +226,10 @@ class UjianController extends Controller
 
         if ($ujian->status_dokumen !== 'berkas_lengkap') {
             return redirect()->back()->with('error', 'Penetapan jadwal gagal: Berkas dokumen persyaratan ujian belum dinyatakan lengkap oleh Koordinator TA.');
+        }
+
+        if ($ujian->status_persetujuan_pembimbing !== 'diizinkan') {
+            return redirect()->back()->with('error', 'Penetapan jadwal gagal: Form siap maju belum diizinkan oleh Koordinator TA berdasarkan persetujuan pembimbing.');
         }
 
         $validated = $request->validate([
@@ -250,6 +286,10 @@ class UjianController extends Controller
 
         if ($ujian->status_dokumen !== 'berkas_lengkap') {
             return redirect()->back()->with('error', 'Alokasi fasilitas gagal: Berkas pendaftaran belum diverifikasi lengkap oleh Koordinator TA.');
+        }
+
+        if ($ujian->status_persetujuan_pembimbing !== 'diizinkan') {
+            return redirect()->back()->with('error', 'Alokasi fasilitas gagal: Form siap maju belum diizinkan oleh Koordinator TA berdasarkan persetujuan pembimbing.');
         }
 
         if (! $ujian->tanggal_ujian) {

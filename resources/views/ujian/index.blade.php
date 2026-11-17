@@ -23,7 +23,7 @@
   <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 pb-3 border-bottom">
     <div>
       <h1 class="h4 fw-bold text-dark mb-1">Alur Pendaftaran & Manajemen Ujian TA</h1>
-      <p class="text-secondary small mb-0">Kolaborasi terintegrasi: Mahasiswa TA (Pendaftaran) &rarr; Koordinator TA (Verifikasi Berkas) &rarr; BAAK (Jadwal, Penguji & Fasilitas Ruangan).</p>
+      <p class="text-secondary small mb-0">Kolaborasi terintegrasi: Mahasiswa TA (Form Siap Maju) &rarr; Koordinator TA (Izin Pembimbing & Verifikasi Berkas) &rarr; BAAK (Jadwal, Penguji & Fasilitas Ruangan).</p>
     </div>
 
     <!-- Tab Switcher ala Bootstrap Nav Pills -->
@@ -67,7 +67,25 @@
               @else
                 <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">Menunggu Verifikasi</span>
               @endif
+              <span class="badge bg-light text-dark border">Batch {{ $myUjian->batch_pengajuan }}</span>
             </div>
+          </div>
+
+          <div class="alert {{ $myUjian->status_persetujuan_pembimbing === 'diizinkan' ? 'alert-success' : ($myUjian->status_persetujuan_pembimbing === 'tidak_diizinkan' ? 'alert-danger' : 'alert-warning') }} py-2 small mb-3">
+            <strong>Form Siap Maju:</strong>
+            @if ($myUjian->status_persetujuan_pembimbing === 'diizinkan')
+              Diizinkan pembimbing dan siap dilanjutkan ke proses penjadwalan.
+            @elseif ($myUjian->status_persetujuan_pembimbing === 'tidak_diizinkan')
+              Belum diizinkan pembimbing. Silakan tindak lanjuti feedback dan ajukan ulang
+              @if ($myUjian->pengajuan_ulang_setelah)
+                setelah {{ $myUjian->pengajuan_ulang_setelah->format('d M Y H:i') }}.
+              @endif
+            @else
+              Menunggu pemeriksaan Koordinator TA atas persetujuan pembimbing.
+            @endif
+            @if ($myUjian->catatan_persetujuan_pembimbing)
+              <div class="mt-1"><strong>Feedback:</strong> {{ $myUjian->catatan_persetujuan_pembimbing }}</div>
+            @endif
           </div>
 
           <div class="row g-2 text-center" style="font-size: 0.75rem;">
@@ -103,11 +121,15 @@
 
             <!-- Step 3 -->
             <div class="col-12 col-sm-6 col-md-3">
-              <div class="p-3 rounded border {{ $myUjian->tanggal_ujian ? 'border-success-subtle bg-success-subtle/40' : 'border-light-subtle bg-light' }} h-100 text-start">
-                <span class="{{ $myUjian->tanggal_ujian ? 'text-success' : 'text-secondary' }} fw-bold text-uppercase d-block" style="font-size: 0.65rem;">Langkah 3</span>
+              @php
+                $siapPenjadwalan = $myUjian->status_dokumen === 'berkas_lengkap'
+                  && $myUjian->status_persetujuan_pembimbing === 'diizinkan';
+              @endphp
+              <div class="p-3 rounded border {{ $myUjian->tanggal_ujian ? 'border-success-subtle bg-success-subtle/40' : ($siapPenjadwalan ? 'border-light-subtle bg-light' : 'border-warning-subtle bg-warning-subtle/40') }} h-100 text-start">
+                <span class="{{ $myUjian->tanggal_ujian ? 'text-success' : ($siapPenjadwalan ? 'text-secondary' : 'text-warning-emphasis') }} fw-bold text-uppercase d-block" style="font-size: 0.65rem;">Langkah 3</span>
                 <p class="fw-bold text-dark mb-1">Tanggal & Penguji</p>
-                <span class="{{ $myUjian->tanggal_ujian ? 'text-success' : 'text-secondary' }} small fw-medium">
-                  {{ $myUjian->tanggal_ujian ? $myUjian->tanggal_ujian->format('d M Y') . ' (BAAK)' : 'Menunggu BAAK' }}
+                <span class="{{ $myUjian->tanggal_ujian ? 'text-success' : ($siapPenjadwalan ? 'text-secondary' : 'text-warning-emphasis') }} small fw-medium">
+                  {{ $myUjian->tanggal_ujian ? $myUjian->tanggal_ujian->format('d M Y') . ' (BAAK)' : ($siapPenjadwalan ? 'Menunggu BAAK' : 'Menunggu verifikasi Koordinator TA') }}
                 </span>
                 @if ($myUjian->penguji1 || $myUjian->penguji2)
                   <div class="mt-2 pt-2 border-top text-secondary small" style="font-size: 0.7rem;">
@@ -218,14 +240,18 @@
       <div class="card shadow-sm border-light-subtle">
         <div class="card-header bg-white py-3">
           <h2 class="h6 fw-bold text-dark mb-0">
-            @if ($myUjian && $myUjian->status_dokumen === 'berkas_kurang')
+            @if ($myUjian && $myUjian->status_persetujuan_pembimbing === 'tidak_diizinkan')
+              Formulir Pengajuan Ulang Form Siap Maju · Batch {{ $myUjian->batch_pengajuan + 1 }}
+            @elseif ($myUjian && $myUjian->status_dokumen === 'berkas_kurang')
               Formulir Pendaftaran Ulang / Revisi Berkas Ujian TA
             @else
               Formulir Pendaftaran Ujian Tugas Akhir FITE
             @endif
           </h2>
           <p class="text-secondary small mb-0">
-            @if ($myUjian && $myUjian->status_dokumen === 'berkas_kurang')
+            @if ($myUjian && $myUjian->status_persetujuan_pembimbing === 'tidak_diizinkan')
+              Unggah kembali bundel persyaratan dengan Form Siap Maju yang telah diperbaiki sesuai feedback pembimbing. Pengajuan ulang dibuka setelah masa jeda 1 minggu.
+            @elseif ($myUjian && $myUjian->status_dokumen === 'berkas_kurang')
               Unggah berkas bundel yang telah diperbaiki sesuai catatan evaluasi Koordinator TA.
             @else
               Pilih tahapan ujian resmi dan unggah bundel naskah serta berkas persyaratan.
@@ -261,16 +287,36 @@
             </div>
 
             <div>
-              <label class="form-label fw-semibold text-secondary small mb-1">Unggah Bundel Persyaratan (Naskah, Form Persetujuan Pembimbing, Bukti Logbook - PDF/ZIP, maks 35MB)</label>
+              <label class="form-label fw-semibold text-secondary small mb-1">Unggah Bundel Persyaratan (Naskah, Form Siap Maju yang disetujui pembimbing, Bukti Logbook - PDF/ZIP, maks 35MB)</label>
               <input type="file" name="file_persyaratan" required accept=".pdf,.zip,.rar" class="form-control form-control-sm">
             </div>
 
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="konfirmasi_persetujuan_pembimbing" value="1" id="konfirmasi_persetujuan_pembimbing" required>
+              <label class="form-check-label small text-secondary" for="konfirmasi_persetujuan_pembimbing">
+                Saya menyertakan Form Siap Maju dengan persetujuan pembimbing dalam bundel persyaratan.
+              </label>
+            </div>
+
             <div class="d-flex justify-content-end pt-2">
-              <button type="submit" class="btn btn-dark btn-sm d-inline-flex align-items-center gap-1.5">
+              <button type="submit" @disabled($myUjian && $myUjian->status_persetujuan_pembimbing === 'tidak_diizinkan' && $myUjian->pengajuan_ulang_setelah?->isFuture()) class="btn btn-dark btn-sm d-inline-flex align-items-center gap-1.5">
                 <i class="bi bi-send"></i>
-                <span>{{ $myUjian && $myUjian->status_dokumen === 'berkas_kurang' ? 'Kirim Ulang Pendaftaran Ujian' : 'Kirim Pendaftaran Ujian ke Koordinator TA' }}</span>
+                <span>
+                  @if ($myUjian && $myUjian->status_persetujuan_pembimbing === 'tidak_diizinkan')
+                    Kirim Ulang Form Siap Maju
+                  @elseif ($myUjian && $myUjian->status_dokumen === 'berkas_kurang')
+                    Kirim Ulang Pendaftaran Ujian
+                  @else
+                    Kirim Pendaftaran Ujian ke Koordinator TA
+                  @endif
+                </span>
               </button>
             </div>
+            @if ($myUjian && $myUjian->status_persetujuan_pembimbing === 'tidak_diizinkan' && $myUjian->pengajuan_ulang_setelah?->isFuture())
+              <p class="text-secondary small text-end mb-0">
+                Pengajuan ulang dibuka {{ $myUjian->pengajuan_ulang_setelah->format('d M Y H:i') }}.
+              </p>
+            @endif
           </form>
         </div>
       </div>
@@ -286,7 +332,7 @@
     <div class="card shadow-sm border-light-subtle">
       <div class="card-header bg-white py-3">
         <h2 class="h6 fw-bold text-dark mb-0">Verifikasi Berkas Pendaftaran Ujian (Wewenang Koordinator TA)</h2>
-        <p class="text-secondary small mb-0">Koordinator TA memeriksa kelengkapan administrasi berkas dan naskah sebelum diteruskan ke BAAK.</p>
+        <p class="text-secondary small mb-0">Koordinator TA memeriksa Form Siap Maju berdasarkan persetujuan pembimbing serta kelengkapan berkas sebelum diteruskan ke BAAK.</p>
       </div>
 
       <div class="table-responsive">
@@ -296,7 +342,7 @@
               <th class="py-2.5 px-3">Mahasiswa & NIM</th>
               <th class="py-2.5 px-3">Jenis Ujian</th>
               <th class="py-2.5 px-3">Bundel Berkas</th>
-              <th class="py-2.5 px-3">Status Dokumen</th>
+              <th class="py-2.5 px-3">Form Siap Maju / Status Dokumen</th>
               <th class="py-2.5 px-3 text-end">Aksi Koordinator</th>
             </tr>
           </thead>
@@ -344,6 +390,17 @@
                       <i class="bi bi-chat-left-text me-1"></i>{{ $item->catatan_verifikasi_ta }}
                     </div>
                   @endif
+                  <div class="small mt-1">
+                    <span class="badge {{ $item->status_persetujuan_pembimbing === 'diizinkan' ? 'bg-success-subtle text-success' : ($item->status_persetujuan_pembimbing === 'tidak_diizinkan' ? 'bg-danger-subtle text-danger' : 'bg-warning-subtle text-warning-emphasis') }}">
+                      {{ $item->status_persetujuan_pembimbing === 'diizinkan' ? 'Siap dijadwalkan' : ($item->status_persetujuan_pembimbing === 'tidak_diizinkan' ? 'Belum diizinkan' : 'Menunggu izin pembimbing') }}
+                    </span>
+                    <span class="text-secondary">Batch {{ $item->batch_pengajuan }}</span>
+                  </div>
+                  @if ($item->catatan_persetujuan_pembimbing)
+                    <div class="text-secondary small mt-1 text-truncate" style="max-width: 200px;" title="{{ $item->catatan_persetujuan_pembimbing }}">
+                      <i class="bi bi-chat-left-text me-1"></i>{{ $item->catatan_persetujuan_pembimbing }}
+                    </div>
+                  @endif
                 </td>
                 <td class="px-3 py-3 text-end text-nowrap">
                   @if (auth()->user()->isKoordinator())
@@ -389,7 +446,7 @@
             </tr>
           </thead>
           <tbody>
-            @forelse ($allUjian->where('status_dokumen', 'berkas_lengkap') as $item)
+            @forelse ($allUjian->where('status_dokumen', 'berkas_lengkap')->where('status_persetujuan_pembimbing', 'diizinkan') as $item)
               @php
                 $needsBaakSetup = ! $item->tanggal_ujian || ! $item->dosen_penguji_1_id || ! $item->dosen_penguji_2_id || ! $item->ruangan;
               @endphp
@@ -484,7 +541,7 @@
             <tr>
               <th class="py-2.5 px-3">Mahasiswa & NIM</th>
               <th class="py-2.5 px-3">Jenis Ujian</th>
-              <th class="py-2.5 px-3">Status Berkas</th>
+              <th class="py-2.5 px-3">Status Siap Maju & Berkas</th>
               <th class="py-2.5 px-3">Tanggal Pelaksanaan</th>
               <th class="py-2.5 px-3">Ruangan Ujian</th>
               <th class="py-2.5 px-3 text-end">Status Ujian</th>
@@ -522,6 +579,12 @@
                   @else
                     <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">Menunggu Verifikasi</span>
                   @endif
+                  <div class="small mt-1">
+                    <span class="badge {{ $item->status_persetujuan_pembimbing === 'diizinkan' ? 'bg-success-subtle text-success' : ($item->status_persetujuan_pembimbing === 'tidak_diizinkan' ? 'bg-danger-subtle text-danger' : 'bg-warning-subtle text-warning-emphasis') }}">
+                      {{ $item->status_persetujuan_pembimbing === 'diizinkan' ? 'Form Siap Maju diizinkan' : ($item->status_persetujuan_pembimbing === 'tidak_diizinkan' ? 'Belum diizinkan' : 'Menunggu izin') }}
+                    </span>
+                    <span class="text-secondary">Batch {{ $item->batch_pengajuan }}</span>
+                  </div>
 
                   @if ($item->catatan_verifikasi_ta)
                     <div class="text-secondary small mt-1 text-truncate" style="max-width: 200px;" title="{{ $item->catatan_verifikasi_ta }}">
@@ -571,6 +634,26 @@
             @method('PATCH')
 
             <div class="modal-body p-4 d-flex flex-column gap-3" style="font-size: 0.8125rem;">
+              <div>
+                <label class="form-label fw-semibold text-secondary small mb-2">Keputusan Form Siap Maju (Persetujuan Pembimbing)</label>
+                <div class="d-flex gap-2">
+                  <label class="btn btn-outline-success btn-sm flex-fill d-flex align-items-center justify-content-center gap-2 py-2 cursor-pointer">
+                    <input type="radio" name="status_persetujuan_pembimbing" value="diizinkan" :checked="selectedUjian?.status_persetujuan_pembimbing !== 'tidak_diizinkan'" class="form-check-input mt-0">
+                    <span class="fw-semibold">Diizinkan</span>
+                  </label>
+                  <label class="btn btn-outline-danger btn-sm flex-fill d-flex align-items-center justify-content-center gap-2 py-2 cursor-pointer">
+                    <input type="radio" name="status_persetujuan_pembimbing" value="tidak_diizinkan" :checked="selectedUjian?.status_persetujuan_pembimbing === 'tidak_diizinkan'" class="form-check-input mt-0">
+                    <span class="fw-semibold">Tidak Diizinkan</span>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label class="form-label fw-semibold text-secondary small mb-1">Feedback Pembimbing / Catatan Form Siap Maju</label>
+                <textarea name="catatan_persetujuan_pembimbing" rows="3" placeholder="Wajib diisi jika form belum diizinkan; jelaskan feedback dan perbaikan yang diperlukan..." class="form-control form-control-sm" :value="selectedUjian?.catatan_persetujuan_pembimbing ?? ''"></textarea>
+                <div class="form-text">Jika tidak diizinkan, mahasiswa dapat mengajukan ulang setelah 1 minggu.</div>
+              </div>
+
               <div>
                 <label class="form-label fw-semibold text-secondary small mb-2">Keputusan Kelengkapan Berkas</label>
                 <div class="d-flex gap-2">

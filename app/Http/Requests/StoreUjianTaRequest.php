@@ -17,6 +17,7 @@ class StoreUjianTaRequest extends FormRequest
             'tugas_akhir_id' => ['nullable', 'exists:tugas_akhir,id'],
             'jenis_ujian' => ['required', 'in:seminar_proposal,seminar_ta_1,seminar_hasil,seminar_skripsi'],
             'file_persyaratan' => ['required', 'file', 'mimes:pdf,zip,rar', 'max:35840'],
+            'konfirmasi_persetujuan_pembimbing' => ['accepted'],
         ];
     }
 }
