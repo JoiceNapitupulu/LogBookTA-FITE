@@ -174,17 +174,17 @@
                 <span x-show="!$store.app.sidebarCollapsed" class="truncate">Pustaka Arsip TA</span>
               </button>
 
-              <!-- Screen 7: Panel Eksekutif Kaprodi & Koordinator -->
+              <!-- Screen 7: Panel Koordinator TA -->
               <button @click="$store.app.currentScreen = 'panel_eksekutif'"
                       :class="$store.app.currentScreen === 'panel_eksekutif' ? 'bg-[#EBEBEB] text-[#0A0A0B] font-semibold' : 'text-[#3D3D3F] hover:bg-[#EBEBEB]'"
                       class="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs transition-colors text-left"
-                      title="Panel Eksekutif Kaprodi & Koordinator TA">
+                      title="Panel Koordinator TA">
                 <svg class="w-4 h-4 shrink-0 text-[#2C2C2F]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <line x1="18" y1="20" x2="18" y2="10"></line>
                   <line x1="12" y1="20" x2="12" y2="4"></line>
                   <line x1="6" y1="20" x2="6" y2="14"></line>
                 </svg>
-                <span x-show="!$store.app.sidebarCollapsed" class="truncate">Panel Eksekutif</span>
+                <span x-show="!$store.app.sidebarCollapsed" class="truncate">Panel Koordinator</span>
               </button>
 
             </div>
@@ -341,18 +341,10 @@
                   </div>
                 </button>
 
-                <button @click="$store.app.setRole('kaprodi')" class="w-full text-left p-2 rounded hover:bg-[#F5F5F5] transition-colors flex items-start gap-2">
-                  <span class="w-2 h-2 rounded-full mt-1 shrink-0" :class="$store.app.currentRole === 'kaprodi' ? 'bg-[#0A0A0B]' : 'bg-[#CCCCCC]'"></span>
-                  <div>
-                    <p class="font-semibold text-[#0A0A0B]">5. Ketua Program Studi (Kaprodi)</p>
-                    <p class="text-[10px] text-[#5D5D5F]">Tetapkan Koordinator TA & pantau statistik kelulusan</p>
-                  </div>
-                </button>
-
                 <button @click="$store.app.setRole('ta')" class="w-full text-left p-2 rounded hover:bg-[#F5F5F5] transition-colors flex items-start gap-2">
                   <span class="w-2 h-2 rounded-full mt-1 shrink-0" :class="$store.app.currentRole === 'ta' ? 'bg-[#0A0A0B]' : 'bg-[#CCCCCC]'"></span>
                   <div>
-                    <p class="font-semibold text-[#0A0A0B]">6. Teaching Assistant (TA)</p>
+                    <p class="font-semibold text-[#0A0A0B]">5. Teaching Assistant (TA)</p>
                     <p class="text-[10px] text-[#5D5D5F]">Verifikasi artefak ujian & unggah arsip naskah alumni</p>
                   </div>
                 </button>
@@ -360,7 +352,7 @@
                 <button @click="$store.app.setRole('baak')" class="w-full text-left p-2 rounded hover:bg-[#F5F5F5] transition-colors flex items-start gap-2">
                   <span class="w-2 h-2 rounded-full mt-1 shrink-0" :class="$store.app.currentRole === 'baak' ? 'bg-[#0A0A0B]' : 'bg-[#CCCCCC]'"></span>
                   <div>
-                    <p class="font-semibold text-[#0A0A0B]">7. BAAK IT Del</p>
+                    <p class="font-semibold text-[#0A0A0B]">6. BAAK IT Del</p>
                     <p class="text-[10px] text-[#5D5D5F]">Atur ruangan ujian (GD 514, dll), jam & link Zoom</p>
                   </div>
                 </button>

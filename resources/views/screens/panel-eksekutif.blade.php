@@ -1,4 +1,4 @@
-{{-- Screen 7: Panel Eksekutif Kaprodi & Koordinator TA --}}
+{{-- Screen 7: Panel Monitoring Koordinator TA --}}
 <div x-show="$store.app.currentScreen === 'panel_eksekutif'" 
      x-data="{ 
        activeProdiTab: 'all',
@@ -11,16 +11,16 @@
      }"
      class="p-6 max-w-7xl mx-auto space-y-6">
 
-  <!-- Header Banner Eksekutif Kaprodi & Koordinator -->
+  <!-- Header Banner Koordinator TA -->
   <div class="bg-[#FFFFFF] border border-[#E0E0E0] rounded-xl p-6 shadow-sm">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
         <div class="flex items-center gap-2 mb-2">
-          <span class="pill-neutral text-xs">Pimpinan FITE IT Del</span>
+          <span class="pill-neutral text-xs">Fakultas Informatika & Teknik Elektro</span>
           <span class="pill-approved text-xs">Monitoring Mutu Akademik</span>
         </div>
-        <h1 class="text-xl md:text-2xl font-bold text-[#0A0A0B]">Panel Eksekutif & Statistik Kelulusan TA</h1>
-        <p class="text-xs text-[#5D5D5F] mt-1">Laporan analitik, sebaran progres bab mahasiswa per angkatan, dan pengelolaan penetapan Koordinator TA.</p>
+        <h1 class="text-xl md:text-2xl font-bold text-[#0A0A0B]">Panel Monitoring & Statistik Kelulusan TA</h1>
+        <p class="text-xs text-[#5D5D5F] mt-1">Laporan analitik, sebaran progres bab mahasiswa per angkatan, dan daftar penugasan Koordinator TA.</p>
       </div>
 
       <div class="flex items-center gap-2">
@@ -77,19 +77,16 @@
     </div>
   </div>
 
-  <!-- BAGIAN KHUSUS KAPRODI: Penetapan Koordinator TA -->
+  <!-- BAGIAN KOORDINATOR TA: Daftar Penugasan Koordinator Program Studi -->
   <div class="bg-[#FFFFFF] border border-[#E0E0E0] rounded-xl overflow-hidden shadow-sm">
     <div class="p-5 border-b border-[#E0E0E0] flex flex-col md:flex-row md:items-center justify-between gap-3">
       <div>
         <div class="flex items-center gap-2">
-          <h2 class="text-base font-semibold text-[#0A0A0B]">Pengelolaan & Penetapan Koordinator Tugas Akhir</h2>
-          <span class="pill-neutral text-xs">Otoritas Ketua Program Studi (Kaprodi)</span>
+          <h2 class="text-base font-semibold text-[#0A0A0B]">Daftar Koordinator Tugas Akhir per Program Studi</h2>
+          <span class="pill-neutral text-xs">Struktur Program Studi FITE</span>
         </div>
-        <p class="text-xs text-[#5D5D5F] mt-0.5">Kaprodi menetapkan dosen aktif sebagai Koordinator TA untuk mengelola penunjukan pembimbing dan penjadwalan ujian program studi</p>
+        <p class="text-xs text-[#5D5D5F] mt-0.5">Daftar penugasan resmi dosen sebagai Koordinator TA untuk mengelola penunjukan pembimbing dan penjadwalan ujian program studi FITE</p>
       </div>
-      <button @click="$store.app.openModal('assignCoordinator')" class="btn-primary text-xs py-2 px-3">
-        + Angkat Koordinator Baru
-      </button>
     </div>
 
     <div class="overflow-x-auto">
