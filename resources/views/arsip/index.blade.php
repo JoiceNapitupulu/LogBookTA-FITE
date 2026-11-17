@@ -29,7 +29,10 @@
   <div class="card shadow-sm border-light-subtle">
     <div class="card-body p-3 p-md-4">
       <form method="GET" action="{{ route('arsip.index') }}" class="d-flex flex-column gap-3">
-        
+        @if (request('prodi') && request('prodi') !== 'all')
+          <input type="hidden" name="prodi" value="{{ request('prodi') }}">
+        @endif
+
         <!-- Big Search Input -->
         <div class="input-group">
           <span class="input-group-text bg-light border-end-0 text-secondary">
@@ -42,7 +45,7 @@
 
         <!-- Filter Pills Row -->
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pt-1" style="font-size: 0.8125rem;">
-          
+
           <!-- Filter Prodi Pills -->
           <div class="d-flex flex-wrap align-items-center gap-1.5">
             <span class="text-secondary fw-semibold me-1">Program Studi:</span>
@@ -118,8 +121,8 @@
               </td>
               <td class="px-3 py-3" style="max-width: 220px;">
                 <div class="d-flex flex-wrap gap-1">
-                  @foreach (explode(',', $item->kata_kunci) as $kw)
-                    <span class="badge bg-light text-secondary border">{{ trim($kw) }}</span>
+                  @foreach (array_filter(array_map('trim', explode(',', (string) $item->kata_kunci))) as $kw)
+                    <span class="badge bg-light text-secondary border">{{ $kw }}</span>
                   @endforeach
                 </div>
               </td>
@@ -132,8 +135,16 @@
             </tr>
           @empty
             <tr>
-              <td colspan="6" class="py-4 text-center text-secondary">
-                Tidak ada arsip yang sesuai dengan kriteria pencarian.
+              <td colspan="6" class="py-5 text-center">
+                <i class="bi bi-journal-x fs-2 text-secondary d-block mb-2"></i>
+                <p class="fw-semibold text-dark mb-1">
+                  {{ request()->hasAny(['q', 'prodi', 'tahun']) ? 'Tidak ada arsip yang sesuai dengan kriteria pencarian.' : 'Belum ada arsip tugas akhir.' }}
+                </p>
+                @if (request()->hasAny(['q', 'prodi', 'tahun']))
+                  <a href="{{ route('arsip.index') }}" class="btn btn-outline-dark btn-sm mt-2">Reset Filter</a>
+                @elseif (auth()->user()->isTA())
+                  <p class="text-secondary small mb-0">Klik "Unggah Arsip Tugas Akhir" untuk menambahkan naskah pertama.</p>
+                @endif
               </td>
             </tr>
           @endforelse
@@ -153,7 +164,7 @@
   <div x-show="uploadModal" x-cloak class="modal-backdrop-custom">
     <div class="modal-dialog modal-dialog-centered w-100 mx-3" style="max-width: 540px;" @click.away="uploadModal = false">
       <div class="modal-content bg-white shadow-lg border-0 rounded-3">
-        
+
         <div class="modal-header border-bottom py-3 px-4">
           <div>
             <h5 class="modal-title fs-6 fw-bold text-dark mb-0">Unggah Naskah Arsip Tugas Akhir</h5>

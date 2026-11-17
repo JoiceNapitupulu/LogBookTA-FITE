@@ -110,69 +110,69 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 4. Kaprodi S1 Sistem Informasi (1 Kaprodi per Prodi)
-        $userKaprodi = User::updateOrCreate(
-            ['email' => 'kaprodi@del.ac.id'],
-            [
-                'name' => 'Dr. Arnaldo Marulitua Sinaga, S.T., M.InfoTech.',
-                'password' => $defaultPassword,
-                'role' => 'kaprodi',
-                'email_verified_at' => now(),
-            ]
-        );
-
-        $kaprodiProfile = DosenProfile::updateOrCreate(
-            ['user_id' => $userKaprodi->id],
-            [
-                'nidn' => '0102067801',
-                'kode_dosen' => 'AMS',
-                'prodi' => 'S1 Sistem Informasi',
-                'is_koordinator_ta' => false,
-                'is_kaprodi' => true,
-            ]
-        );
-
-        // 4b. Kaprodi S1 Informatika (1 Kaprodi per Prodi)
-        $userKaprodiIf = User::updateOrCreate(
-            ['email' => 'kaprodi.if@del.ac.id'],
+        // 4. Dosen S1 Informatika
+        $userDosen4 = User::updateOrCreate(
+            ['email' => 'dosen4@del.ac.id'],
             [
                 'name' => 'Dr. Samuel Indra Gunawan, S.T., M.T.',
                 'password' => $defaultPassword,
-                'role' => 'kaprodi',
+                'role' => 'dosen',
                 'email_verified_at' => now(),
             ]
         );
 
-        $kaprodiIfProfile = DosenProfile::updateOrCreate(
-            ['user_id' => $userKaprodiIf->id],
+        $dosen4Profile = DosenProfile::updateOrCreate(
+            ['user_id' => $userDosen4->id],
             [
                 'nidn' => '0112057901',
                 'kode_dosen' => 'SIG',
                 'prodi' => 'S1 Informatika',
                 'is_koordinator_ta' => false,
-                'is_kaprodi' => true,
+                'is_kaprodi' => false,
             ]
         );
 
-        // 4c. Kaprodi S1 Teknik Elektro (1 Kaprodi per Prodi)
-        $userKaprodiTe = User::updateOrCreate(
-            ['email' => 'kaprodi.te@del.ac.id'],
+        // 4b. Dosen S1 Teknik Elektro
+        $userDosenTe = User::updateOrCreate(
+            ['email' => 'dosen.te@del.ac.id'],
             [
                 'name' => 'Dr. Parman Sukses, S.T., M.Sc.',
                 'password' => $defaultPassword,
-                'role' => 'kaprodi',
+                'role' => 'dosen',
                 'email_verified_at' => now(),
             ]
         );
 
-        $kaprodiTeProfile = DosenProfile::updateOrCreate(
-            ['user_id' => $userKaprodiTe->id],
+        $dosenTeProfile = DosenProfile::updateOrCreate(
+            ['user_id' => $userDosenTe->id],
             [
                 'nidn' => '0109048102',
                 'kode_dosen' => 'PSS',
                 'prodi' => 'S1 Teknik Elektro',
                 'is_koordinator_ta' => false,
-                'is_kaprodi' => true,
+                'is_kaprodi' => false,
+            ]
+        );
+
+        // 4c. Dosen S1 Sistem Informasi (pengganti Kaprodi lama)
+        $userDosen5 = User::updateOrCreate(
+            ['email' => 'dosen5@del.ac.id'],
+            [
+                'name' => 'Dr. Arnaldo Marulitua Sinaga, S.T., M.InfoTech.',
+                'password' => $defaultPassword,
+                'role' => 'dosen',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $dosen5Profile = DosenProfile::updateOrCreate(
+            ['user_id' => $userDosen5->id],
+            [
+                'nidn' => '0102067801',
+                'kode_dosen' => 'AMS',
+                'prodi' => 'S1 Sistem Informasi',
+                'is_koordinator_ta' => false,
+                'is_kaprodi' => false,
             ]
         );
 
@@ -372,7 +372,7 @@ class DatabaseSeeder extends Seeder
         $tugasAkhir3 = TugasAkhir::updateOrCreate(
             ['mahasiswa_id' => $mhsTaProfile5->id],
             [
-                'dosen_pembimbing_1_id' => $kaprodiProfile->id,
+                'dosen_pembimbing_1_id' => $dosenTeProfile->id,
                 'dosen_pembimbing_2_id' => $dosen1Profile->id,
                 'judul' => 'Rancang Bangun Sistem Monitoring Daya Panel Surya Berbasis ESP32 dan Protokol MQTT pada Laboratorium Energi Terbarukan',
                 'abstrak' => 'Implementasi sistem sensor telemetri tegangan dan arus sel surya untuk analisis efisiensi konversi daya secara real-time.',
@@ -520,7 +520,7 @@ class DatabaseSeeder extends Seeder
                 'verified_by_ta_id' => $userDosen1->id,
                 'catatan_verifikasi_ta' => 'Semua berkas fisik dan digital telah diperiksa lengkap & valid oleh Koordinator TA FITE.',
                 'tanggal_ujian' => now()->addDays(8)->toDateString(),
-                'dosen_penguji_1_id' => $kaprodiProfile->id,
+                'dosen_penguji_1_id' => $dosen5Profile->id,
                 'dosen_penguji_2_id' => $dosen2Profile->id,
                 'jam_mulai' => '09:00:00',
                 'jam_selesai' => '11:00:00',
