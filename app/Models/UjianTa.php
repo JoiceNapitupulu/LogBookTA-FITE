@@ -17,6 +17,10 @@ class UjianTa extends Model
         'jenis_ujian',
         'file_persyaratan',
         'status_dokumen',
+        'status_persetujuan_pembimbing',
+        'catatan_persetujuan_pembimbing',
+        'batch_pengajuan',
+        'pengajuan_ulang_setelah',
         'verified_by_ta_id',
         'catatan_verifikasi_ta',
         'tanggal_ujian',
@@ -33,6 +37,8 @@ class UjianTa extends Model
     {
         return [
             'tanggal_ujian' => 'date',
+            'batch_pengajuan' => 'integer',
+            'pengajuan_ulang_setelah' => 'datetime',
             'dosen_penguji_1_id' => 'integer',
             'dosen_penguji_2_id' => 'integer',
         ];
@@ -97,7 +103,9 @@ class UjianTa extends Model
      */
     public function scopeMenungguFasilitas($query)
     {
-        return $query->whereNotNull('tanggal_ujian')->whereNull('ruangan');
+        return $query->where('status_persetujuan_pembimbing', 'diizinkan')
+            ->whereNotNull('tanggal_ujian')
+            ->whereNull('ruangan');
     }
 
     /**
@@ -105,6 +113,8 @@ class UjianTa extends Model
      */
     public function scopeSiapJadwal($query)
     {
-        return $query->where('status_dokumen', 'berkas_lengkap')->whereNull('tanggal_ujian');
+        return $query->where('status_dokumen', 'berkas_lengkap')
+            ->where('status_persetujuan_pembimbing', 'diizinkan')
+            ->whereNull('tanggal_ujian');
     }
 }
