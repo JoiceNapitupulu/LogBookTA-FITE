@@ -9,15 +9,21 @@ use App\Models\Logbook;
 use App\Models\MahasiswaProfile;
 use App\Models\TugasAkhir;
 use App\Models\UjianTa;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request): View|RedirectResponse
     {
         $user = Auth::user();
+
+        // Mahasiswa Non-TA langsung diarahkan ke Pustaka Arsip
+        if ($user->isMahasiswaNonTa()) {
+            return redirect()->route('arsip.index');
+        }
 
         // 1. Context data for Mahasiswa
         $mahasiswaProfile = null;
@@ -39,6 +45,7 @@ class DashboardController extends Controller
                     'janjiBimbingan' => fn ($q) => $q->with('dosen.user')->latest('tanggal_waktu'),
                     'ujianTa' => fn ($q) => $q->with('verifiedByTa')->latest(),
                 ]);
+
                 $logbooks = $tugasAkhir->logbooks;
                 $janjiBimbingan = $tugasAkhir->janjiBimbingan;
                 $ujianTa = $tugasAkhir->ujianTa->first();
@@ -53,6 +60,7 @@ class DashboardController extends Controller
 
         if ($user->isDosen()) {
             $dosenProfile = $user->dosenProfile ?? DosenProfile::where('user_id', $user->id)->first();
+
             if ($dosenProfile) {
                 $mahasiswaBimbingan = $dosenProfile->tugasAkhirBimbingan()
                     ->with([
@@ -65,6 +73,7 @@ class DashboardController extends Controller
                     ->get();
 
                 $tugasAkhirIds = $mahasiswaBimbingan->pluck('id');
+
                 $pendingReviewsCount = Logbook::whereIn('tugas_akhir_id', $tugasAkhirIds)
                     ->where('status_verifikasi', 'pending')
                     ->count();
@@ -83,6 +92,7 @@ class DashboardController extends Controller
         $pendingUjianCount = UjianTa::menungguVerifikasi()->count();
         $unassignedExamsCount = UjianTa::siapJadwal()->count();
         $unscheduledBaakCount = UjianTa::menungguFasilitas()->count();
+
         $menungguAssignCount = TugasAkhir::whereNull('dosen_pembimbing_1_id')->count() +
             MahasiswaProfile::where('is_ta', true)->whereDoesntHave('tugasAkhir')->count();
 

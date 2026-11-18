@@ -15,6 +15,12 @@ class AuthController extends Controller
     public function login(): View|RedirectResponse
     {
         if (Auth::check()) {
+            $user = Auth::user();
+
+            if ($user->isMahasiswaNonTa()) {
+                return redirect()->route('arsip.index');
+            }
+
             return redirect()->route('dashboard');
         }
 
@@ -38,6 +44,7 @@ class AuthController extends Controller
         // 2. Jika bukan email, cek via NIM Mahasiswa
         if (! $user) {
             $mhs = MahasiswaProfile::where('nim', $loginInput)->first();
+
             if ($mhs) {
                 $user = $mhs->user;
             }
@@ -48,6 +55,7 @@ class AuthController extends Controller
             $dosen = DosenProfile::where('kode_dosen', $loginInput)
                 ->orWhere('nidn', $loginInput)
                 ->first();
+
             if ($dosen) {
                 $user = $dosen->user;
             }
@@ -56,8 +64,19 @@ class AuthController extends Controller
         if ($user && Auth::attempt(['email' => $user->email, 'password' => $password], $remember)) {
             $request->session()->regenerate();
 
+            $authenticatedUser = Auth::user();
+
+            // Mahasiswa Non-TA langsung menuju Pustaka Arsip
+            if ($authenticatedUser->isMahasiswaNonTa()) {
+                return redirect()->route('arsip.index')
+                    ->with('success', 'Selamat datang di Pustaka Arsip Tugas Akhir.');
+            }
+
             return redirect()->intended(route('dashboard'))
-                ->with('success', 'Selamat datang di Workspace Tugas Akhir FITE IT Del, ' . Auth::user()->name);
+                ->with(
+                    'success',
+                    'Selamat datang di Workspace Tugas Akhir FITE IT Del, ' . $authenticatedUser->name
+                );
         }
 
         return back()->withErrors([
@@ -66,7 +85,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Demo login helper for presentation and testing
+     * Demo login helper for presentation and testing.
      */
     public function demoLogin(string $role): RedirectResponse
     {
@@ -81,7 +100,8 @@ class AuthController extends Controller
         ];
 
         if (! isset($emailMap[$role])) {
-            return redirect()->route('login')->withErrors(['username' => 'Demo role tidak tersedia.']);
+            return redirect()->route('login')
+                ->withErrors(['username' => 'Demo role tidak tersedia.']);
         }
 
         $email = $emailMap[$role];
@@ -90,6 +110,12 @@ class AuthController extends Controller
         if ($user) {
             Auth::login($user);
             request()->session()->regenerate();
+
+            // Demo login Mahasiswa Non-TA langsung menuju Pustaka Arsip
+            if ($user->isMahasiswaNonTa()) {
+                return redirect()->route('arsip.index')
+                    ->with('success', 'Beralih peran ke: ' . $user->name . ' (MAHASISWA NON-TA)');
+            }
 
             return redirect()->route('dashboard')
                 ->with('success', 'Beralih peran ke: ' . $user->name . ' (' . strtoupper($user->role) . ')');
@@ -101,6 +127,7 @@ class AuthController extends Controller
     public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
