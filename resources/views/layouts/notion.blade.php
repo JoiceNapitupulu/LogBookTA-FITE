@@ -328,12 +328,12 @@
               @endif
 
               @if (auth()->check() && !auth()->user()->isMahasiswaNonTa())
-              <!-- Manajemen Ujian TA -->
+              <!-- Manajemen Seminar TA -->
               <a href="{{ route('ujian.index') }}" 
                  class="nav-link-academic {{ request()->routeIs('ujian.*') ? 'active' : '' }}"
-                 title="Manajemen Ujian TA">
+                 title="Manajemen Seminar TA">
                 <i class="bi bi-mortarboard text-center" style="width: 18px;"></i>
-                <span x-show="sidebarOpen" class="text-truncate">Manajemen Ujian TA</span>
+                <span x-show="sidebarOpen" class="text-truncate">Manajemen Seminar TA</span>
               </a>
               @endif
             </div>
