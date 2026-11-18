@@ -1,7 +1,7 @@
 @extends('layouts.notion')
 
-@section('title', 'Manajemen Ujian TA')
-@section('breadcrumb', 'Ujian TA')
+@section('title', 'Manajemen Seminar TA')
+@section('breadcrumb', 'Seminar TA')
 
 @section('content')
 <div class="d-flex flex-column gap-3" x-data="{ 
@@ -22,7 +22,7 @@
   <!-- Header Halaman Akademik -->
   <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 pb-3 border-bottom">
     <div>
-      <h1 class="h4 fw-bold text-dark mb-1">Alur Pendaftaran & Manajemen Ujian TA</h1>
+      <h1 class="h4 fw-bold text-dark mb-1">Alur Pendaftaran & Manajemen Seminar TA</h1>
       <p class="text-secondary small mb-0">Kolaborasi terintegrasi: Mahasiswa TA (Form Siap Maju) &rarr; Koordinator TA (Izin Pembimbing & Verifikasi Berkas) &rarr; BAAK (Jadwal, Penguji & Fasilitas Ruangan).</p>
     </div>
 
@@ -531,7 +531,7 @@
   <div x-show="activeTab === 'ta'" class="d-flex flex-column gap-3">
     <div class="card shadow-sm border-light-subtle">
       <div class="card-header bg-white py-3">
-        <h2 class="h6 fw-bold text-dark mb-0">Pantauan Administrasi & Jadwal Ujian TA (Monitoring)</h2>
+        <h2 class="h6 fw-bold text-dark mb-0">Pantauan Administrasi & Jadwal Seminar TA (Monitoring)</h2>
         <p class="text-secondary small mb-0">Pemantauan menyeluruh alur pendaftaran ujian seluruh mahasiswa FITE (Read-only).</p>
       </div>
 
