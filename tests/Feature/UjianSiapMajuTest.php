@@ -86,6 +86,9 @@ class UjianSiapMajuTest extends TestCase
             'tanggal_ujian' => now()->addDays(10)->toDateString(),
             'dosen_penguji_1_id' => $coordinator->dosenProfile->id,
             'dosen_penguji_2_id' => $secondExaminer->id,
+            'ruangan' => 'Ruang Seminar 1',
+            'jam_mulai' => '09:00',
+            'jam_selesai' => '11:00',
         ])->assertSessionHas('success');
 
         $this->assertDatabaseHas('ujian_ta', [
