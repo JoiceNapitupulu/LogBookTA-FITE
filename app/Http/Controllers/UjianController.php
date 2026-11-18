@@ -236,9 +236,9 @@ class UjianController extends Controller
             'tanggal_ujian' => ['required', 'date'],
             'dosen_penguji_1_id' => ['required', 'exists:dosen_profiles,id'],
             'dosen_penguji_2_id' => ['required', 'exists:dosen_profiles,id', 'different:dosen_penguji_1_id'],
-            'ruangan' => ['nullable', 'string', 'max:100'],
-            'jam_mulai' => ['nullable'],
-            'jam_selesai' => ['nullable'],
+            'ruangan' => ['required', 'string', 'max:100'],
+            'jam_mulai' => ['required', 'date_format:H:i'],
+            'jam_selesai' => ['required', 'date_format:H:i', 'after:jam_mulai'],
             'link_zoom' => ['nullable', 'url', 'max:255'],
         ], [
             'tanggal_ujian.required' => 'Tanggal pelaksanaan ujian wajib ditentukan.',
@@ -247,6 +247,12 @@ class UjianController extends Controller
             'dosen_penguji_2_id.required' => 'Dosen Penguji 2 wajib dipilih.',
             'dosen_penguji_2_id.exists' => 'Dosen Penguji 2 tidak valid.',
             'dosen_penguji_2_id.different' => 'Dosen Penguji 1 dan Dosen Penguji 2 harus merupakan dosen yang berbeda.',
+            'ruangan.required' => 'Ruangan ujian/sidang wajib dipilih.',
+            'jam_mulai.required' => 'Jam mulai ujian/sidang wajib diisi.',
+            'jam_mulai.date_format' => 'Format jam mulai tidak valid.',
+            'jam_selesai.required' => 'Jam selesai ujian/sidang wajib diisi.',
+            'jam_selesai.date_format' => 'Format jam selesai tidak valid.',
+            'jam_selesai.after' => 'Jam selesai harus setelah jam mulai.',
         ]);
 
         DB::transaction(function () use ($validated, $ujian) {
@@ -274,7 +280,7 @@ class UjianController extends Controller
         });
 
         return redirect()->back()
-            ->with('success', 'Tanggal pelaksanaan ujian, 2 Dosen Penguji, dan fasilitas berhasil diterbitkan oleh BAAK IT Del.');
+            ->with('success', 'Tanggal pelaksanaan ujian, 2 Dosen Penguji, dan fasilitas berhasil diterbitkan oleh BAAK ITDel.');
     }
 
     public function alokasiFasilitas(Request $request, UjianTa $ujian): RedirectResponse
@@ -300,23 +306,26 @@ class UjianController extends Controller
             return redirect()->back()->with('error', 'Alokasi fasilitas gagal: Dosen Penguji 1 dan Dosen Penguji 2 belum ditetapkan.');
         }
 
-        $request->validate([
+        $validated = $request->validate([
             'ruangan' => ['required', 'string', 'max:100'],
-            'jam_mulai' => ['required'],
-            'jam_selesai' => ['required'],
+            'jam_mulai' => ['required', 'date_format:H:i'],
+            'jam_selesai' => ['required', 'date_format:H:i', 'after:jam_mulai'],
             'link_zoom' => ['nullable', 'url', 'max:255'],
         ], [
             'ruangan.required' => 'Ruangan ujian/sidang wajib dipilih.',
             'jam_mulai.required' => 'Jam mulai ujian/sidang wajib diisi.',
+            'jam_mulai.date_format' => 'Format jam mulai tidak valid.',
             'jam_selesai.required' => 'Jam selesai ujian/sidang wajib diisi.',
+            'jam_selesai.date_format' => 'Format jam selesai tidak valid.',
+            'jam_selesai.after' => 'Jam selesai harus setelah jam mulai.',
         ]);
 
-        DB::transaction(function () use ($request, $ujian) {
+        DB::transaction(function () use ($validated, $ujian) {
             $ujian->update([
-                'ruangan' => $request->ruangan,
-                'jam_mulai' => $request->jam_mulai,
-                'jam_selesai' => $request->jam_selesai,
-                'link_zoom' => $request->link_zoom,
+                'ruangan' => $validated['ruangan'],
+                'jam_mulai' => $validated['jam_mulai'],
+                'jam_selesai' => $validated['jam_selesai'],
+                'link_zoom' => $validated['link_zoom'] ?? null,
             ]);
         });
 
