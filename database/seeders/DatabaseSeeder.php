@@ -394,6 +394,47 @@ class DatabaseSeeder extends Seeder
             ['tugas_akhir_id' => $tugasAkhir3->id]
         );
 
+        // 9b. Mahasiswa TA Aktif yang Sedang Mencari Topik (Belum Memiliki Tugas Akhir)
+        $userMhsTopik = User::updateOrCreate(
+            ['email' => 'mhs.topik@students.del.ac.id'],
+            [
+                'name' => 'Nia Silalahi',
+                'password' => $defaultPassword,
+                'role' => 'mahasiswa',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $mhsTopikProfile = MahasiswaProfile::updateOrCreate(
+            ['user_id' => $userMhsTopik->id],
+            [
+                'nim' => '11S21099',
+                'prodi' => 'S1 Informatika',
+                'angkatan' => 2021,
+                'is_ta' => true,
+            ]
+        );
+
+        $userMhsTopik2 = User::updateOrCreate(
+            ['email' => 'mhs.topik2@students.del.ac.id'],
+            [
+                'name' => 'Willem Sinaga',
+                'password' => $defaultPassword,
+                'role' => 'mahasiswa',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $mhsTopik2Profile = MahasiswaProfile::updateOrCreate(
+            ['user_id' => $userMhsTopik2->id],
+            [
+                'nim' => '12S21088',
+                'prodi' => 'S1 Sistem Informasi',
+                'angkatan' => 2021,
+                'is_ta' => true,
+            ]
+        );
+
         // Logbook Ruth Simanjuntak
         Logbook::updateOrCreate(
             ['tugas_akhir_id' => $tugasAkhir2->id, 'bab_progress' => 'BAB 1'],
@@ -644,9 +685,9 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Proposal 1: Mahasiswa Joy Christine mengajukan Topik 1 (Status: diajukan)
+        // Proposal 1: Mahasiswa Willem Sinaga (Mhs TA Pencari Topik SI) mengajukan Topik 1 (Status: diajukan)
         ProposalTa::updateOrCreate(
-            ['topik_ta_id' => $topik1->id, 'mahasiswa_id' => $mhsTaProfile4->id],
+            ['topik_ta_id' => $topik1->id, 'mahasiswa_id' => $mhsTopik2Profile->id],
             [
                 'judul_proposal' => 'Penerapan Domain EDM dan APO COBIT 2019 pada Digitalisasi UMKM Produk Olahan Kopi',
                 'link_ecourse' => 'https://ecourse.del.ac.id/mod/assign/view.php?id=1204',
@@ -655,9 +696,9 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Proposal 2: Mahasiswa Daniel Siregar mengajukan Topik 3 (Status: diajukan, tahap 1 sudah selesai jadi dosen bisa memutuskan lolos/tidak)
+        // Proposal 2: Mahasiswa Nia Silalahi (Mhs TA Pencari Topik IF) mengajukan Topik 3 (Status: diajukan, tahap 1 sudah selesai jadi dosen bisa memutuskan lolos/tidak)
         ProposalTa::updateOrCreate(
-            ['topik_ta_id' => $topik3->id, 'mahasiswa_id' => $mhsTaProfile3->id],
+            ['topik_ta_id' => $topik3->id, 'mahasiswa_id' => $mhsTopikProfile->id],
             [
                 'judul_proposal' => 'Implementasi LightGBM dan Seleksi Fitur Information Gain untuk Deteksi DDoS Real-Time',
                 'link_ecourse' => 'https://ecourse.del.ac.id/mod/assign/view.php?id=1205',

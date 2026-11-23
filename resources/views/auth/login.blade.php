@@ -96,24 +96,28 @@
               <span class="font-bold text-black block">1. Mahasiswa TA</span>
               <span class="text-gray-500 text-[10px] truncate block">Samuel Siahaan</span>
             </a>
+            <a href="{{ route('demo.login', 'mahasiswa_topik') }}" class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors">
+              <span class="font-bold text-black block">2. Mhs Cari Topik</span>
+              <span class="text-gray-500 text-[10px] truncate block">Nia Silalahi</span>
+            </a>
             <a href="{{ route('demo.login', 'mahasiswa_non_ta') }}" class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors">
-              <span class="font-bold text-black block">2. Mhs Non-TA</span>
+              <span class="font-bold text-black block">3. Mhs Non-TA</span>
               <span class="text-gray-500 text-[10px] truncate block">Yosua Tambunan</span>
             </a>
             <a href="{{ route('demo.login', 'dosen') }}" class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors">
-              <span class="font-bold text-black block">3. Dosen (Koord)</span>
+              <span class="font-bold text-black block">4. Dosen (Koord)</span>
               <span class="text-gray-500 text-[10px] truncate block">Dr. Johannes H.</span>
             </a>
             <a href="{{ route('demo.login', 'dosen2') }}" class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors">
-              <span class="font-bold text-black block">4. Dosen 2</span>
+              <span class="font-bold text-black block">5. Dosen 2</span>
               <span class="text-gray-500 text-[10px] truncate block">Marlina V., M.Sc.</span>
             </a>
             <a href="{{ route('demo.login', 'ta') }}" class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors">
-              <span class="font-bold text-black block">5. Teaching Asst</span>
+              <span class="font-bold text-black block">6. Teaching Asst</span>
               <span class="text-gray-500 text-[10px] truncate block">Grace Panjaitan</span>
             </a>
             <a href="{{ route('demo.login', 'baak') }}" class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors">
-              <span class="font-bold text-black block">6. BAAK IT Del</span>
+              <span class="font-bold text-black block">7. BAAK IT Del</span>
               <span class="text-gray-500 text-[10px] truncate block">Staf BAAK</span>
             </a>
           </div>

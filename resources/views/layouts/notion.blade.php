@@ -301,15 +301,17 @@
                 <span x-show="sidebarOpen" class="text-truncate">Dashboard Utama</span>
               </a>
 
-              @if (auth()->check() && (auth()->user()->isMahasiswaTa() || auth()->user()->isDosen()))
-              <!-- Topik & Proposal TA -->
+              @if (auth()->check() && ((auth()->user()->isMahasiswaTa() && !auth()->user()->tugasAkhir()) || auth()->user()->isDosen()))
+              <!-- Topik & Proposal TA (Hanya untuk Mahasiswa TA yang BELUM memiliki Topik/Tugas Akhir, dan Dosen) -->
               <a href="{{ route('topik.index') }}" 
                  class="nav-link-academic {{ request()->routeIs('topik.*') ? 'active' : '' }}"
                  title="Topik & Proposal TA">
                 <i class="bi bi-lightbulb text-center" style="width: 18px;"></i>
                 <span x-show="sidebarOpen" class="text-truncate">Topik & Proposal TA</span>
               </a>
+              @endif
 
+              @if (auth()->check() && (auth()->user()->isMahasiswaTa() || auth()->user()->isDosen()))
               <!-- Logbook Aktivitas -->
               <a href="{{ route('logbook.index') }}" 
                  class="nav-link-academic {{ request()->routeIs('logbook.*') ? 'active' : '' }}"

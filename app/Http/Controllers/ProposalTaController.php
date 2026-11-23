@@ -38,7 +38,12 @@ class ProposalTaController extends Controller
 
         $mahasiswaProfile = $user->mahasiswaProfile;
 
-        // 3. Cek apakah mahasiswa sudah memiliki proposal yang LOLOS
+        // 3. Cek apakah mahasiswa sudah memiliki Tugas Akhir resmi atau proposal yang LOLOS
+        if ($user->tugasAkhir()) {
+            return redirect()->back()
+                ->with('error', 'Anda telah terdaftar memiliki topik Tugas Akhir resmi yang sedang berjalan. Pengajuan proposal baru ditolak.');
+        }
+
         $hasLolos = ProposalTa::where('mahasiswa_id', $mahasiswaProfile->id)
             ->where('status', 'lolos')
             ->exists();

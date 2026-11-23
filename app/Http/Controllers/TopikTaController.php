@@ -22,6 +22,9 @@ class TopikTaController extends Controller
 
         // 1. Context: Mahasiswa TA (Aturan BLIND: Dosen tidak ditampilkan)
         if ($user->isMahasiswa()) {
+            $tugasAkhir = $user->tugasAkhir();
+            $hasTugasAkhir = $tugasAkhir !== null;
+
             $query = TopikTa::dipublikasikan()->withCount('proposals');
 
             if ($request->filled('prodi') && $request->prodi !== 'semua') {
@@ -51,9 +54,9 @@ class TopikTaController extends Controller
                     ->get();
             }
 
-            $hasAcceptedProposal = $myProposals->contains(fn ($p) => $p->status === 'lolos');
+            $hasAcceptedProposal = $hasTugasAkhir || $myProposals->contains(fn ($p) => $p->status === 'lolos');
 
-            return view('topik.index-mahasiswa', compact('topikList', 'myProposals', 'hasAcceptedProposal'));
+            return view('topik.index-mahasiswa', compact('topikList', 'myProposals', 'hasAcceptedProposal', 'tugasAkhir', 'hasTugasAkhir'));
         }
 
         // 2. Context: Dosen Pembimbing

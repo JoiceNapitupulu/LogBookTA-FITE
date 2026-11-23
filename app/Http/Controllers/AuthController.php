@@ -91,6 +91,7 @@ class AuthController extends Controller
     {
         $emailMap = [
             'mahasiswa_ta' => 'mhs.ta@students.del.ac.id',
+            'mahasiswa_topik' => 'mhs.topik@students.del.ac.id',
             'mahasiswa_non_ta' => 'mhs.nonta@students.del.ac.id',
             'dosen' => 'dosen1@del.ac.id',
             'dosen2' => 'dosen2@del.ac.id',

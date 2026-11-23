@@ -16,6 +16,15 @@ class TopikProposalTest extends TestCase
 {
     use DatabaseTransactions;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (! User::where('email', 'mhs.ta@students.del.ac.id')->exists()) {
+            $this->seed();
+        }
+    }
+
     /**
      * Test 1: Mahasiswa TA melihat topik secara BLIND (nama dosen pemilik TIDAK muncul)
      */
@@ -35,9 +44,10 @@ class TopikProposalTest extends TestCase
             'tahap1_selesai' => false,
         ]);
 
-        $mhsUser = User::where('role', 'mahasiswa')
-            ->whereHas('mahasiswaProfile', fn($q) => $q->where('is_ta', true))
-            ->first();
+        $mhsUser = User::where('email', 'mhs.topik@students.del.ac.id')->first()
+            ?? User::where('role', 'mahasiswa')
+                ->whereHas('mahasiswaProfile', fn($q) => $q->where('is_ta', true))
+                ->first();
         $this->assertNotNull($mhsUser);
 
         $response = $this->actingAs($mhsUser)->get('/topik');
@@ -49,7 +59,7 @@ class TopikProposalTest extends TestCase
     }
 
     /**
-     * Test 2: Mahasiswa TA dapat mengajukan proposal baru
+     * Test 2: Mahasiswa TA yang belum memiliki TA dapat mengajukan proposal baru
      */
     public function test_mahasiswa_ta_dapat_mengajukan_proposal(): void
     {
@@ -65,9 +75,10 @@ class TopikProposalTest extends TestCase
             'tahap1_selesai' => false,
         ]);
 
-        $mhsUser = User::where('role', 'mahasiswa')
-            ->whereHas('mahasiswaProfile', fn($q) => $q->where('is_ta', true))
-            ->first();
+        $mhsUser = User::where('email', 'mhs.topik@students.del.ac.id')->first()
+            ?? User::where('role', 'mahasiswa')
+                ->whereHas('mahasiswaProfile', fn($q) => $q->where('is_ta', true))
+                ->first();
         $mhsProfile = $mhsUser->mahasiswaProfile;
 
         // Pastikan mahasiswa belum punya proposal lolos pada topik ini
@@ -90,6 +101,45 @@ class TopikProposalTest extends TestCase
             'mahasiswa_id' => $mhsProfile->id,
             'judul_proposal' => 'Pengembangan Model Prediksi Mahasiswa',
             'status' => 'diajukan',
+        ]);
+    }
+
+    /**
+     * Test 2b: Mahasiswa yang SUDAH memiliki Topik/Tugas Akhir TIDAK memiliki bagian mengajukan proposal
+     */
+    public function test_mahasiswa_yang_sudah_punya_topik_ta_tidak_memiliki_bagian_mengajukan_proposal(): void
+    {
+        $mhsSudahTa = User::where('email', 'mhs.ta@students.del.ac.id')->first();
+        $this->assertNotNull($mhsSudahTa);
+        $this->assertNotNull($mhsSudahTa->tugasAkhir());
+
+        $response = $this->actingAs($mhsSudahTa)->get('/topik');
+
+        $response->assertStatus(200);
+        // Judul halaman disesuaikan untuk mahasiswa yang sudah punya TA
+        $response->assertSee('Informasi Topik Tugas Akhir');
+        $response->assertSee('Anda Sudah Memiliki Topik Tugas Akhir Resmi');
+        $response->assertSee($mhsSudahTa->tugasAkhir()->judul);
+
+        // Tidak boleh ada tombol ajukan proposal dan modal pengajuan
+        $response->assertDontSee('Ajukan Proposal Topik Ini');
+        $response->assertDontSee('Kirimkan Pengajuan Proposal');
+
+        // Sidebar untuk mahasiswa yang sudah punya TA TIDAK menampilkan menu "Topik & Proposal TA"
+        $response->assertDontSee('title="Topik & Proposal TA"', false);
+
+        // Jika mencoba POST pengajuan proposal, harus ditolak
+        $topik = TopikTa::first();
+        $responsePost = $this->actingAs($mhsSudahTa)
+            ->withSession(['_token' => 'test-csrf-token'])
+            ->post("/topik/{$topik->id}/proposal", [
+                '_token' => 'test-csrf-token',
+                'judul_proposal' => 'Pengajuan Ilegal Mahasiswa Sudah Punya TA',
+            ]);
+
+        $responsePost->assertSessionHas('error');
+        $this->assertDatabaseMissing('proposal_ta', [
+            'judul_proposal' => 'Pengajuan Ilegal Mahasiswa Sudah Punya TA',
         ]);
     }
 
@@ -138,9 +188,10 @@ class TopikProposalTest extends TestCase
             'tahap1_selesai' => true,
         ]);
 
-        $mhsUser = User::where('role', 'mahasiswa')
-            ->whereHas('mahasiswaProfile', fn($q) => $q->where('is_ta', true))
-            ->first();
+        $mhsUser = User::where('email', 'mhs.topik@students.del.ac.id')->first()
+            ?? User::where('role', 'mahasiswa')
+                ->whereHas('mahasiswaProfile', fn($q) => $q->where('is_ta', true))
+                ->first();
         $mhsProfile = $mhsUser->mahasiswaProfile;
 
         // Bersihkan data proposal lama mahasiswa jika ada pada topik ini
