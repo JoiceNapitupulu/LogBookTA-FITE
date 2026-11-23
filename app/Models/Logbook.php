@@ -16,6 +16,7 @@ class Logbook extends Model
         'tugas_akhir_id',
         'tanggal',
         'bab_progress',
+        'bab_progresses',
         'deskripsi_kegiatan',
         'kendala',
         'rencana_berikutnya',
@@ -30,6 +31,7 @@ class Logbook extends Model
     {
         return [
             'tanggal' => 'date',
+            'bab_progresses' => 'array',
         ];
     }
 

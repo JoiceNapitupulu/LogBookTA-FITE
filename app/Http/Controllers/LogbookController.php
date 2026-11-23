@@ -16,6 +16,13 @@ class LogbookController extends Controller
 {
     public function index(Request $request): View
     {
+        $request->validate([
+            'bab' => ['nullable', 'regex:/^(?:[1-7]|BAB [1-7])$/'],
+        ]);
+        $selectedBab = $request->filled('bab')
+            ? (str_starts_with((string) $request->bab, 'BAB ') ? $request->bab : 'BAB '.$request->bab)
+            : null;
+
         $user = Auth::user();
 
         if ($user->isTA() || $user->isBaak()) {
@@ -52,13 +59,16 @@ class LogbookController extends Controller
         if ($request->filled('status')) {
             $query->where('status_verifikasi', $request->status);
         }
-        if ($request->filled('bab')) {
-            $query->where('bab_progress', $request->bab);
+        if ($selectedBab) {
+            $query->where(function ($chapterQuery) use ($selectedBab) {
+                $chapterQuery->whereJsonContains('bab_progresses', $selectedBab)
+                    ->orWhere('bab_progress', $selectedBab);
+            });
         }
 
         $logbooks = $query->latest('tanggal')->paginate(15)->withQueryString();
 
-        return view('logbook.index', compact('logbooks', 'myTa'));
+        return view('logbook.index', compact('logbooks', 'myTa', 'selectedBab'));
     }
 
     public function store(StoreLogbookRequest $request): RedirectResponse
@@ -84,6 +94,7 @@ class LogbookController extends Controller
         }
 
         $validated['tugas_akhir_id'] = $tugasAkhir->id;
+        $validated['bab_progress'] = $validated['bab_progresses'][0];
 
         if ($request->hasFile('file_dokumen_mhs')) {
             $path = $request->file('file_dokumen_mhs')->store('uploads/logbooks', 'public');

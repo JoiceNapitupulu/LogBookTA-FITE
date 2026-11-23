@@ -16,7 +16,8 @@ class StoreLogbookRequest extends FormRequest
         return [
             'tugas_akhir_id' => ['nullable', 'exists:tugas_akhir,id'],
             'tanggal' => ['required', 'date'],
-            'bab_progress' => ['required', 'in:BAB 1,BAB 2,BAB 3,BAB 4,BAB 5,Pengujian,Lainnya'],
+            'bab_progresses' => ['required', 'array', 'min:1'],
+            'bab_progresses.*' => ['required', 'string', 'distinct', 'in:BAB 1,BAB 2,BAB 3,BAB 4,BAB 5,BAB 6,BAB 7,Pengujian,Lainnya'],
             'deskripsi_kegiatan' => ['required', 'string'],
             'kendala' => ['nullable', 'string'],
             'rencana_berikutnya' => ['nullable', 'string'],
