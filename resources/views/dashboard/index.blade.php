@@ -165,117 +165,106 @@
         </div>
       </div>
 
-      <!-- Stepper Horizontal Pencapaian BAB TA -->
+      <!-- Stepper Horizontal Pencapaian 10 Tahapan Resmi Tugas Akhir -->
       <div class="card shadow-sm border-light-subtle mb-4">
         <div class="card-body p-3 p-md-4">
-          <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-3">
             <div>
-              <h3 class="h6 fw-bold text-dark mb-0">Tahapan Capaian Bab Tugas Akhir</h3>
-              <p class="text-secondary small mb-0">Pelacakan progres tahapan naskah dari Proposal hingga Sidang Akhir.</p>
+              <h3 class="h6 fw-bold text-dark mb-0">Tahapan Progres Tugas Akhir (10 Tahap Resmi)</h3>
+              <p class="text-secondary small mb-0">Pantau pencapaian 10 tahapan resmi FITE. Klik setiap tahap untuk mengakses logbook atau berkas seminar terkait.</p>
             </div>
-            <span class="badge bg-light text-dark border py-1.5 px-2.5">
-              Status: {{ strtoupper($tugasAkhir->status) }}
-            </span>
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge bg-light text-dark border py-1.5 px-2.5" style="font-size: 0.75rem;">
+                Status TA: {{ strtoupper($tugasAkhir->status) }}
+              </span>
+            </div>
           </div>
 
-          <div class="row g-2 text-center" style="font-size: 0.75rem;">
-            @php
-              $steps = [
-                [
-                  'step' => 'Tahap 1',
-                  'name' => 'Proposal',
-                  'status' => in_array($tugasAkhir->status, ['sempro', 'seminar_ta', 'sidang_akhir', 'selesai']) ? 'approved' : ($tugasAkhir->status === 'proposal' ? 'in_progress' : 'empty'),
-                  'label' => in_array($tugasAkhir->status, ['sempro', 'seminar_ta', 'sidang_akhir', 'selesai']) ? 'Lulus Sempro' : ($tugasAkhir->status === 'proposal' ? 'Pengajuan' : 'Belum Mulai'),
-                ],
-              ];
-
-              foreach (['BAB 1', 'BAB 2', 'BAB 3', 'BAB 4', 'BAB 5'] as $idx => $bName) {
-                $logsForBab = $logbooks->filter(fn($l) => in_array($bName, $l->bab_progresses ?: [$l->bab_progress]));
-                if ($bName === 'BAB 5') {
-                  $logsForBab = $logbooks->filter(fn($l) => count(array_intersect(['BAB 5', 'Pengujian'], $l->bab_progresses ?: [$l->bab_progress])) > 0);
-                }
-
-                $isApproved = $logsForBab->where('status_verifikasi', 'disetujui')->isNotEmpty();
-                $isRevisi = $logsForBab->where('status_verifikasi', 'revisi')->isNotEmpty();
-                $isPending = $logsForBab->where('status_verifikasi', 'pending')->isNotEmpty();
-
-                if ($isApproved) {
-                  $sStatus = 'approved';
-                  $sLabel = 'Disetujui';
-                } elseif ($isRevisi) {
-                  $sStatus = 'revision';
-                  $sLabel = 'Perlu Revisi';
-                } elseif ($isPending) {
-                  $sStatus = 'pending';
-                  $sLabel = 'Menunggu Evaluasi';
-                } else {
-                  $sStatus = 'empty';
-                  $sLabel = 'Belum Ada Entri';
-                }
-
-                $steps[] = [
-                  'step' => 'Tahap ' . ($idx + 2),
-                  'name' => $bName,
-                  'filter' => $bName,
-                  'status' => $sStatus,
-                  'label' => $sLabel,
-                ];
-              }
-
-              // Final: Sidang Akhir
-              $sidangStatus = 'empty';
-              $sidangLabel = 'Terkunci';
-              if ($tugasAkhir->status === 'selesai') {
-                $sidangStatus = 'approved';
-                $sidangLabel = 'Lulus Sidang';
-              } elseif ($tugasAkhir->status === 'sidang_akhir') {
-                $sidangStatus = 'pending';
-                $sidangLabel = 'Terdaftar Sidang';
-              } elseif ($tugasAkhir->status === 'seminar_ta') {
-                $sidangStatus = 'in_progress';
-                $sidangLabel = 'Tahap Seminar TA';
-              }
-              $steps[] = [
-                'step' => 'Final',
-                'name' => 'Sidang Akhir',
-                'status' => $sidangStatus,
-                'label' => $sidangLabel,
-              ];
-            @endphp
-
-            @foreach ($steps as $st)
-              <div class="col-6 col-sm-4 col-md">
-                @if (isset($st['filter']))
-                  <a href="{{ route('logbook.index', ['bab' => $st['filter']]) }}" class="d-block h-100 text-decoration-none" aria-label="Lihat logbook {{ $st['name'] }}">
-                @endif
-                @if ($st['status'] === 'approved')
-                  <div class="p-2.5 rounded-3 border border-success-subtle bg-success-subtle/40 h-100 d-flex flex-column justify-content-between">
-                    <span class="text-success fw-bold text-uppercase d-block" style="font-size: 0.65rem;">{{ $st['step'] }}</span>
-                    <p class="fw-bold text-dark my-1">{{ $st['name'] }}</p>
-                    <span class="text-success small fw-medium"><i class="bi bi-check-circle-fill me-0.5"></i> {{ $st['label'] }}</span>
-                  </div>
-                @elseif ($st['status'] === 'revision')
-                  <div class="p-2.5 rounded-3 border border-warning-subtle bg-warning-subtle/50 h-100 d-flex flex-column justify-content-between">
-                    <span class="text-warning-emphasis fw-bold text-uppercase d-block" style="font-size: 0.65rem;">{{ $st['step'] }}</span>
-                    <p class="fw-bold text-dark my-1">{{ $st['name'] }}</p>
-                    <span class="text-warning-emphasis small fw-medium"><i class="bi bi-exclamation-triangle-fill me-0.5"></i> {{ $st['label'] }}</span>
-                  </div>
-                @elseif ($st['status'] === 'pending' || $st['status'] === 'in_progress')
-                  <div class="p-2.5 rounded-3 border border-primary-subtle bg-primary-subtle/40 h-100 d-flex flex-column justify-content-between">
-                    <span class="text-primary fw-bold text-uppercase d-block" style="font-size: 0.65rem;">{{ $st['step'] }}</span>
-                    <p class="fw-bold text-dark my-1">{{ $st['name'] }}</p>
-                    <span class="text-primary small fw-medium"><i class="bi bi-clock-history me-0.5"></i> {{ $st['label'] }}</span>
-                  </div>
-                @else
-                  <div class="p-2.5 rounded-3 border border-light-subtle bg-light text-secondary h-100 d-flex flex-column justify-content-between opacity-75">
-                    <span class="text-secondary fw-medium text-uppercase d-block" style="font-size: 0.65rem;">{{ $st['step'] }}</span>
-                    <p class="fw-medium text-secondary my-1">{{ $st['name'] }}</p>
-                    <span class="text-secondary small"><i class="bi bi-dash-circle me-0.5"></i> {{ $st['label'] }}</span>
-                  </div>
-                @endif
-                @if (isset($st['filter']))
-                  </a>
-                @endif
+          <!-- Grid 10 Tahap (Responsif: 2 kolom di mobile, 5 kolom di desktop) -->
+          <div class="row g-2 text-center row-cols-2 row-cols-sm-3 row-cols-md-5" style="font-size: 0.75rem;">
+            @foreach ($taSteps as $st)
+              <div class="col">
+                <a href="{{ $st['url'] }}" 
+                   class="d-block h-100 text-decoration-none text-reset transition-all hover-lift"
+                   title="Buka {{ $st['name'] }}">
+                  @if ($st['status'] === 'approved')
+                    <div class="p-2.5 rounded-3 border border-success-subtle bg-success-subtle/40 h-100 d-flex flex-column justify-content-between shadow-xs">
+                      <div class="d-flex align-items-center justify-content-between mb-1">
+                        <span class="text-success fw-bold text-uppercase" style="font-size: 0.65rem;">Tahap {{ $st['order'] }}</span>
+                        @if ($st['type'] === 'bab')
+                          <i class="bi bi-journal-text text-success" style="font-size: 0.75rem;"></i>
+                        @elseif ($st['type'] === 'seminar')
+                          <i class="bi bi-mortarboard text-success" style="font-size: 0.75rem;"></i>
+                        @else
+                          <i class="bi bi-file-earmark-text text-success" style="font-size: 0.75rem;"></i>
+                        @endif
+                      </div>
+                      <p class="fw-bold text-dark my-1 lh-sm text-truncate" style="font-size: 0.8125rem;">{{ $st['name'] }}</p>
+                      <div class="mt-2">
+                        <span class="badge bg-success text-white py-1 px-2 font-monospace" style="font-size: 0.6875rem;">
+                          <i class="bi bi-check-circle-fill me-0.5"></i> {{ $st['label'] }}
+                        </span>
+                      </div>
+                    </div>
+                  @elseif ($st['status'] === 'revision')
+                    <div class="p-2.5 rounded-3 border border-warning-subtle bg-warning-subtle/50 h-100 d-flex flex-column justify-content-between shadow-xs">
+                      <div class="d-flex align-items-center justify-content-between mb-1">
+                        <span class="text-warning-emphasis fw-bold text-uppercase" style="font-size: 0.65rem;">Tahap {{ $st['order'] }}</span>
+                        @if ($st['type'] === 'bab')
+                          <i class="bi bi-journal-text text-warning-emphasis" style="font-size: 0.75rem;"></i>
+                        @elseif ($st['type'] === 'seminar')
+                          <i class="bi bi-mortarboard text-warning-emphasis" style="font-size: 0.75rem;"></i>
+                        @else
+                          <i class="bi bi-file-earmark-text text-warning-emphasis" style="font-size: 0.75rem;"></i>
+                        @endif
+                      </div>
+                      <p class="fw-bold text-dark my-1 lh-sm text-truncate" style="font-size: 0.8125rem;">{{ $st['name'] }}</p>
+                      <div class="mt-2">
+                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle py-1 px-2 font-monospace" style="font-size: 0.6875rem;">
+                          <i class="bi bi-exclamation-triangle-fill me-0.5"></i> {{ $st['label'] }}
+                        </span>
+                      </div>
+                    </div>
+                  @elseif ($st['status'] === 'pending')
+                    <div class="p-2.5 rounded-3 border border-primary-subtle bg-primary-subtle/40 h-100 d-flex flex-column justify-content-between shadow-xs">
+                      <div class="d-flex align-items-center justify-content-between mb-1">
+                        <span class="text-primary fw-bold text-uppercase" style="font-size: 0.65rem;">Tahap {{ $st['order'] }}</span>
+                        @if ($st['type'] === 'bab')
+                          <i class="bi bi-journal-text text-primary" style="font-size: 0.75rem;"></i>
+                        @elseif ($st['type'] === 'seminar')
+                          <i class="bi bi-mortarboard text-primary" style="font-size: 0.75rem;"></i>
+                        @else
+                          <i class="bi bi-file-earmark-text text-primary" style="font-size: 0.75rem;"></i>
+                        @endif
+                      </div>
+                      <p class="fw-bold text-dark my-1 lh-sm text-truncate" style="font-size: 0.8125rem;">{{ $st['name'] }}</p>
+                      <div class="mt-2">
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle py-1 px-2 font-monospace" style="font-size: 0.6875rem;">
+                          <i class="bi bi-clock-history me-0.5"></i> {{ $st['label'] }}
+                        </span>
+                      </div>
+                    </div>
+                  @else
+                    <div class="p-2.5 rounded-3 border border-light-subtle bg-light text-secondary h-100 d-flex flex-column justify-content-between opacity-85">
+                      <div class="d-flex align-items-center justify-content-between mb-1">
+                        <span class="text-secondary fw-medium text-uppercase" style="font-size: 0.65rem;">Tahap {{ $st['order'] }}</span>
+                        @if ($st['type'] === 'bab')
+                          <i class="bi bi-journal-text text-secondary opacity-75" style="font-size: 0.75rem;"></i>
+                        @elseif ($st['type'] === 'seminar')
+                          <i class="bi bi-mortarboard text-secondary opacity-75" style="font-size: 0.75rem;"></i>
+                        @else
+                          <i class="bi bi-file-earmark-text text-secondary opacity-75" style="font-size: 0.75rem;"></i>
+                        @endif
+                      </div>
+                      <p class="fw-medium text-secondary my-1 lh-sm text-truncate" style="font-size: 0.8125rem;">{{ $st['name'] }}</p>
+                      <div class="mt-2">
+                        <span class="badge bg-white text-secondary border py-1 px-2 font-monospace" style="font-size: 0.6875rem;">
+                          <i class="bi bi-dash-circle me-0.5"></i> {{ $st['label'] }}
+                        </span>
+                      </div>
+                    </div>
+                  @endif
+                </a>
               </div>
             @endforeach
           </div>
