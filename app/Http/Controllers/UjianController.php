@@ -132,8 +132,10 @@ class UjianController extends Controller
         // Cek syarat akademik dasar pendaftaran ujian (4 jenis resmi FITE)
         $approvedBabsCount = $tugasAkhir->logbooks()
             ->where('status_verifikasi', 'disetujui')
-            ->distinct('bab_progress')
-            ->count('bab_progress');
+            ->get(['bab_progresses', 'bab_progress'])
+            ->flatMap(fn ($logbook) => $logbook->bab_progresses ?: [$logbook->bab_progress])
+            ->unique()
+            ->count();
 
         if ($jenisUjian === 'seminar_proposal') {
             $allowedStatuses = ['proposal', 'pengerjaan', 'sempro'];

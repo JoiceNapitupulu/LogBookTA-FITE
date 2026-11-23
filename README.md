@@ -21,6 +21,10 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
+## Logbook Progress
+
+Logbook chapters are stored as a JSON array in `logbooks.bab_progresses`, so one entry can cover multiple chapters. The legacy `bab_progress` column remains populated with the first selected value for compatibility with existing data and integrations. Filter logbook entries by chapter with `/logbook?bab=1` (or `bab=BAB%201`).
+
 ## Learning Laravel
 
 Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.

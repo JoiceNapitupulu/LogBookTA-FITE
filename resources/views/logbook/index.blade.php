@@ -83,12 +83,13 @@
 
       <select name="bab" onchange="this.form.submit()" class="form-select form-select-sm" style="width: auto; font-size: 0.8125rem;">
         <option value="">Semua Bab</option>
-        <option value="BAB 1" {{ request('bab') === 'BAB 1' ? 'selected' : '' }}>BAB 1</option>
-        <option value="BAB 2" {{ request('bab') === 'BAB 2' ? 'selected' : '' }}>BAB 2</option>
-        <option value="BAB 3" {{ request('bab') === 'BAB 3' ? 'selected' : '' }}>BAB 3</option>
-        <option value="BAB 4" {{ request('bab') === 'BAB 4' ? 'selected' : '' }}>BAB 4</option>
-        <option value="BAB 5" {{ request('bab') === 'BAB 5' ? 'selected' : '' }}>BAB 5</option>
+        @foreach (range(1, 7) as $babNumber)
+          <option value="BAB {{ $babNumber }}" {{ $selectedBab === 'BAB '.$babNumber ? 'selected' : '' }}>BAB {{ $babNumber }}</option>
+        @endforeach
       </select>
+      @if ($selectedBab)
+        <a href="{{ route('logbook.index', request()->except('bab', 'page')) }}" class="btn btn-outline-secondary btn-sm text-nowrap">Semua Bab</a>
+      @endif
     </form>
 
   </div>
@@ -116,7 +117,7 @@
             <tr>
               <td class="px-3 py-3 text-nowrap">
                 <span class="fw-bold text-dark d-block">{{ $log->tanggal->format('d M Y') }}</span>
-                <span class="badge bg-light text-secondary border mt-0.5">{{ $log->bab_progress }}</span>
+                <span class="badge bg-light text-secondary border mt-0.5">{{ implode(', ', $log->bab_progresses ?: [$log->bab_progress]) }}</span>
               </td>
 
               @if (!auth()->user()->isMahasiswa())
@@ -231,7 +232,7 @@
           @forelse ($logbooks->where('status_verifikasi', 'pending') as $item)
             <div class="card shadow-xs border p-2.5 bg-white">
               <div class="d-flex align-items-center justify-content-between text-secondary small mb-1" style="font-size: 0.75rem;">
-                <span class="badge bg-light text-dark border">{{ $item->bab_progress }}</span>
+                <span class="badge bg-light text-dark border">{{ implode(', ', $item->bab_progresses ?: [$item->bab_progress]) }}</span>
                 <span>{{ $item->tanggal->format('d M Y') }}</span>
               </div>
               <p class="small fw-semibold text-dark mb-0 line-clamp-2">{{ $item->deskripsi_kegiatan }}</p>
@@ -254,7 +255,7 @@
           @forelse ($logbooks->where('status_verifikasi', 'revisi') as $item)
             <div class="card shadow-xs border p-2.5 bg-white">
               <div class="d-flex align-items-center justify-content-between text-secondary small mb-1" style="font-size: 0.75rem;">
-                <span class="badge bg-light text-dark border">{{ $item->bab_progress }}</span>
+                <span class="badge bg-light text-dark border">{{ implode(', ', $item->bab_progresses ?: [$item->bab_progress]) }}</span>
                 <span>{{ $item->tanggal->format('d M Y') }}</span>
               </div>
               <p class="small fw-semibold text-dark mb-1 line-clamp-2">{{ $item->deskripsi_kegiatan }}</p>
@@ -280,7 +281,7 @@
           @forelse ($logbooks->where('status_verifikasi', 'disetujui') as $item)
             <div class="card shadow-xs border p-2.5 bg-white">
               <div class="d-flex align-items-center justify-content-between text-secondary small mb-1" style="font-size: 0.75rem;">
-                <span class="badge bg-light text-dark border">{{ $item->bab_progress }}</span>
+                <span class="badge bg-light text-dark border">{{ implode(', ', $item->bab_progresses ?: [$item->bab_progress]) }}</span>
                 <span>{{ $item->tanggal->format('d M Y') }}</span>
               </div>
               <p class="small fw-semibold text-dark mb-0 line-clamp-2">{{ $item->deskripsi_kegiatan }}</p>
@@ -298,7 +299,7 @@
     @forelse ($logbooks as $item)
       <div class="list-group-item list-group-item-action d-flex align-items-center justify-content-between py-2.5 px-3">
         <div class="d-flex align-items-center gap-2.5">
-          <span class="badge bg-light text-secondary border">{{ $item->bab_progress }}</span>
+          <span class="badge bg-light text-secondary border">{{ implode(', ', $item->bab_progresses ?: [$item->bab_progress]) }}</span>
           <span class="small fw-semibold text-dark">{{ $item->tanggal->format('d M Y') }} — {{ Str::limit($item->deskripsi_kegiatan, 80) }}</span>
         </div>
         <div>
@@ -351,15 +352,25 @@
                   </div>
                   <div class="col-6">
                     <label class="form-label fw-semibold text-secondary small mb-1">Fokus Bab Progres</label>
-                    <select name="bab_progress" required class="form-select form-select-sm">
-                      <option value="BAB 1">BAB 1 - Pendahuluan</option>
-                      <option value="BAB 2">BAB 2 - Tinjauan Pustaka</option>
-                      <option value="BAB 3">BAB 3 - Metodologi</option>
-                      <option value="BAB 4" selected>BAB 4 - Implementasi & Hasil</option>
-                      <option value="BAB 5">BAB 5 - Kesimpulan</option>
-                      <option value="Pengujian">Pengujian Sistem / Model</option>
-                      <option value="Lainnya">Lainnya</option>
-                    </select>
+                    <fieldset class="border rounded p-2">
+                      <legend class="float-none w-auto px-1 small mb-1">Pilih satu atau beberapa bab</legend>
+                      <div class="d-flex flex-wrap gap-2">
+                        @foreach (range(1, 7) as $babNumber)
+                          <label class="form-check form-check-inline mb-0">
+                            <input type="checkbox" name="bab_progresses[]" value="BAB {{ $babNumber }}" class="form-check-input" {{ in_array('BAB '.$babNumber, old('bab_progresses', ['BAB 4'])) ? 'checked' : '' }}>
+                            <span class="form-check-label">BAB {{ $babNumber }}</span>
+                          </label>
+                        @endforeach
+                        <label class="form-check form-check-inline mb-0">
+                          <input type="checkbox" name="bab_progresses[]" value="Pengujian" class="form-check-input" {{ in_array('Pengujian', old('bab_progresses', [])) ? 'checked' : '' }}>
+                          <span class="form-check-label">Pengujian</span>
+                        </label>
+                        <label class="form-check form-check-inline mb-0">
+                          <input type="checkbox" name="bab_progresses[]" value="Lainnya" class="form-check-input" {{ in_array('Lainnya', old('bab_progresses', [])) ? 'checked' : '' }}>
+                          <span class="form-check-label">Lainnya</span>
+                        </label>
+                      </div>
+                    </fieldset>
                   </div>
                 </div>
 
@@ -424,7 +435,7 @@
             <div class="modal-body p-4 d-flex flex-column gap-3" style="font-size: 0.8125rem;">
               <!-- Info Mahasiswa & Logbook -->
               <div class="p-3 bg-light rounded border">
-                <p class="small fw-bold text-dark mb-1" x-text="'Bab: ' + selectedLogbook.bab_progress + ' (' + selectedLogbook.tanggal + ')'"></p>
+                <p class="small fw-bold text-dark mb-1" x-text="'Bab: ' + (selectedLogbook.bab_progresses || [selectedLogbook.bab_progress]).join(', ') + ' (' + selectedLogbook.tanggal + ')'"></p>
                 <p class="text-secondary small mb-0" x-text="selectedLogbook.deskripsi_kegiatan"></p>
                 <template x-if="selectedLogbook.kendala">
                   <p class="text-warning-emphasis small mt-1 mb-0" x-text="'Kendala: ' + selectedLogbook.kendala"></p>

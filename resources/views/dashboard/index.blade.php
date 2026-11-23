@@ -190,9 +190,9 @@
               ];
 
               foreach (['BAB 1', 'BAB 2', 'BAB 3', 'BAB 4', 'BAB 5'] as $idx => $bName) {
-                $logsForBab = $logbooks->where('bab_progress', $bName);
+                $logsForBab = $logbooks->filter(fn($l) => in_array($bName, $l->bab_progresses ?: [$l->bab_progress]));
                 if ($bName === 'BAB 5') {
-                  $logsForBab = $logbooks->filter(fn($l) => in_array($l->bab_progress, ['BAB 5', 'Pengujian']));
+                  $logsForBab = $logbooks->filter(fn($l) => count(array_intersect(['BAB 5', 'Pengujian'], $l->bab_progresses ?: [$l->bab_progress])) > 0);
                 }
 
                 $isApproved = $logsForBab->where('status_verifikasi', 'disetujui')->isNotEmpty();
@@ -216,6 +216,7 @@
                 $steps[] = [
                   'step' => 'Tahap ' . ($idx + 2),
                   'name' => $bName,
+                  'filter' => $bName,
                   'status' => $sStatus,
                   'label' => $sLabel,
                 ];
@@ -244,6 +245,9 @@
 
             @foreach ($steps as $st)
               <div class="col-6 col-sm-4 col-md">
+                @if (isset($st['filter']))
+                  <a href="{{ route('logbook.index', ['bab' => $st['filter']]) }}" class="d-block h-100 text-decoration-none" aria-label="Lihat logbook {{ $st['name'] }}">
+                @endif
                 @if ($st['status'] === 'approved')
                   <div class="p-2.5 rounded-3 border border-success-subtle bg-success-subtle/40 h-100 d-flex flex-column justify-content-between">
                     <span class="text-success fw-bold text-uppercase d-block" style="font-size: 0.65rem;">{{ $st['step'] }}</span>
@@ -268,6 +272,9 @@
                     <p class="fw-medium text-secondary my-1">{{ $st['name'] }}</p>
                     <span class="text-secondary small"><i class="bi bi-dash-circle me-0.5"></i> {{ $st['label'] }}</span>
                   </div>
+                @endif
+                @if (isset($st['filter']))
+                  </a>
                 @endif
               </div>
             @endforeach
@@ -304,7 +311,7 @@
                 <tr>
                   <td class="px-3 py-3 text-nowrap">
                     <span class="fw-bold text-dark d-block">{{ $log->tanggal->format('d M Y') }}</span>
-                    <span class="badge bg-light text-secondary border mt-0.5">{{ $log->bab_progress }}</span>
+                    <span class="badge bg-light text-secondary border mt-0.5">{{ implode(', ', $log->bab_progresses ?: [$log->bab_progress]) }}</span>
                   </td>
                   <td class="px-3 py-3" style="max-width: 280px;">
                     <p class="fw-medium text-dark mb-0 line-clamp-2">{{ $log->deskripsi_kegiatan }}</p>
@@ -520,7 +527,7 @@
                 <td class="px-3 py-3 text-secondary">
                   @if ($ta->logbooks->isNotEmpty())
                     <span class="fw-medium text-dark d-block">{{ $ta->logbooks->first()->tanggal->format('d M Y') }}</span>
-                    <span class="small">{{ $ta->logbooks->first()->bab_progress }}</span>
+                    <span class="small">{{ implode(', ', $ta->logbooks->first()->bab_progresses ?: [$ta->logbooks->first()->bab_progress]) }}</span>
                   @else
                     <span class="small">Belum ada entri</span>
                   @endif
