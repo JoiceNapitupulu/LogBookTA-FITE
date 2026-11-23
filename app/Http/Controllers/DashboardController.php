@@ -182,7 +182,13 @@ class DashboardController extends Controller
                     $babs[] = $log->bab_progress;
                 }
 
-                $upperBabs = array_map(fn($b) => strtoupper(trim((string)$b)), $babs);
+                $upperBabs = array_map(function ($item) {
+                    $clean = strtoupper(trim((string) $item));
+                    if (preg_match('/^(?:BAB\s*)?([1-7])$/', $clean, $m)) {
+                        return 'BAB ' . $m[1];
+                    }
+                    return $clean;
+                }, $babs);
 
                 if (in_array($normalizedTarget, $upperBabs)) {
                     return true;
@@ -210,33 +216,48 @@ class DashboardController extends Controller
 
         // Helper untuk menghitung status Ujian/Seminar
         $getExamStatus = function (string $jenisUjian, array $bypassTaStatuses = []) use ($ujianList, $tugasAkhir): array {
-            $exam = $ujianList->firstWhere('jenis_ujian', $jenisUjian);
+            $exams = $ujianList->where('jenis_ujian', $jenisUjian);
 
-            // Cek apakah status tugas akhir sudah melampaui tahapan ini
-            if (!empty($bypassTaStatuses) && in_array($tugasAkhir->status, $bypassTaStatuses)) {
-                return ['approved', 'Disetujui'];
-            }
+            // Cek jika status tugas akhir sudah melampaui tahapan ini
+            $isBypassed = !empty($bypassTaStatuses) && in_array($tugasAkhir->status, $bypassTaStatuses);
 
-            if (!$exam) {
+            if ($exams->isEmpty()) {
+                if ($isBypassed) {
+                    return ['approved', 'Disetujui'];
+                }
                 return ['empty', 'Belum'];
             }
 
-            // Selesai jika berkas lengkap, terjadwal, atau lulus
-            $isComplete = $exam->status_dokumen === 'berkas_lengkap'
-                || in_array($exam->status_ujian, ['terjadwal', 'lulus'])
-                || $exam->status_persetujuan_pembimbing === 'diizinkan';
+            // 1. Selesai jika berkas lengkap, terjadwal, lulus, atau izin pembimbing diberikan
+            $isComplete = $isBypassed || $exams->contains(function ($exam) {
+                return $exam->status_dokumen === 'berkas_lengkap'
+                    || in_array($exam->status_ujian, ['terjadwal', 'lulus'])
+                    || $exam->status_persetujuan_pembimbing === 'diizinkan';
+            });
 
             if ($isComplete) {
                 return ['approved', 'Disetujui'];
             }
 
-            // Revisi jika berkas kurang atau ditolak pembimbing
-            if ($exam->status_dokumen === 'berkas_kurang' || $exam->status_persetujuan_pembimbing === 'tidak_diizinkan') {
+            // 2. Revisi jika berkas kurang, tidak diizinkan, atau status ujian revisi
+            $isRevision = $exams->contains(function ($exam) {
+                return $exam->status_dokumen === 'berkas_kurang'
+                    || $exam->status_persetujuan_pembimbing === 'tidak_diizinkan'
+                    || $exam->status_ujian === 'revisi';
+            });
+
+            if ($isRevision) {
                 return ['revision', 'Revisi'];
             }
 
-            // Menunggu jika masih diverifikasi atau diajukan
-            if ($exam->status_dokumen === 'menunggu_verifikasi' || $exam->status_ujian === 'diajukan' || $exam->status_persetujuan_pembimbing === 'menunggu_verifikasi') {
+            // 3. Menunggu jika status dokumen menunggu verifikasi atau status ujian diajukan
+            $isPending = $exams->contains(function ($exam) {
+                return $exam->status_dokumen === 'menunggu_verifikasi'
+                    || $exam->status_ujian === 'diajukan'
+                    || $exam->status_persetujuan_pembimbing === 'menunggu_verifikasi';
+            });
+
+            if ($isPending) {
                 return ['pending', 'Menunggu'];
             }
 
